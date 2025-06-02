@@ -1,0 +1,799 @@
+/* src/App.css */
+
+/* --- Estilos Generales del Cuerpo y Fondo --- */
+body {
+  margin: 0;
+  font-family: 'Press Start 2P', cursive;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: #1a1a1a;
+  color: #eee;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 20px;
+  box-sizing: border-box;
+  position: relative;
+
+  /* --- Fondo de Imagen (Estilo GBA) --- */
+  background-image: url('/public/imgindex/1.jpg'); /* Asegúrate de que esta ruta sea correcta */
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  /*filter: brightness(0.6) grayscale(0.3); /* Oscurece y desatura */
+}
+
+/* Importar fuente de Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Press+Start 2P&display=swap');
+
+/* --- Capa Semitransparente o Difuminada sobre el Fondo --- */
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5); /* Fondo negro con 50% de transparencia (ajusta el 0.5) */
+  /* Opcional: Aplicar un filtro de desenfoque en lugar de (o además de) la transparencia */
+  /* filter: blur(5px); /* Ajusta el valor (ej: 5px) para controlar el nivel de desenfoque */
+  z-index: 0;
+}
+
+
+/* --- Contenedor Principal Estilo Pokedex --- */
+.pokedex-container {
+  text-align: center;
+  padding: 30px;
+  max-width: 1000px;
+  width: 100%;
+  margin: 0;
+  background-color: #c0392b;
+  border: 15px solid #e74c3c;
+  border-radius: 25px;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
+  position: relative;
+  z-index: 1;
+  /* MODIFICADO: Eliminamos overflow: hidden; para permitir que el menú desplegable se muestre por encima */
+  /* overflow: hidden; */
+}
+
+/* Detalle de diseño: una "bisagra" o elemento decorativo */
+.pokedex-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 50px;
+    height: 15px;
+    background-color: #34495e;
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+    z-index: 2;
+}
+
+
+header {
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 5px solid #e74c3c;
+    position: relative;
+    z-index: 2;
+    /* Centramos el contenido del header (la imagen) */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Estilos para la imagen del logo en el header */
+.pokedex-logo {
+    max-width: 250px; /* Ajusta el tamaño máximo del logo */
+    height: auto; /* Mantiene la proporción */
+    display: block; /* Asegura que se comporte como bloque para centrar */
+    margin: 0 auto; /* Centra la imagen horizontalmente */
+    filter: drop-shadow(3px 3px 0px #333); /* Añade una sombra similar a la del texto anterior */
+}
+
+
+/* --- Mensaje de Bienvenida --- */
+.welcome-message {
+    margin-bottom: 20px;
+    font-family: monospace;
+    padding: 20px;
+    background-color: #ecf0f1;
+    border-radius: 10px;
+    border: 3px solid #bdc3c7;
+    box-shadow: inset 0 0 8px rgba(0,0,0,0.1);
+    color: #34495e;
+    position: relative;
+    z-index: 1;
+}
+
+.welcome-message h2 {
+    font-size: 1.8em;
+    margin-top: 0;
+    font-weight: bold;
+    color: #2c3e50;
+    text-shadow: 1px 1px 0px rgba(255,255,255,0.5);
+    font-family: monospace;
+}
+
+.welcome-message p {
+    font-size: 1em;
+    margin-bottom: 0;
+    font-family: monospace;
+}
+
+
+/* --- Contenedor de Controles de Búsqueda y Filtrado --- */
+.controls-container {
+    background-color: #ecf0f1;
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    border: 3px solid #bdc3c7;
+    box-shadow: inset 0 0 10px rgba(0,0,0,0.2);
+    display: flex;
+    flex-wrap: nowrap; /* Mantiene los elementos en una sola línea */
+    justify-content: center;
+    gap: 50px; /* Ajusta este valor si necesitas más o menos espacio */
+    position: relative;
+    /* MODIFICADO: Aumentamos el z-index y aseguramos la posición */
+    z-index: 25; /* Un valor más alto que el menú desplegable (20) y la lista (1) */
+    /* Aseguramos una posición para que z-index funcione correctamente */
+    position: relative; /* O 'absolute', 'fixed', 'sticky' - 'relative' es el más seguro aquí */
+    min-width: 0; /* Permite que el contenedor se encoja */
+    padding-bottom: 10px; /* Añade espacio si aparece la barra de scroll */
+    align-items: center; /* Alinea los elementos verticalmente en el centro */
+    font-family: monospace;
+}
+
+.controls-container div {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    flex-shrink: 1; /* Permite que los divs interiores se encojan */
+    justify-content: flex-start; /* Alinea el contenido al inicio */
+    font-family: monospace;
+}
+
+
+.controls-container input,
+.controls-container select {
+    font-family: monospace;
+    padding: 10px;
+    border: 2px solid #34495e;
+    border-radius: 5px;
+    background-color: #fff;
+    color: #34495e;
+    font-size: 0.8em;
+    outline: none;
+    transition: border-color 0.3s ease;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.362%22%20height%3D%22292.362%22%3E%3Cpath%20fill%3D%22%2334495e%22%20d%3D%22M287.362%20197.211L146.181%2055.849L5%20197.211h282.362z%22%2F%3E%3C%2Fsvg%3E');
+    background-repeat: no-repeat;
+    background-position: right 8px top 50%;
+    background-size: 12px auto;
+    padding-right: 30px;
+    min-width: 0;
+}
+
+.controls-container input:focus,
+.controls-container select:focus {
+    border-color: #f1c40f;
+    box-shadow: 0 0 5px rgba(241, 196, 15, 0.5);
+}
+
+
+.controls-container label {
+    font-weight: bold;
+    margin-right: 5px;
+    font-size: 0.9em;
+    color: #34495e;
+    flex-shrink: 0;
+}
+
+/* --- Estilos Específicos para las Opciones del Selector de Tipo --- */
+/* Nota: Estilizar <option> de forma consistente entre navegadores es limitado.
+   Aplicaremos background-color y color, que suelen funcionar.
+   Para un control total, se necesitaría recrear el select con divs/ul/li. */
+
+.controls-container select#type-filter option {
+    padding: 8px 10px;
+    color: #34495e;
+    background-color: #fff;
+}
+
+/* Estilos para la opción "Todos" */
+.controls-container select#type-filter option[value=""] {
+    background-color: #bdc3c7;
+    color: #34495e;
+    font-weight: bold;
+    font-family: monospace;
+}
+
+
+/* --- Colores de Fondo para las Opciones de Tipo --- */
+/* Usamos los mismos colores que para los spans de tipo en las tarjetas */
+/* Esto aplica el color de fondo a cada opción del select */
+/* Asegúrate de que los valores en 'value' coincidan exactamente con los nombres de tipo en inglés de la API */
+.controls-container select#type-filter option[value="normal"] { background-color: #A8A77A; color: white; text-shadow: 1px 1px 2px rgba(0,0,0,0.3); }
+.controls-container select#type-filter option[value="fire"] { background-color: #EE8130; color: white; text-shadow: 1px 1px 2px rgba(0,0,0,0.3); }
+.controls-container select#type-filter option[value="water"] { background-color: #6390F0; color: white; text-shadow: 1px 1px 2px rgba(0,0,0,0.3); }
+.controls-container select#type-filter option[value="electric"] { background-color: #F7D02C; color: #333; text-shadow: 1px 1px 0px rgba(255,255,255,0.5); } /* Texto oscuro para colores claros */
+.controls-container select#type-filter option[value="grass"] { background-color: #7AC74C; color: white; text-shadow: 1px 1px 2px rgba(0,0,0,0.3); }
+.controls-container select#type-filter option[value="ice"] { background-color: #96D9D6; color: #333; text-shadow: 1px 1px 0px rgba(255,255,255,0.5); } /* Texto oscuro */
+.controls-container select#type-filter option[value="fighting"] { background-color: #C22E28; color: white; text-shadow: 1px 1px 2px rgba(0,0,0,0.3); }
+.controls-container select#type-filter option[value="poison"] { background-color: #A33EA1; color: white; text-shadow: 1px 1px 2px rgba(0,0,0,0.3); }
+.controls-container select#type-filter option[value="ground"] { background-color: #E2BF65; color: #333; text-shadow: 1px 1px 0px rgba(255,255,255,0.5); } /* Texto oscuro */
+.controls-container select#type-filter option[value="flying"] { background-color: #A98FF3; color: #333; text-shadow: 1px 1px 0px rgba(255,255,255,0.5); } /* Texto oscuro */
+.controls-container select#type-filter option[value="psychic"] { background-color: #F95587; color: white; text-shadow: 1px 1px 2px rgba(0,0,0,0.3); }
+.controls-container select#type-filter option[value="bug"] { background-color: #A6B91A; color: white; text-shadow: 1px 1px 2px rgba(0,0,0,0.3); }
+.controls-container select#type-filter option[value="rock"] { background-color: #B6A136; color: white; text-shadow: 1px 1px 2px rgba(0,0,0,0.3); }
+.controls-container select#type-filter option[value="ghost"] { background-color: #735797; color: white; text-shadow: 1px 1px 2px rgba(0,0,0,0.3); }
+.controls-container select#type-filter option[value="dragon"] { background-color: #6F35FC; color: white; text-shadow: 1px 1px 2px rgba(0,0,0,0.3); }
+.controls-container select#type-filter option[value="dark"] { background-color: #705746; color: white; text-shadow: 1px 1px 2px rgba(0,0,0,0.3); }
+.controls-container select#type-filter option[value="steel"] { background-color: #B7B7CE; color: #333; text-shadow: 1px 1px 0px rgba(255,255,255,0.5); } /* Texto oscuro */
+.controls-container select#type-filter option[value="fairy"] { background-color: #D685AD; color: white; text-shadow: 1px 1px 2px rgba(0,0,0,0.3); }
+
+
+/* --- Estilos para el Botón y Menú Desplegable de Generaciones --- */
+.generation-filter-container {
+    position: relative;
+    display: inline-block; /* Asegura que ocupe solo el espacio necesario */
+    flex-shrink: 0; /* Evita que el contenedor del botón se encoja demasiado */
+    font-family: monospace;
+    font-weight: bold;
+}
+
+.generation-button {
+    font-family: monospace;
+    font-weight: bold;
+    padding: 10px 15px;
+    border: 2px solid #34495e;
+    border-radius: 5px;
+    background-color: #3498db;
+    color: white;
+    font-size: 1em;
+    cursor: pointer;
+    outline: none;
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+    text-shadow: 1px 1px 0px rgba(0,0,0,0.3);
+    white-space: nowrap; /* Evita que el texto del botón se envuelva */
+}
+
+.generation-button:hover {
+    background-color: #2980b9;
+    border-color: #2980b9;
+}
+
+.generation-dropdown-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background-color: #ecf0f1;
+    border: 2px solid #34495e;
+    border-radius: 5px;
+    list-style: none;
+    padding: 5px 0;
+    margin: 5px 0 0 0;
+    z-index: 20; /* Asegura que esté por encima de la lista de Pokémon */
+    box-shadow: 0 5px 10px rgba(0,0,0,0.2);
+    text-align: left;
+    font-family: monospace;
+    font-weight: bold;
+}
+
+.generation-dropdown-menu li {
+    padding: 8px 15px;
+    cursor: pointer;
+    font-size: 0.9em;
+    color: #34495e;
+    font-family: sans-serif;
+    transition: background-color 0.1s ease;
+    font-family: monospace;
+    font-weight: bold;
+}
+
+.generation-dropdown-menu li:hover {
+    background-color: #bdc3c7;
+
+}
+
+.generation-dropdown-menu li.active {
+    background-color: #3498db;
+    color: white;
+    font-weight: bold;
+    font-family: monospace;
+}
+
+
+.pokemon-list {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+  padding: 0;
+  list-style: none;
+  margin-top: 20px;
+  position: relative;
+  z-index: 1; /* Asegura que esté por debajo del menú desplegable */
+}
+
+/* --- Estilos para PokemonCard --- */
+.pokemon-card {
+  border: 5px solid #34495e;
+  padding: 15px;
+  border-radius: 15px;
+  background-color: #ecf0f1;
+  box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.3);
+  width: 180px;
+  text-align: center;
+  cursor: pointer;
+  transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out, background-color 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  z-index: 1; /* Asegura que las tarjetas individuales estén en una capa normal */
+}
+
+.pokemon-card:hover {
+  transform: translateY(-8px) rotate(2deg);
+  box-shadow: 6px 6px 15px rgba(0, 0, 0, 0.4);
+  background-color: #bdc3c7;
+}
+
+.pokemon-card .pokemon-image {
+    width: 100px;
+    height: 100px;
+    margin-bottom: 10px;
+    image-rendering: pixelated;
+    display: block;
+    filter: drop-shadow(2px 2px 1px rgba(0,0,0,0.2));
+}
+
+.pokemon-number {
+    font-size: 1em;
+    color: #34495e;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.pokemon-name {
+    font-size: 1.2em;
+    font-weight: bold;
+    margin: 0 0 10px 0;
+    text-transform: capitalize;
+    color: #2c3e50;
+}
+
+.pokemon-types {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.pokemon-types span {
+    padding: 4px 10px;
+    border-radius: 15px;
+    font-size: 0.8em;
+    color: white;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+    font-weight: bold;
+    border: 2px solid rgba(0,0,0,0.2);
+}
+
+/* --- Colores de Tipos (Mantén o ajusta según tu paleta) --- */
+.type-normal { background-color: #A8A77A; }
+.type-fire { background-color: #EE8130; }
+.type-water { background-color: #6390F0; }
+.type-electric { background-color: #F7D02C; }
+.type-grass { background-color: #7AC74C; }
+.type-ice { background-color: #96D9D6; }
+.type-fighting { background-color: #C22E28; }
+.type-poison { background-color: #A33EA1; }
+.type-ground { background-color: #E2BF65; }
+.type-flying { background-color: #A98FF3; }
+.type-psychic { background-color: #F95587; }
+.type-bug { background-color: #A6B91A; }
+.type-rock { background-color: #B6A136; }
+.type-ghost { background-color: #735797; }
+.type-dragon { background-color: #6F35FC; }
+.type-dark { background-color: #705746; }
+.type-steel { background-color: #B7B7CE; }
+.type-fairy { background-color: #D685AD; }
+
+
+.loading-card, .error-card {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 220px;
+    background-color: #bdc3c7;
+    color: #34495e;
+    border: 3px dashed #34495e;
+    border-radius: 15px;
+    font-family: 'Press Start 2P', cursive;
+    font-size: 0.9em;
+    position: relative;
+    z-index: 1;
+}
+
+/* Estilos para el placeholder de imagen */
+.pokemon-image-placeholder {
+    width: 100px;
+    height: 100px;
+    margin-bottom: 10px;
+    background-color: #bdc3c7;
+    color: #34495e;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    font-size: 0.8em;
+    border: 3px dashed #34495e;
+    border-radius: 5px;
+    font-family: sans-serif;
+    font-weight: bold;
+    position: relative;
+    z-index: 1;
+}
+
+
+/* --- Estilos para PokemonDetail View --- */
+.pokemon-detail-view {
+  padding: 30px;
+  max-width: 750px;
+  margin: 20px auto;
+  text-align: center;
+  background-color: #ecf0f1;
+  border-radius: 15px;
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.3);
+  position: relative;
+  z-index: 2;
+  border: 5px solid #34495e;
+}
+
+.pokemon-detail-view h2 {
+    color: #2c3e50;
+    margin-bottom: 15px;
+    text-transform: capitalize;
+    font-size: 1.8em;
+    font-family: 'Press Start 2P', cursive;
+    text-shadow: 2px 2px 0px #bdc3c7;
+}
+
+.pokemon-detail-image {
+    width: 250px;
+    height: 250px;
+    margin: 20px auto;
+    display: block;
+    border: 8px solid #bdc3c7;
+    border-radius: 20px;
+    background-color: #fff;
+    image-rendering: pixelated;
+    filter: drop-shadow(3px 3px 2px rgba(0,0,0,0.3));
+}
+
+.pokemon-detail-view h3 {
+    color: #34495e;
+    margin-top: 30px;
+    margin-bottom: 15px;
+    border-bottom: 2px solid #bdc3c7;
+    padding-bottom: 8px;
+    font-family: 'Press Start 2P', cursive;
+    font-size: 1.2em;
+}
+
+/* --- Estilos para las Estadísticas (Barras) --- */
+.stats-container {
+    margin-top: 20px;
+    text-align: left;
+    padding: 0 20px;
+}
+
+.stat-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 12px;
+    font-size: 1em;
+}
+
+.stat-name {
+    width: 130px;
+    font-weight: bold;
+    margin-right: 15px;
+    text-transform: capitalize;
+    font-family: sans-serif;
+    font-size: 1em;
+    color: #2c3e50;
+}
+
+.stat-bar-background {
+    flex-grow: 1;
+    height: 25px;
+    background-color: #bdc3c7;
+    border-radius: 12px;
+    overflow: hidden;
+    position: relative;
+    border: 1px solid #95a5a6;
+}
+
+.stat-bar-fill {
+    height: 100%;
+    background-color: #2ecc71;
+    display: flex;
+    align-items: center;
+    padding-left: 8px;
+    transition: width 0.8s ease-out;
+}
+
+.stat-value {
+    font-size: 1em;
+    color: white;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
+    z-index: 1;
+    font-weight: bold;
+    font-family: sans-serif;
+}
+
+/* Opcional: Colores de barra por estadística */
+/* .stat-item:nth-child(1) .stat-bar-fill { background-color: #e74c3c; } // HP (rojo) */
+/* .stat-item:nth-child(2) .stat-bar-fill { background-color: #f39c12; } // Attack (naranja) */
+/* .stat-item:nth-child(3) .stat-bar-fill { background-color: #f1c40f; } // Defense (amarillo) */
+/* .stat-item:nth-child(4) .stat-bar-fill { background-color: #3498db; } // Sp. Atk (azul) */
+/* .stat-item:nth-child(5) .stat-bar-fill { background-color: #9b59b6; } // Sp. Def (púrpura) */
+/* .stat-item:nth-child(6) .stat-bar-fill { background-color: #1abc9c; } // Speed (turquesa) */
+
+
+/* --- Estilos para el Botón Volver --- */
+.back-button {
+    background-color: #3498db;
+    border: 3px solid #2980b9;
+    border-radius: 8px;
+    padding: 12px 25px;
+    font-size: 1.1em;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+    display: inline-block;
+    margin-bottom: 20px;
+    font-family: 'Press Start 2P', cursive;
+    text-shadow: 1px 1px 0px rgba(0,0,0,0.3);
+    color: white;
+}
+
+.back-button:hover {
+    background-color: #2980b9;
+    transform: translateY(-2px);
+}
+
+.back-button:active {
+    transform: translateY(0);
+}
+
+/* --- Estilos Adicionales para PokemonDetail View (Habilidades, etc.) --- */
+
+/* --- Estilos para la sección de Habilidades (con insignias de color) --- */
+
+/* Estilo para el subtítulo "Habilidades:" */
+.pokemon-detail-view h4 {
+    color: #2c3e50; /* Color similar a otros textos importantes */
+    margin-top: 15px; /* Espacio encima del título de habilidades */
+    margin-bottom: 15px; /* Espacio debajo del título de habilidades */
+    text-align: left; /* Alinear a la izquierda, como las estadísticas */
+    padding-left: 20px; /* Ajustar según necesites alineación */
+    font-size: 1.1em; /* Tamaño ligeramente menor que h3 */
+    font-family: sans-serif; /* O la fuente que uses para texto normal */
+    font-weight: bold;
+}
+
+.characteristics-container {
+    display: flex;
+    flex-direction: column; /* Para apilar Altura y Peso verticalmente */
+    gap: 12px; /* Espacio entre el ítem de Altura y el de Peso */
+    margin-bottom: 25px; /* Espacio después de la sección de características */
+    padding: 0 20px; /* Para alinear con el resto del contenido si es necesario */
+}
+
+.characteristic-item {
+    display: flex;
+    align-items: center; /* Alinea verticalmente el icono, etiqueta y valor */
+    background-color: #f8f9fa; /* Un color de fondo sutil */
+    padding: 12px 18px;
+    border-radius: 8px; /* Bordes redondeados */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08); /* Una sombra ligera */
+    transition: transform 0.2s ease-in-out; /* Pequeña animación al pasar el mouse */
+}
+
+.characteristic-item:hover {
+    transform: translateY(-2px); /* Efecto de elevación sutil */
+}
+
+.characteristic-icon {
+    font-size: 1.6em; /* Tamaño del emoji/icono */
+    margin-right: 12px;
+    color: #495057; /* Color para el icono si no es un emoji colorido */
+}
+
+.characteristic-label {
+    font-weight: bold;
+    color: #343a40; /* Color oscuro para la etiqueta */
+    margin-right: 8px;
+    font-size: 0.95em;
+}
+
+.characteristic-value {
+    font-size: 0.95em;
+    color: #212529; /* Color principal para el valor */
+}
+
+/* Ajustes para pantallas pequeñas si es necesario */
+@media (max-width: 600px) {
+    .characteristic-item {
+        padding: 10px 15px;
+    }
+    .characteristic-icon {
+        font-size: 1.4em;
+        margin-right: 10px;
+    }
+    .characteristic-label, .characteristic-value {
+        font-size: 0.9em;
+    }
+}
+
+/* Contenedor flexible para las insignias de habilidades */
+.abilities-container {
+    display: flex; /* Organiza las insignias en fila */
+    flex-wrap: wrap; /* Permite que las insignias pasen a la siguiente línea si no caben */
+    gap: 8px; /* Espacio entre las insignias */
+    margin-top: 10px;
+    margin-bottom: 20px;
+    padding: 0 20px; /* Ajustar padding para alinear con otras secciones */
+    justify-content: center; /* Centra las insignias si no llenan la línea */
+}
+
+/* Estilos para cada insignia de habilidad */
+.ability-badge {
+    padding: 5px 10px; /* Relleno dentro de la insignia */
+    border-radius: 15px; /* Bordes redondeados (tipo píldora) */
+    color: white; /* Color del texto blanco para contraste */
+    font-size: 0.9em; /* Tamaño de fuente */
+    font-weight: bold;
+    text-transform: capitalize; /* Capitaliza el texto */
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5); /* Sombra para que el texto destaque */
+    /* Las clases .type-* se encargarán del background-color */
+}
+
+/* Asegurarse de que las clases de tipo existentes tengan color de texto contrastante */
+/* (Probablemente ya lo tengan si usas esas clases para los tipos del Pokémon) */
+.type-fire,
+.type-water,
+.type-grass,
+.type-normal,
+.type-fire,
+.type-water,
+.type-electric,
+.type-grass,
+.type-ice,
+.type-fighting,
+.type-poison,
+.type-ground,
+.type-flying,
+.type-psychic,
+.type-bug,
+.type-rock,
+.type-ghost,
+.type-dragon,
+.type-dark,
+.type-steel,
+.type-fairy,
+.type-unknown,
+/* ...añade todos tus tipos aquí */
+.ability-badge {
+    color: white; /* Asegura texto blanco en las insignias de habilidad */
+}
+
+/* Contenedor para los badges de movimientos */
+.moves-container {
+    display: flex;
+    flex-wrap: wrap; /* Permite que los badges pasen a la siguiente línea */
+    gap: 8px; /* Espacio entre badges */
+    margin-top: 10px;
+    margin-bottom: 20px;
+    padding: 0 20px; /* Alineación opcional */
+    justify-content: center; /* Centra los badges si no llenan el espacio */
+}
+
+/* Estilo base para los badges (puedes unificarlo con .ability-badge si son iguales) */
+/* Esta clase genérica .type-badge es la que sugiero para aplicar estilos comunes a los badges de tipo, habilidad y movimiento */
+.type-badge {
+    padding: 6px 12px; /* Ajusta el padding según tu gusto */
+    border-radius: 16px; /* Bordes redondeados */
+    color: white; /* Color del texto (generalmente blanco) */
+    font-size: 0.85em; /* Tamaño de fuente */
+    font-weight: bold;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.4); /* Sombra de texto para legibilidad */
+    text-align: center;
+    display: inline-block; /* Para que el padding y dimensiones se apliquen correctamente */
+    margin: 3px; /* Pequeño margen opcional */
+}
+
+/*
+  Asegúrate de tener definidas las clases para cada tipo de Pokémon/movimiento.
+  Estas clases solo necesitan definir el background-color.
+  Ejemplos (deberías tener una lista completa para todos los tipos):
+*/
+.type-normal { background-color: #A8A77A; }
+.type-fire { background-color: #EE8130; }
+.type-water { background-color: #6390F0; }
+.type-electric { background-color: #F7D02C; }
+.type-grass { background-color: #47c100; }
+.type-ice { background-color: #96D9D6; }
+.type-fighting { background-color: #C22E28; }
+.type-poison { background-color: #A33EA1; }
+.type-ground { background-color: #E2BF65; }
+.type-flying { background-color: #A98FF3; }
+.type-psychic { background-color: #F95587; }
+.type-bug { background-color: #A6B91A; }
+.type-rock { background-color: #B6A136; }
+.type-ghost { background-color: #735797; }
+.type-dragon { background-color: #6F35FC; }
+.type-dark { background-color: #705746; }
+.type-steel { background-color: #B7B7CE; }
+.type-fairy { background-color: #D685AD; }
+.type-unknown { background-color: #68A090; } /* Para el tipo 'unknown' de fallback */
+
+/* Si quieres que .ability-badge tenga un estilo específico y .move-badge otro,
+   puedes definir .ability-badge y .move-badge por separado en lugar de un .type-badge genérico,
+   y luego aplicar la clase de color (ej. .type-fire) a ambos.
+   Por ahora, la propuesta es usar .type-badge como base y aplicar .type-<tipo_especifico> para el color.
+*/
+
+/* Ejemplo de cómo podrías tenerlo para las habilidades (manteniendo el color del primer tipo del Pokémon) */
+.ability-badge {
+    /* Estilos específicos de las ability-badge si son diferentes de .type-badge */
+    /* Si son iguales, puedes simplemente añadir la clase type-badge al span de habilidad también */
+    padding: 6px 12px;
+    border-radius: 16px;
+    color: white;
+    font-size: 0.85em;
+    font-weight: bold;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.4);
+    text-align: center;
+    display: inline-block;
+    margin: 3px;
+}
+/* Y en el JSX de habilidades:
+   className={`ability-badge ${firstPokemonType ? `type-${firstPokemonType.toLowerCase()}` : 'type-normal'}`}
+   Aquí, la clase .ability-badge daría la forma y .type-* el color.
+*/
+
+/* Reutiliza los estilos de .pokemon-types */
+/* .pokemon-types { ... } */
+/* .pokemon-types span { ... } */
+/* .type-normal, .type-fire, etc. { ... } */
+
+
+/* Ensure the global loading/error styles still work */
+.loading, .error, .no-results {
+    font-size: 1.2em;
+    margin-top: 20px;
+    color: #34495e;
+    font-family: 'Press Start 2P', cursive;
+    text-shadow: 1px 1px 0px rgba(255,255,255,0.5);
+}
+
+.error {
+  color: #e74c3c;
+}
+
+.no-results {
+    color: #34495e;
+}
