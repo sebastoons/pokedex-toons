@@ -68,7 +68,7 @@ body::before {
   border: 5px solid #e74c3c;
   border-radius: 25px;
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
-  position: relative;
+  position: center;
   z-index: 1;
   box-sizing: border-box; /* IMPORTANTE: Asegura que padding y border no aumenten el width */
   /* MODIFICADO: Eliminamos overflow: hidden; para permitir que el menú desplegable se muestre por encima */
@@ -80,14 +80,6 @@ body::before {
         padding: 10px; /* Reduce padding en pantallas medianas */
         border-width: 7px; /* Reduce el ancho del borde */
         border-radius: 10px; /* Reduce el radio del borde si es necesario */
-    }
-}
-
-@media (max-width: 480px) {
-    .pokedex-container {
-        padding: 7px; /* Aún más pequeño para móviles */
-        border-width: 5px; /* Borde más fino */
-        border-radius: 7px;
     }
 }
 
