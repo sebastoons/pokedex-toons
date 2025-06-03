@@ -8,25 +8,19 @@ import { BrowserRouter } from 'react-router-dom';
 const container = document.getElementById('root');
 const root = ReactDOM.createRoot(container);
 
-// --- Código para registrar el Service Worker ---
-// Verifica si el navegador soporta Service Workers
-if ('serviceWorker' in navigator) {
-  // Espera a que la página cargue completamente antes de registrar
-  window.addEventListener('load', () => {
-    // Registra el Service Worker
-    // La ruta '/service-worker.js' es relativa a la raíz de tu dominio donde desplegarás la app
-    navigator.serviceWorker.register('/service-worker.js') // <-- La ruta debe ser correcta
-      .then(registration => {
-        // Registro exitoso
-        console.log('Service Worker registrado con éxito:', registration.scope);
-      })
-      .catch(error => {
-        // Fallo en el registro
-        console.log('Fallo en el registro del Service Worker:', error);
-      });
-  });
-}
-// --- Fin Código para registrar el Service Worker ---
+// --- CÓDIGO DE SERVICE WORKER ELIMINADO/COMENTADO ---
+// if ('serviceWorker' in navigator) {
+//   window.addEventListener('load', () => {
+//     navigator.serviceWorker.register('/service-worker.js')
+//       .then(registration => {
+//         console.log('Service Worker registrado con éxito:', registration.scope);
+//       })
+//       .catch(error => {
+//         console.log('Fallo en el registro del Service Worker:', error);
+//       });
+//   });
+// }
+// --- FIN DEL CÓDIGO DE SERVICE WORKER ---
 
 
 // Render the App component, wrapped with BrowserRouter
