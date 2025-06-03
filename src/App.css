@@ -29,13 +29,13 @@ body {
 /* Media query para reducir padding en pantallas más pequeñas */
 @media (max-width: 768px) {
     body {
-        padding: 10px; /* Reduce el padding en pantallas más pequeñas */
+        padding: 5px; /* Reduce el padding en pantallas más pequeñas */
     }
 }
 
 @media (max-width: 480px) {
     body {
-        padding: 5px; /* Más reducción para teléfonos muy pequeños */
+        padding: 2px; /* Más reducción para teléfonos muy pequeños */
     }
 }
 
@@ -60,12 +60,12 @@ body::before {
 /* --- Contenedor Principal Estilo Pokedex --- */
 .pokedex-container {
   text-align: center;
-  padding: 30px;
+  padding: 10px;
   max-width: 1000px;
   width: 100%;
   margin: 0;
   background-color: #c0392b;
-  border: 15px solid #e74c3c;
+  border: 5px solid #e74c3c;
   border-radius: 25px;
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
   position: relative;
@@ -77,17 +77,17 @@ body::before {
 
 @media (max-width: 768px) {
     .pokedex-container {
-        padding: 15px; /* Reduce padding en pantallas medianas */
-        border-width: 10px; /* Reduce el ancho del borde */
-        border-radius: 15px; /* Reduce el radio del borde si es necesario */
+        padding: 10px; /* Reduce padding en pantallas medianas */
+        border-width: 7px; /* Reduce el ancho del borde */
+        border-radius: 10px; /* Reduce el radio del borde si es necesario */
     }
 }
 
 @media (max-width: 480px) {
     .pokedex-container {
-        padding: 10px; /* Aún más pequeño para móviles */
-        border-width: 8px; /* Borde más fino */
-        border-radius: 10px;
+        padding: 7px; /* Aún más pequeño para móviles */
+        border-width: 5px; /* Borde más fino */
+        border-radius: 7px;
     }
 }
 
