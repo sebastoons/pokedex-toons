@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom'; // Importa Link para la navegación
 import '../App.css'; // Importa los estilos CSS (ajusta la ruta si es necesario)
 // Importa tus URLs de imágenes manuales
