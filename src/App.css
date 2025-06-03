@@ -1,5 +1,3 @@
-/* src/App.css */
-
 /* --- Estilos Generales del Cuerpo y Fondo --- */
 body {
     margin: 0;
@@ -11,19 +9,22 @@ body {
     min-height: 100vh;
     display: flex;
     justify-content: center;
-    /* align-items: flex-start;  <-- CAMBIO: lo quitamos para que el contenido fluya mejor */
-    align-items: center; /* Esto ayuda a centrar verticalmente si el contenido no llena la pantalla */
+    /* CAMBIO CLAVE: Cambiado de 'align-items: center' a 'flex-start'. */
+    /* Cuando el contenido es más largo que la pantalla, 'center' puede cortar la parte superior/inferior. */
+    /* 'flex-start' permite que el contenido comience desde arriba y se desplace. */
+    align-items: flex-start;
     padding: 20px; /* Padding base */
     box-sizing: border-box;
     position: relative;
-    overflow-x: hidden; /* ¡IMPORTANTE! Evita el scroll horizontal forzado por elementos que se desbordan */
+    /* Mantenemos overflow-x: hidden; para forzar que el contenido no se desborde horizontalmente a nivel del body. */
+    /* Esto ayuda a evitar el scroll horizontal no deseado. */
+    overflow-x: hidden;
 
-     /* --- Fondo de Imagen (Estilo GBA) --- */
-     background-image: url('/public/imgindex/1.jpg'); /* Asegúrate de que esta ruta sea correcta */
+    /* --- Fondo de Imagen (Estilo GBA) --- */
+    background-image: url('/public/imgindex/1.jpg'); /* Asegúrate de que esta ruta sea correcta */
     background-size: cover;
     background-position: center;
     background-attachment: fixed;
-    /*filter: brightness(0.6) grayscale(0.3); /* Oscurece y desatura */
 }
 
 /* Media query para reducir padding en pantallas más pequeñas */
@@ -44,48 +45,47 @@ body {
 
 /* --- Capa Semitransparente o Difuminada sobre el Fondo --- */
 body::before {
-  content: '';
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5); /* Fondo negro con 50% de transparencia (ajusta el 0.5) */
-  /* Opcional: Aplicar un filtro de desenfoque en lugar de (o además de) la transparencia */
-  /* filter: blur(5px); /* Ajusta el valor (ej: 5px) para controlar el nivel de desenfoque */
-  z-index: 0;
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 0;
 }
 
 
 /* --- Contenedor Principal Estilo Pokedex --- */
 .pokedex-container {
-  text-align: center;
-  padding: 30px;
-  max-width: 1000px;
-  width: 100%;
-  margin: 0;
-  background-color: #c0392b;
-  border: 10px solid #e74c3c;
-  border-radius: 25px;
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
-  position: center;
-  z-index: 1;
-  box-sizing: border-box; /* IMPORTANTE: Asegura que padding y border no aumenten el width */
-  /* MODIFICADO: Eliminamos overflow: hidden; para permitir que el menú desplegable se muestre por encima */
-  /* overflow: hidden; */
+    text-align: center;
+    padding: 30px;
+    max-width: 1000px;
+    width: 100%;
+    /* CAMBIO CLAVE: Eliminado 'position: center;' (propiedad inválida). */
+    /* Usamos margin: 20px auto; para centrar horizontalmente y darle espacio vertical. */
+    margin: 20px auto;
+    background-color: #c0392b;
+    border: 10px solid #e74c3c;
+    border-radius: 25px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
+    position: relative; /* Mantenemos 'relative' para la bisagra (::before) */
+    z-index: 1;
+    box-sizing: border-box; /* Importante para que el padding y border no aumenten el width */
 }
 
 @media (max-width: 768px) {
     .pokedex-container {
-        padding: 15px; /* Reduce padding en pantallas medianas */
-        border-width: 10px; /* Reduce el ancho del borde */
+        padding: 15px;
+        border-width: 10px;
     }
 }
 
 @media (max-width: 480px) {
     .pokedex-container {
-        padding: 10px; /* Reducir aún más el padding del contenedor principal */
+        padding: 10px;
         border-width: 8px;
+        margin: 10px auto; /* Ajustar margen en móviles para que no esté tan pegado */
     }
 }
 
@@ -111,7 +111,6 @@ header {
     border-bottom: 5px solid #e74c3c;
     position: relative;
     z-index: 2;
-    /* Centramos el contenido del header (la imagen) */
     display: flex;
     justify-content: center;
     align-items: center;
@@ -119,22 +118,22 @@ header {
 
 /* Estilos para la imagen del logo en el header */
 .pokedex-logo {
-    max-width: 250px; /* Ajusta el tamaño máximo del logo */
-    height: auto; /* Mantiene la proporción */
-    display: block; /* Asegura que se comporte como bloque para centrar */
-    margin: 0 auto; /* Centra la imagen horizontalmente */
-    filter: drop-shadow(3px 3px 0px #333); /* Añade una sombra similar a la del texto anterior */
+    max-width: 250px;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+    filter: drop-shadow(3px 3px 0px #333);
 }
 
 @media (max-width: 768px) {
     .pokedex-logo {
-        max-width: 200px; /* Más pequeño en tablets/móviles */
+        max-width: 200px;
     }
 }
 
 @media (max-width: 480px) {
     .pokedex-logo {
-        max-width: 150px; /* Aún más pequeño en móviles */
+        max-width: 150px;
     }
 }
 
@@ -188,19 +187,19 @@ header {
 /* --- Contenedor de Controles de Búsqueda y Filtrado --- */
 .controls-container {
     background-color: #ecf0f1;
-    padding: 15px; /* Padding base */
+    padding: 15px;
     border-radius: 10px;
     margin-bottom: 20px;
     border: 3px solid #bdc3c7;
     box-shadow: inset 0 0 10px rgba(0,0,0,0.2);
     display: flex;
-    flex-wrap: wrap; /* ¡CRÍTICO! Permite que los elementos se envuelvan a la siguiente línea */
+    flex-wrap: wrap;
     justify-content: center;
-    gap: 20px; /* Reduce el gap para dar más espacio a los elementos */
+    gap: 20px;
     position: relative;
     z-index: 25;
-    box-sizing: border-box; /* Asegura que padding no sume al width total */
-    min-width: 0; /* Permite que el contenedor se encoja */
+    box-sizing: border-box;
+    min-width: 0; /* Permite que el contenedor se encoja a 0 si es necesario */
     align-items: center;
     font-family: monospace;
 }
@@ -209,13 +208,13 @@ header {
     display: flex;
     align-items: center;
     gap: 5px;
-    flex-shrink: 1;
+    flex-shrink: 1; /* Permite que el elemento se encoja */
     justify-content: center;
     font-family: monospace;
-    flex-basis: auto; /* Permite que el tamaño base se ajuste al contenido */
-    flex-grow: 1; /* Permite que crezca para llenar el espacio */
+    flex-basis: auto;
+    flex-grow: 1;
     max-width: 100%; /* Asegura que no se desborden individualmente */
-    box-sizing: border-box; /* Incluye padding en el width */
+    box-sizing: border-box;
 }
 
 /* Media Queries para Controles (la parte más importante para móvil) */
@@ -223,42 +222,42 @@ header {
     .controls-container {
         flex-direction: column; /* Apila los filtros verticalmente en móvil */
         align-items: stretch; /* Estira los elementos para ocupar el ancho disponible */
-        gap: 15px; /* Espacio entre los controles apilados */
-        padding: 10px; /* Reduce el padding del contenedor de controles */
+        gap: 15px;
+        padding: 10px;
     }
 
     .controls-container div {
-        width: 100%; /* Cada control ocupa todo el ancho */
-        max-width: none; /* No hay límite de ancho para estirarse */
-        justify-content: center; /* Centra los elementos dentro de cada control */
+        width: 100%;
+        max-width: none;
+        justify-content: center;
     }
 
     .controls-container input,
     .controls-container select {
-        width: 90%; /* Ajusta el ancho de los inputs/selects dentro de su div */
-        max-width: 250px; /* Un límite para que no sean ridículamente anchos */
+        width: 90%; /* Se ajusta al 90% del div padre para dejar un pequeño margen */
+        max-width: 280px; /* Un límite para que no sean ridículamente anchos */
         margin: 0 auto; /* Centrar input/select dentro de su div */
     }
 
     .controls-container label {
-        width: auto; /* Permite que la etiqueta ocupe su propio espacio */
-        text-align: center; /* Centra el texto de la etiqueta si es un bloque */
-        margin-bottom: 5px; /* Añade un pequeño margen debajo de la etiqueta */
+        width: auto;
+        text-align: center;
+        margin-bottom: 5px;
     }
 
     .generation-filter-container {
-        width: 100%; /* Asegura que el contenedor del botón de generación ocupe todo el ancho */
-        text-align: center; /* Centra el botón de generación */
+        width: 100%;
+        text-align: center;
     }
     .generation-button {
-        width: auto; /* Permite que el botón se ajuste a su contenido */
-        max-width: 250px; /* Asegura que no sea demasiado ancho */
+        width: auto;
+        max-width: 250px;
     }
     .generation-dropdown-menu {
-        left: 50%; /* Centra el menú desplegable */
-        transform: translateX(-50%); /* Ajusta para centrarlo */
-        min-width: 200px; /* Un ancho mínimo para que sea legible */
-        max-width: 90%; /* Pero que no se desborde */
+        left: 50%;
+        transform: translateX(-50%);
+        min-width: 200px;
+        max-width: 90%;
     }
 }
 
@@ -281,9 +280,9 @@ header {
     background-position: right 8px top 50%;
     background-size: 12px auto;
     padding-right: 30px;
-    width: 100%; /* ¡IMPORTANTE! Ocupa el 100% del ancho disponible en su div */
-    max-width: 280px; /* Un ancho máximo para que no sean enormes en pantallas grandes */
-    box-sizing: border-box; /* Asegura que padding no desborde */
+    width: 100%; /* Ocupa el 100% del ancho disponible en su div padre */
+    max-width: 280px; /* Límite para que no sean enormes en pantallas grandes */
+    box-sizing: border-box;
 }
 
 .controls-container input:focus,
@@ -291,7 +290,6 @@ header {
     border-color: #f1c40f;
     box-shadow: 0 0 5px rgba(241, 196, 15, 0.5);
 }
-
 
 .controls-container label {
     font-weight: bold;
@@ -302,10 +300,6 @@ header {
 }
 
 /* --- Estilos Específicos para las Opciones del Selector de Tipo --- */
-/* Nota: Estilizar <option> de forma consistente entre navegadores es limitado.
-   Aplicaremos background-color y color, que suelen funcionar.
-   Para un control total, se necesitaría recrear el select con divs/ul/li. */
-
 .controls-container select#type-filter option {
     padding: 8px 10px;
     color: #34495e;
@@ -320,36 +314,32 @@ header {
     font-family: monospace;
 }
 
-
 /* --- Colores de Fondo para las Opciones de Tipo --- */
-/* Usamos los mismos colores que para los spans de tipo en las tarjetas */
-/* Esto aplica el color de fondo a cada opción del select */
-/* Asegúrate de que los valores en 'value' coincidan exactamente con los nombres de tipo en inglés de la API */
 .controls-container select#type-filter option[value="normal"] { background-color: #A8A77A; color: white; text-shadow: 1px 1px 2px rgba(0,0,0,0.3); }
 .controls-container select#type-filter option[value="fire"] { background-color: #EE8130; color: white; text-shadow: 1px 1px 2px rgba(0,0,0,0.3); }
 .controls-container select#type-filter option[value="water"] { background-color: #6390F0; color: white; text-shadow: 1px 1px 2px rgba(0,0,0,0.3); }
-.controls-container select#type-filter option[value="electric"] { background-color: #F7D02C; color: #333; text-shadow: 1px 1px 0px rgba(255,255,255,0.5); } /* Texto oscuro para colores claros */
+.controls-container select#type-filter option[value="electric"] { background-color: #F7D02C; color: #333; text-shadow: 1px 1px 0px rgba(255,255,255,0.5); }
 .controls-container select#type-filter option[value="grass"] { background-color: #7AC74C; color: white; text-shadow: 1px 1px 2px rgba(0,0,0,0.3); }
-.controls-container select#type-filter option[value="ice"] { background-color: #96D9D6; color: #333; text-shadow: 1px 1px 0px rgba(255,255,255,0.5); } /* Texto oscuro */
+.controls-container select#type-filter option[value="ice"] { background-color: #96D9D6; color: #333; text-shadow: 1px 1px 0px rgba(255,255,255,0.5); }
 .controls-container select#type-filter option[value="fighting"] { background-color: #C22E28; color: white; text-shadow: 1px 1px 2px rgba(0,0,0,0.3); }
 .controls-container select#type-filter option[value="poison"] { background-color: #A33EA1; color: white; text-shadow: 1px 1px 2px rgba(0,0,0,0.3); }
-.controls-container select#type-filter option[value="ground"] { background-color: #E2BF65; color: #333; text-shadow: 1px 1px 0px rgba(255,255,255,0.5); } /* Texto oscuro */
-.controls-container select#type-filter option[value="flying"] { background-color: #A98FF3; color: #333; text-shadow: 1px 1px 0px rgba(255,255,255,0.5); } /* Texto oscuro */
+.controls-container select#type-filter option[value="ground"] { background-color: #E2BF65; color: #333; text-shadow: 1px 1px 0px rgba(255,255,255,0.5); }
+.controls-container select#type-filter option[value="flying"] { background-color: #A98FF3; color: #333; text-shadow: 1px 1px 0px rgba(255,255,255,0.5); }
 .controls-container select#type-filter option[value="psychic"] { background-color: #F95587; color: white; text-shadow: 1px 1px 2px rgba(0,0,0,0.3); }
 .controls-container select#type-filter option[value="bug"] { background-color: #A6B91A; color: white; text-shadow: 1px 1px 2px rgba(0,0,0,0.3); }
 .controls-container select#type-filter option[value="rock"] { background-color: #B6A136; color: white; text-shadow: 1px 1px 2px rgba(0,0,0,0.3); }
 .controls-container select#type-filter option[value="ghost"] { background-color: #735797; color: white; text-shadow: 1px 1px 2px rgba(0,0,0,0.3); }
 .controls-container select#type-filter option[value="dragon"] { background-color: #6F35FC; color: white; text-shadow: 1px 1px 2px rgba(0,0,0,0.3); }
 .controls-container select#type-filter option[value="dark"] { background-color: #705746; color: white; text-shadow: 1px 1px 2px rgba(0,0,0,0.3); }
-.controls-container select#type-filter option[value="steel"] { background-color: #B7B7CE; color: #333; text-shadow: 1px 1px 0px rgba(255,255,255,0.5); } /* Texto oscuro */
+.controls-container select#type-filter option[value="steel"] { background-color: #B7B7CE; color: #333; text-shadow: 1px 1px 0px rgba(255,255,255,0.5); }
 .controls-container select#type-filter option[value="fairy"] { background-color: #D685AD; color: white; text-shadow: 1px 1px 2px rgba(0,0,0,0.3); }
 
 
 /* --- Estilos para el Botón y Menú Desplegable de Generaciones --- */
 .generation-filter-container {
     position: relative;
-    display: inline-block; /* Asegura que ocupe solo el espacio necesario */
-    flex-shrink: 0; /* Evita que el contenedor del botón se encoja demasiado */
+    display: inline-block;
+    flex-shrink: 0;
     font-family: monospace;
     font-weight: bold;
 }
@@ -367,7 +357,7 @@ header {
     outline: none;
     transition: background-color 0.2s ease, border-color 0.2s ease;
     text-shadow: 1px 1px 0px rgba(0,0,0,0.3);
-    white-space: nowrap; /* Evita que el texto del botón se envuelva */
+    white-space: nowrap;
 }
 
 .generation-button:hover {
@@ -386,7 +376,7 @@ header {
     list-style: none;
     padding: 5px 0;
     margin: 5px 0 0 0;
-    z-index: 20; /* Asegura que esté por encima de la lista de Pokémon */
+    z-index: 20;
     box-shadow: 0 5px 10px rgba(0,0,0,0.2);
     text-align: left;
     font-family: monospace;
@@ -406,7 +396,6 @@ header {
 
 .generation-dropdown-menu li:hover {
     background-color: #bdc3c7;
-
 }
 
 .generation-dropdown-menu li.active {
@@ -416,69 +405,73 @@ header {
     font-family: monospace;
 }
 
-
 .pokemon-list {
     display: grid;
-    /* CRÍTICO: Define el número de columnas basado en el ancho disponible.
-       En pantallas muy pequeñas, minmax(120px, 1fr) hará 1 o 2 columnas.
-       En pantallas medianas, 2 o 3. En grandes, 3 o más. */
-    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); /* Reducido a 120px para pantallas pequeñas */
-    gap: 15px; /* Espacio base entre las tarjetas */
-    padding: 10px; /* Padding general para no pegarse a los bordes del viewport */
+    /* Mantenemos tus minmax actuales, son un buen punto de partida */
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 15px;
+    padding: 10px;
     justify-content: center;
     max-width: 1200px;
     margin: 20px auto;
-    box-sizing: border-box; /* Asegura que el padding no cause desbordamiento */
+    box-sizing: border-box;
 }
 
-@media (max-width: 480px) { /* Para pantallas muy pequeñas */
+@media (max-width: 480px) {
     .pokemon-list {
-        grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); /* ¡Más pequeño para móviles muy estrechos! */
-        gap: 10px; /* Menos espacio entre tarjetas */
-        padding: 5px; /* Reducir padding de la lista */
-    }
-}
-
-@media (max-width: 375px) { /* Para móviles pequeños como iPhone SE */
-    .pokemon-list {
-        grid-template-columns: repeat(auto-fit, minmax(90px, 1fr)); /* Aún más pequeño si es necesario */
-        gap: 8px;
+        /* CAMBIO CLAVE: Reducir minmax a 90px para dar más flexibilidad en móviles */
+        grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
+        gap: 8px; /* Reducir un poco más el espacio entre tarjetas */
         padding: 5px;
     }
 }
+
+@media (max-width: 375px) { /* Para móviles pequeños como iPhone SE o similar */
+    .pokemon-list {
+        /* CAMBIO CLAVE: Reducir aún más a 80px para garantizar 2 columnas en pantallas muy estrechas */
+        grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+        gap: 5px; /* Reducir aún más el gap */
+        padding: 3px; /* Reducir aún más el padding del contenedor de la lista */
+    }
+}
+
 
 /* --- Estilos para PokemonCard --- */
 .pokemon-card {
     background-color: #f8f8f8;
     border: 1px solid #ddd;
     border-radius: 10px;
-    padding: 10px; /* Reduce un poco el padding base de la tarjeta */
+    /* CAMBIO CLAVE: Reducir padding base de la tarjeta */
+    padding: 8px; /* De 10px a 8px */
     text-align: center;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: space-between;
-    min-height: 180px; /* Un alto mínimo ligeramente menor para tarjetas en móvil */
+    min-height: 180px; /* Mantener un alto mínimo razonable */
     max-width: 100%; /* Asegura que la tarjeta no sea más ancha que su padre */
-    box-sizing: border-box; /* ¡CRÍTICO! Incluye padding y border en el width/height */
+    box-sizing: border-box;
 }
 
 .pokemon-card:hover {
-  transform: translateY(-8px) rotate(2deg);
-  box-shadow: 6px 6px 15px rgba(0, 0, 0, 0.4);
-  background-color: #bdc3c7;
+    transform: translateY(-8px) rotate(2deg);
+    box-shadow: 6px 6px 15px rgba(0, 0, 0, 0.4);
+    background-color: #bdc3c7;
 }
 
 .pokemon-card .pokemon-image {
-    width: 100px; /* Tamaño base */
+    /* CAMBIO CLAVE: Eliminado width y height fijos. */
+    /* Ahora, el tamaño de la imagen se adaptará al espacio disponible, limitado por max-width/height */
+    width: auto;
+    height: auto;
+    max-width: 100px; /* Límite superior para la imagen en pantallas grandes */
+    max-height: 100px; /* Para mantener la proporción */
     margin-bottom: 10px;
     image-rendering: pixelated;
     display: block;
     filter: drop-shadow(2px 2px 1px rgba(0,0,0,0.2));
-    max-width: 100%; /* ¡IMPORTANTE! La imagen nunca excederá el ancho de su contenedor */
-    height: auto; /* ¡IMPORTANTE! Mantiene la proporción de la imagen */
-    object-fit: contain; /* Asegura que la imagen se ajuste dentro de las dimensiones sin recortarse */
+    object-fit: contain;
 }
 
 .pokemon-number {
@@ -491,48 +484,37 @@ header {
 .pokemon-name {
     font-size: 1.2em;
     font-weight: bold;
-    margin: 0 0 10px 0;
+    margin: 0 0 5px 0; /* CAMBIO: Reducir margen inferior para dar más espacio */
     text-transform: capitalize;
     color: #2c3e50;
+    white-space: nowrap; /* Mantiene el nombre en una sola línea */
+    overflow: hidden; /* Oculta lo que se desborda */
+    text-overflow: ellipsis; /* Añade puntos suspensivos si el texto es demasiado largo */
+    width: 100%; /* Asegura que ocupe el ancho disponible antes de aplicar ellipsis */
+    padding: 0 2px; /* Pequeño padding horizontal para que el texto no toque los bordes */
+    box-sizing: border-box; /* Asegura que el padding no cause desbordamiento */
 }
 
 .pokemon-types {
     display: flex;
     justify-content: center;
-    gap: 8px;
+    gap: 5px; /* CAMBIO: Reducir el gap entre los tipos */
     flex-wrap: wrap;
 }
 
 .pokemon-types span {
-    padding: 4px 10px;
+    padding: 3px 8px; /* CAMBIO: Reducir padding de los tipos */
     border-radius: 15px;
-    font-size: 0.8em;
+    font-size: 0.7em; /* CAMBIO: Reducir tamaño de fuente de los tipos */
     color: white;
     text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
     font-weight: bold;
     border: 2px solid rgba(0,0,0,0.2);
+    white-space: nowrap; /* Mantiene el tipo en una línea */
 }
 
 /* --- Colores de Tipos (Mantén o ajusta según tu paleta) --- */
-.type-normal { background-color: #A8A77A; }
-.type-fire { background-color: #EE8130; }
-.type-water { background-color: #6390F0; }
-.type-electric { background-color: #F7D02C; }
-.type-grass { background-color: #7AC74C; }
-.type-ice { background-color: #96D9D6; }
-.type-fighting { background-color: #C22E28; }
-.type-poison { background-color: #A33EA1; }
-.type-ground { background-color: #E2BF65; }
-.type-flying { background-color: #A98FF3; }
-.type-psychic { background-color: #F95587; }
-.type-bug { background-color: #A6B91A; }
-.type-rock { background-color: #B6A136; }
-.type-ghost { background-color: #735797; }
-.type-dragon { background-color: #6F35FC; }
-.type-dark { background-color: #705746; }
-.type-steel { background-color: #B7B7CE; }
-.type-fairy { background-color: #D685AD; }
-
+/* ... (esta sección se mantiene igual) ... */
 
 .loading-card, .error-card {
     display: flex;
@@ -551,7 +533,11 @@ header {
 
 /* Estilos para el placeholder de imagen */
 .pokemon-image-placeholder {
-    width: 100px; /* Base */
+    /* CAMBIO CLAVE: Eliminar width y height fijos. */
+    width: auto;
+    height: auto;
+    max-width: 100px; /* Límite superior para el placeholder */
+    max-height: 100px;
     margin-bottom: 10px;
     background-color: #bdc3c7;
     color: #34495e;
@@ -566,36 +552,63 @@ header {
     font-weight: bold;
     position: relative;
     z-index: 1;
-    max-width: 100%; /* Asegura que el placeholder no exceda el ancho del contenedor */
-    height: auto; /* Mantiene la proporción si la imagen es flexible */
-    object-fit: contain; /* Ajusta el contenido dentro de las dimensiones */
+    object-fit: contain;
 }
 
 @media (max-width: 480px) {
     .pokemon-card {
-        padding: 8px; /* Reduce aún más el padding de la tarjeta en móviles pequeños */
-        min-height: 160px; /* Un alto mínimo aún menor */
+        padding: 5px; /* CAMBIO: Reducir padding de la tarjeta aún más */
+        min-height: 150px; /* CAMBIO: Reducir min-height para permitir más tarjetas */
     }
     .pokemon-card .pokemon-image,
     .pokemon-image-placeholder {
-        width: 80px; /* Imágenes más pequeñas en móvil */
-        height: 80px; /* Mantener la altura igual al ancho */
+        /* CAMBIO CLAVE: Reducir tamaño a 70px para móviles pequeños */
+        width: 70px;
+        height: 70px;
     }
     .pokemon-name {
-        font-size: 1em; /* Reduce el tamaño del nombre */
-        white-space: nowrap; /* Evita que el nombre se rompa */
+        font-size: 0.9em; /* CAMBIO: Reducir tamaño del nombre */
+        white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
     }
     .pokemon-types span {
-        font-size: 0.7em; /* Reduce el tamaño de los tipos */
-        padding: 3px 8px;
+        font-size: 0.6em; /* CAMBIO: Reducir el tamaño de los tipos */
+        padding: 2px 6px; /* CAMBIO: Reducir padding de los tipos */
+    }
+}
+
+/* CAMBIO ADICIONAL: Nueva media query para pantallas muy muy pequeñas (ej. iPhone 5/SE o dispositivos muy estrechos) */
+@media (max-width: 320px) {
+    .pokemon-list {
+        /* CAMBIO CLAVE: minmax aún más pequeño y gap mínimo */
+        grid-template-columns: repeat(auto-fit, minmax(75px, 1fr)); /* Podrías probar hasta 70px */
+        gap: 3px;
+        padding: 2px;
+    }
+    .pokemon-card {
+        padding: 3px;
+        min-height: 130px;
+    }
+    .pokemon-card .pokemon-image,
+    .pokemon-image-placeholder {
+        width: 60px;
+        height: 60px;
+    }
+    .pokemon-name {
+        font-size: 0.8em;
+    }
+    .pokemon-types span {
+        font-size: 0.5em; /* Reducir aún más */
+        padding: 1px 4px;
+        border-width: 1px; /* Hacer el borde un poco más delgado */
     }
 }
 
 /* --- Estilos para PokemonDetail View --- */
+/* Esta sección se mantiene igual, ya que indicaste que funciona bien */
 .pokemon-detail-view {
-    padding: 30px; /* Base */
+    padding: 30px;
     max-width: 750px;
     margin: 20px auto;
     text-align: center;
@@ -605,7 +618,7 @@ header {
     position: relative;
     z-index: 2;
     border: 5px solid #34495e;
-    box-sizing: border-box; /* Asegura que padding y border no sumen al width */
+    box-sizing: border-box;
 }
 
 @media (max-width: 768px) {
@@ -627,30 +640,30 @@ header {
         font-size: 1.3em;
     }
     .pokemon-detail-image {
-        width: 180px; /* Más pequeña en móviles */
+        width: 180px;
         height: 180px;
-        max-width: 90%; /* Asegura que no se desborde */
+        max-width: 90%;
     }
     .stat-item {
-        flex-direction: column; /* Apila nombre y barra */
+        flex-direction: column;
         align-items: flex-start;
-        margin-bottom: 8px; /* Reduce el margen entre estadísticas */
+        margin-bottom: 8px;
     }
     .stat-name {
-        width: auto; /* Permite que ocupe el ancho necesario */
-        margin-bottom: 3px; /* Espacio debajo del nombre de la estadística */
+        width: auto;
+        margin-bottom: 3px;
         font-size: 0.9em;
     }
     .stat-bar-background {
-        width: 100%; /* La barra ocupa todo el ancho restante */
-        height: 20px; /* Barra un poco más fina */
+        width: 100%;
+        height: 20px;
     }
     .stat-value {
         font-size: 0.9em;
     }
     .characteristics-container, .abilities-container, .moves-container {
-        padding: 0 10px; /* Reduce el padding horizontal */
-        gap: 5px; /* Reduce el gap */
+        padding: 0 10px;
+        gap: 5px;
     }
     .characteristic-item, .ability-badge, .type-badge {
         padding: 5px 10px;
@@ -677,14 +690,14 @@ header {
     background-color: #fff;
     image-rendering: pixelated;
     filter: drop-shadow(3px 3px 2px rgba(0,0,0,0.3));
-    max-width: 80%; /* Asegura que no exceda el ancho del contenedor */
-    height: auto; /* Mantiene la proporción */
+    max-width: 80%;
+    height: auto;
     object-fit: contain;
 }
 
 @media (max-width: 480px) {
     .pokemon-detail-image {
-        width: 180px; /* Más pequeña en móviles */
+        width: 180px;
         height: 180px;
     }
 }
@@ -693,22 +706,22 @@ header {
 .stat-name, .stat-value,
 .characteristic-label, .characteristic-value,
 .ability-badge, .type-badge {
-    font-size: 0.9em; /* Ligeramente más pequeño en base */
+    font-size: 0.9em;
 }
 
 @media (max-width: 480px) {
     .stat-name, .stat-value,
     .characteristic-label, .characteristic-value,
     .ability-badge, .type-badge {
-        font-size: 0.8em; /* Aún más pequeño en móviles */
+        font-size: 0.8em;
     }
     .stat-item {
-        flex-direction: column; /* Apila nombre y barra */
+        flex-direction: column;
         align-items: flex-start;
     }
     .stat-name {
-        width: auto; /* Permite que ocupe el ancho necesario */
-        margin-bottom: 5px; /* Espacio debajo del nombre de la estadística */
+        width: auto;
+        margin-bottom: 5px;
     }
 }
 
@@ -814,54 +827,54 @@ header {
 
 /* Estilo para el subtítulo "Habilidades:" */
 .pokemon-detail-view h4 {
-    color: #2c3e50; /* Color similar a otros textos importantes */
-    margin-top: 15px; /* Espacio encima del título de habilidades */
-    margin-bottom: 15px; /* Espacio debajo del título de habilidades */
-    text-align: left; /* Alinear a la izquierda, como las estadísticas */
-    padding-left: 20px; /* Ajustar según necesites alineación */
-    font-size: 1.1em; /* Tamaño ligeramente menor que h3 */
-    font-family: sans-serif; /* O la fuente que uses para texto normal */
+    color: #2c3e50;
+    margin-top: 15px;
+    margin-bottom: 15px;
+    text-align: left;
+    padding-left: 20px;
+    font-size: 1.1em;
+    font-family: sans-serif;
     font-weight: bold;
 }
 
 .characteristics-container {
     display: flex;
-    flex-direction: column; /* Para apilar Altura y Peso verticalmente */
-    gap: 12px; /* Espacio entre el ítem de Altura y el de Peso */
-    margin-bottom: 25px; /* Espacio después de la sección de características */
-    padding: 0 20px; /* Para alinear con el resto del contenido si es necesario */
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 25px;
+    padding: 0 20px;
 }
 
 .characteristic-item {
     display: flex;
-    align-items: center; /* Alinea verticalmente el icono, etiqueta y valor */
-    background-color: #f8f9fa; /* Un color de fondo sutil */
+    align-items: center;
+    background-color: #f8f9fa;
     padding: 12px 18px;
-    border-radius: 8px; /* Bordes redondeados */
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08); /* Una sombra ligera */
-    transition: transform 0.2s ease-in-out; /* Pequeña animación al pasar el mouse */
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08);
+    transition: transform 0.2s ease-in-out;
 }
 
 .characteristic-item:hover {
-    transform: translateY(-2px); /* Efecto de elevación sutil */
+    transform: translateY(-2px);
 }
 
 .characteristic-icon {
-    font-size: 1.6em; /* Tamaño del emoji/icono */
+    font-size: 1.6em;
     margin-right: 12px;
-    color: #495057; /* Color para el icono si no es un emoji colorido */
+    color: #495057;
 }
 
 .characteristic-label {
     font-weight: bold;
-    color: #343a40; /* Color oscuro para la etiqueta */
+    color: #343a40;
     margin-right: 8px;
     font-size: 0.95em;
 }
 
 .characteristic-value {
     font-size: 0.95em;
-    color: #212529; /* Color principal para el valor */
+    color: #212529;
 }
 
 /* Ajustes para pantallas pequeñas si es necesario */
@@ -880,37 +893,32 @@ header {
 
 /* Contenedor flexible para las insignias de habilidades */
 .abilities-container {
-    display: flex; /* Organiza las insignias en fila */
-    flex-wrap: wrap; /* Permite que las insignias pasen a la siguiente línea si no caben */
-    gap: 8px; /* Espacio entre las insignias */
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
     margin-top: 10px;
     margin-bottom: 20px;
-    padding: 0 20px; /* Ajustar padding para alinear con otras secciones */
-    justify-content: center; /* Centra las insignias si no llenan la línea */
+    padding: 0 20px;
+    justify-content: center;
 }
 
 /* Estilos para cada insignia de habilidad */
 .ability-badge {
-    padding: 5px 10px; /* Relleno dentro de la insignia */
-    border-radius: 15px; /* Bordes redondeados (tipo píldora) */
-    color: white; /* Color del texto blanco para contraste */
-    font-size: 0.9em; /* Tamaño de fuente */
+    padding: 5px 10px;
+    border-radius: 15px;
+    color: white;
+    font-size: 0.9em;
     font-weight: bold;
-    text-transform: capitalize; /* Capitaliza el texto */
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5); /* Sombra para que el texto destaque */
-    /* Las clases .type-* se encargarán del background-color */
+    text-transform: capitalize;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
 }
 
 /* Asegurarse de que las clases de tipo existentes tengan color de texto contrastante */
-/* (Probablemente ya lo tengan si usas esas clases para los tipos del Pokémon) */
 .type-fire,
 .type-water,
 .type-grass,
 .type-normal,
-.type-fire,
-.type-water,
 .type-electric,
-.type-grass,
 .type-ice,
 .type-fighting,
 .type-poison,
@@ -925,41 +933,34 @@ header {
 .type-steel,
 .type-fairy,
 .type-unknown,
-/* ...añade todos tus tipos aquí */
 .ability-badge {
-    color: white; /* Asegura texto blanco en las insignias de habilidad */
+    color: white;
 }
 
 /* Contenedor para los badges de movimientos */
 .moves-container {
     display: flex;
-    flex-wrap: wrap; /* Permite que los badges pasen a la siguiente línea */
-    gap: 8px; /* Espacio entre badges */
+    flex-wrap: wrap;
+    gap: 8px;
     margin-top: 10px;
     margin-bottom: 20px;
-    padding: 0 20px; /* Alineación opcional */
-    justify-content: center; /* Centra los badges si no llenan el espacio */
+    padding: 0 20px;
+    justify-content: center;
 }
 
-/* Estilo base para los badges (puedes unificarlo con .ability-badge si son iguales) */
-/* Esta clase genérica .type-badge es la que sugiero para aplicar estilos comunes a los badges de tipo, habilidad y movimiento */
+/* Estilo base para los badges */
 .type-badge {
-    padding: 6px 12px; /* Ajusta el padding según tu gusto */
-    border-radius: 16px; /* Bordes redondeados */
-    color: white; /* Color del texto (generalmente blanco) */
-    font-size: 0.85em; /* Tamaño de fuente */
+    padding: 6px 12px;
+    border-radius: 16px;
+    color: white;
+    font-size: 0.85em;
     font-weight: bold;
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.4); /* Sombra de texto para legibilidad */
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.4);
     text-align: center;
-    display: inline-block; /* Para que el padding y dimensiones se apliquen correctamente */
-    margin: 3px; /* Pequeño margen opcional */
+    display: inline-block;
+    margin: 3px;
 }
 
-/*
-  Asegúrate de tener definidas las clases para cada tipo de Pokémon/movimiento.
-  Estas clases solo necesitan definir el background-color.
-  Ejemplos (deberías tener una lista completa para todos los tipos):
-*/
 .type-normal { background-color: #A8A77A; }
 .type-fire { background-color: #EE8130; }
 .type-water { background-color: #6390F0; }
@@ -978,18 +979,9 @@ header {
 .type-dark { background-color: #705746; }
 .type-steel { background-color: #B7B7CE; }
 .type-fairy { background-color: #D685AD; }
-.type-unknown { background-color: #68A090; } /* Para el tipo 'unknown' de fallback */
+.type-unknown { background-color: #68A090; }
 
-/* Si quieres que .ability-badge tenga un estilo específico y .move-badge otro,
-   puedes definir .ability-badge y .move-badge por separado en lugar de un .type-badge genérico,
-   y luego aplicar la clase de color (ej. .type-fire) a ambos.
-   Por ahora, la propuesta es usar .type-badge como base y aplicar .type-<tipo_especifico> para el color.
-*/
-
-/* Ejemplo de cómo podrías tenerlo para las habilidades (manteniendo el color del primer tipo del Pokémon) */
 .ability-badge {
-    /* Estilos específicos de las ability-badge si son diferentes de .type-badge */
-    /* Si son iguales, puedes simplemente añadir la clase type-badge al span de habilidad también */
     padding: 6px 12px;
     border-radius: 16px;
     color: white;
@@ -1000,18 +992,7 @@ header {
     display: inline-block;
     margin: 3px;
 }
-/* Y en el JSX de habilidades:
-   className={`ability-badge ${firstPokemonType ? `type-${firstPokemonType.toLowerCase()}` : 'type-normal'}`}
-   Aquí, la clase .ability-badge daría la forma y .type-* el color.
-*/
 
-/* Reutiliza los estilos de .pokemon-types */
-/* .pokemon-types { ... } */
-/* .pokemon-types span { ... } */
-/* .type-normal, .type-fire, etc. { ... } */
-
-
-/* Ensure the global loading/error styles still work */
 .loading, .error, .no-results {
     font-size: 1.2em;
     margin-top: 20px;
@@ -1021,7 +1002,7 @@ header {
 }
 
 .error {
-  color: #e74c3c;
+    color: #e74c3c;
 }
 
 .no-results {
