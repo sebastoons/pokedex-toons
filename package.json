@@ -24,6 +24,13 @@
       "react-app",
       "react-app/jest"
     ],
+    "env": {                 
+      "browser": true,
+      "es2021": true,
+      "jest": true,
+      "node": true,
+      "worker": true        
+    },
     "overrides": [
       {
         "files": ["src/service-worker.js"],
