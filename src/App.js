@@ -51,10 +51,6 @@ function App() {
     const [selectedGeneration, setSelectedGeneration] = useState('1');
     const [isGenMenuOpen, setIsGenMenuOpen] = useState(false);
 
-    // Ahora, usa la constante global
-    const generations = ALL_POKEMON_GENERATIONS;
-    const pokemonTypes = ALL_POKEMON_TYPES;
-
 
     useEffect(() => {
         const fetchPokemonWithDetails = async () => {
