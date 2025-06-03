@@ -29,13 +29,13 @@ body {
 /* Media query para reducir padding en pantallas más pequeñas */
 @media (max-width: 768px) {
     body {
-        padding: 5px; /* Reduce el padding en pantallas más pequeñas */
+        padding: 10px; /* Reduce el padding en pantallas más pequeñas */
     }
 }
 
 @media (max-width: 480px) {
     body {
-        padding: 2px; /* Más reducción para teléfonos muy pequeños */
+        padding: 5px; /* Más reducción para teléfonos muy pequeños */
     }
 }
 
@@ -60,12 +60,12 @@ body::before {
 /* --- Contenedor Principal Estilo Pokedex --- */
 .pokedex-container {
   text-align: center;
-  padding: 10px;
+  padding: 30px;
   max-width: 1000px;
   width: 100%;
   margin: 0;
   background-color: #c0392b;
-  border: 5px solid #e74c3c;
+  border: 10px solid #e74c3c;
   border-radius: 25px;
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
   position: center;
@@ -77,9 +77,15 @@ body::before {
 
 @media (max-width: 768px) {
     .pokedex-container {
-        padding: 10px; /* Reduce padding en pantallas medianas */
-        border-width: 7px; /* Reduce el ancho del borde */
-        border-radius: 10px; /* Reduce el radio del borde si es necesario */
+        padding: 15px; /* Reduce padding en pantallas medianas */
+        border-width: 10px; /* Reduce el ancho del borde */
+    }
+}
+
+@media (max-width: 480px) {
+    .pokedex-container {
+        padding: 10px; /* Reducir aún más el padding del contenedor principal */
+        border-width: 8px;
     }
 }
 
@@ -204,7 +210,7 @@ header {
     align-items: center;
     gap: 5px;
     flex-shrink: 1;
-    justify-content: flex-start;
+    justify-content: center;
     font-family: monospace;
     flex-basis: auto; /* Permite que el tamaño base se ajuste al contenido */
     flex-grow: 1; /* Permite que crezca para llenar el espacio */
@@ -231,6 +237,7 @@ header {
     .controls-container select {
         width: 90%; /* Ajusta el ancho de los inputs/selects dentro de su div */
         max-width: 250px; /* Un límite para que no sean ridículamente anchos */
+        margin: 0 auto; /* Centrar input/select dentro de su div */
     }
 
     .controls-container label {
@@ -427,8 +434,16 @@ header {
 @media (max-width: 480px) { /* Para pantallas muy pequeñas */
     .pokemon-list {
         grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); /* ¡Más pequeño para móviles muy estrechos! */
-        gap: 8px; /* Menos espacio entre tarjetas */
+        gap: 10px; /* Menos espacio entre tarjetas */
         padding: 5px; /* Reducir padding de la lista */
+    }
+}
+
+@media (max-width: 375px) { /* Para móviles pequeños como iPhone SE */
+    .pokemon-list {
+        grid-template-columns: repeat(auto-fit, minmax(90px, 1fr)); /* Aún más pequeño si es necesario */
+        gap: 8px;
+        padding: 5px;
     }
 }
 
@@ -457,7 +472,6 @@ header {
 
 .pokemon-card .pokemon-image {
     width: 100px; /* Tamaño base */
-    height: 100px; /* Tamaño base */
     margin-bottom: 10px;
     image-rendering: pixelated;
     display: block;
@@ -538,7 +552,6 @@ header {
 /* Estilos para el placeholder de imagen */
 .pokemon-image-placeholder {
     width: 100px; /* Base */
-    height: 100px; /* Base */
     margin-bottom: 10px;
     background-color: #bdc3c7;
     color: #34495e;
@@ -570,6 +583,9 @@ header {
     }
     .pokemon-name {
         font-size: 1em; /* Reduce el tamaño del nombre */
+        white-space: nowrap; /* Evita que el nombre se rompa */
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
     .pokemon-types span {
         font-size: 0.7em; /* Reduce el tamaño de los tipos */
