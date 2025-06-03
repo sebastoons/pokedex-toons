@@ -1,4 +1,16 @@
-// src/service-worker.js
+/* eslint-disable no-restricted-globals */
+
+// El resto de tu código de service-worker.js va aquí...
+// Por ejemplo:
+// self.addEventListener('install', (event) => {
+//   event.waitUntil(
+//     caches.open('v1').then((cache) => {
+//       return cache.addAll(['/index.html', '/styles.css', '/app.js']);
+//     })
+//   );
+// });
+// ...
+
 
 const CACHE_NAME = 'my-react-app-cache-v1';
 const OFFLINE_URL = '/offline.html'; // Crea un archivo offline.html simple en tu carpeta public
