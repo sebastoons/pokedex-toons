@@ -1,7 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App.js';
-import './index.css';
+import './index.css'; // Esto se carga primero (estilos base/reset)
+import './App.css';   // <-- ¡AÑADE ESTA LÍNEA AQUÍ! (estilos de tu aplicación principal)
 import { BrowserRouter } from 'react-router-dom';
 
 // Get the root element from your HTML (usually index.html)

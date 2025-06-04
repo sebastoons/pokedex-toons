@@ -1,6 +1,5 @@
 // src/App.js
 import React, { useState, useEffect, useMemo } from 'react';
-import './App.css';
 import PokemonCard from './components/PokemonCard';
 import { Routes, Route, Link } from 'react-router-dom';
 import PokemonDetail from './components/PokemonDetail';
