@@ -504,6 +504,25 @@ header {
         width: 100%;
         text-align: center;
     }
+    .controls-container select#type-filter option[value="normal"] { background-color: #A8A77A; color: white; text-shadow: 1px 1px 2px rgba(0,0,0,0.3); }
+    .controls-container select#type-filter option[value="fire"] { background-color: #EE8130; color: white; text-shadow: 1px 1px 2px rgba(0,0,0,0.3); }
+    .controls-container select#type-filter option[value="water"] { background-color: #6390F0; color: white; text-shadow: 1px 1px 2px rgba(0,0,0,0.3); }
+    .controls-container select#type-filter option[value="electric"] { background-color: #F7D02C; color: #333; text-shadow: 1px 1px 0px rgba(255,255,255,0.5); }
+    .controls-container select#type-filter option[value="grass"] { background-color: #7AC74C; color: white; text-shadow: 1px 1px 2px rgba(0,0,0,0.3); }
+    .controls-container select#type-filter option[value="ice"] { background-color: #96D9D6; color: #333; text-shadow: 1px 1px 0px rgba(255,255,255,0.5); }
+    .controls-container select#type-filter option[value="fighting"] { background-color: #C22E28; color: white; text-shadow: 1px 1px 2px rgba(0,0,0,0.3); }
+    .controls-container select#type-filter option[value="poison"] { background-color: #A33EA1; color: white; text-shadow: 1px 1px 2px rgba(0,0,0,0.3); }
+    .controls-container select#type-filter option[value="ground"] { background-color: #E2BF65; color: #333; text-shadow: 1px 1px 0px rgba(255,255,255,0.5); }
+    .controls-container select#type-filter option[value="flying"] { background-color: #A98FF3; color: #333; text-shadow: 1px 1px 0px rgba(255,255,255,0.5); }
+    .controls-container select#type-filter option[value="psychic"] { background-color: #F95587; color: white; text-shadow: 1px 1px 2px rgba(0,0,0,0.3); }
+    .controls-container select#type-filter option[value="bug"] { background-color: #A6B91A; color: white; text-shadow: 1px 1px 2px rgba(0,0,0,0.3); }
+    .controls-container select#type-filter option[value="rock"] { background-color: #B6A136; color: white; text-shadow: 1px 1px 2px rgba(0,0,0,0.3); }
+    .controls-container select#type-filter option[value="ghost"] { background-color: #735797; color: white; text-shadow: 1px 1px 2px rgba(0,0,0,0.3); }
+    .controls-container select#type-filter option[value="dragon"] { background-color: #6F35FC; color: white; text-shadow: 1px 1px 2px rgba(0,0,0,0.3); }
+    .controls-container select#type-filter option[value="dark"] { background-color: #705746; color: white; text-shadow: 1px 1px 2px rgba(0,0,0,0.3); }
+    .controls-container select#type-filter option[value="steel"] { background-color: #B7B7CE; color: #333; text-shadow: 1px 1px 0px rgba(255,255,255,0.5); }
+    .controls-container select#type-filter option[value="fairy"] { background-color: #D685AD; color: white; text-shadow: 1px 1px 2px rgba(0,0,0,0.3); }
+    
     .generation-button {
         width: 100%;
         max-width: 250px; /* Límite para el botón en tablets */
