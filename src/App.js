@@ -51,9 +51,10 @@ function App() {
     const [isGenMenuOpen, setIsGenMenuOpen] = useState(false);
 
 
-    useEffect(() => {
+     useEffect(() => {
         const fetchPokemonWithDetails = async () => {
             try {
+                // Primero, obtenemos la lista principal de URLs
                 const listResponse = await fetch('https://pokeapi.co/api/v2/pokemon?limit=905&offset=0');
                 if (!listResponse.ok) {
                     throw new Error(`HTTP error! status: ${listResponse.status}`);
@@ -61,8 +62,13 @@ function App() {
                 const listData = await listResponse.json();
                 const results = listData.results;
 
-                const pokemonWithDetails = await Promise.all(
-                    results.map(async (pokemon) => {
+                const pokemonWithDetails = [];
+                const chunkSize = 50; // Define cuántos Pokémon se procesarán a la vez
+                const delayMs = 100; // Retardo entre cada chunk para evitar saturar
+
+                for (let i = 0; i < results.length; i += chunkSize) {
+                    const chunk = results.slice(i, i + chunkSize);
+                    const chunkPromises = chunk.map(async (pokemon) => {
                         try {
                             const detailResponse = await fetch(pokemon.url);
                             if (!detailResponse.ok) {
@@ -80,11 +86,18 @@ function App() {
                             console.warn(`Error processing details for ${pokemon.name}: `, detailErr);
                             return { name: pokemon.name, url: pokemon.url, id: null, types: [] };
                         }
-                    })
-                );
+                    });
 
-                const validPokemon = pokemonWithDetails.filter(pokemon => pokemon.id !== null);
-                setPokemonList(validPokemon);
+                    const resolvedChunk = await Promise.all(chunkPromises);
+                    pokemonWithDetails.push(...resolvedChunk.filter(pokemon => pokemon.id !== null));
+
+                    // Añadir un pequeño retardo antes del siguiente chunk
+                    if (i + chunkSize < results.length) {
+                        await new Promise(resolve => setTimeout(resolve, delayMs));
+                    }
+                }
+
+                setPokemonList(pokemonWithDetails);
 
             } catch (err) {
                 setError(err);
@@ -96,7 +109,8 @@ function App() {
 
         fetchPokemonWithDetails();
 
-    }, []);
+    }, []); // Dependencias vacías, solo se ejecuta una vez al montar
+
 
 
     // useMemo memoriza el resultado de la función y solo la re-ejecuta si las dependencias cambian.

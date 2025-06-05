@@ -1,4 +1,9 @@
-/* --- Estilos Generales del Cuerpo y Fondo --- */
+/* --- App.css: Estilos Generales y Componentes de Pokedex --- */
+
+/* --- Importar fuente de Google Fonts (PRIMERO DE TODO) --- */
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+/* --- Estilos Generales del Body --- */
 body {
     margin: 0;
     font-family: 'Press Start 2P', cursive;
@@ -7,41 +12,20 @@ body {
     background-color: #1a1a1a;
     color: #eee;
     min-height: 100vh;
-    display: flex;
+    display: flex; /* Esto centra el contenido principal (.pokedex-container) */
     justify-content: center;
-    /* CAMBIO CLAVE: Cambiado de 'align-items: center' a 'flex-start'. */
-    /* Cuando el contenido es más largo que la pantalla, 'center' puede cortar la parte superior/inferior. */
-    /* 'flex-start' permite que el contenido comience desde arriba y se desplace. */
-    align-items: flex-start;
-    padding: 20px; /* Padding base */
+    align-items: flex-start; /* Permite scroll vertical */
+    padding: 0;
     box-sizing: border-box;
     position: relative;
-    /* Mantenemos overflow-x: hidden; para forzar que el contenido no se desborde horizontalmente a nivel del body. */
-    /* Esto ayuda a evitar el scroll horizontal no deseado. */
-    overflow-x: hidden;
+    overflow-x: hidden; /* Evitar scroll horizontal en el body */
 
     /* --- Fondo de Imagen (Estilo GBA) --- */
-    background-image: url('/public/imgindex/1.jpg'); /* Asegúrate de que esta ruta sea correcta */
+    background-image: url('/public/imgindex/1.jpg'); /* Asegúrate que esta ruta sea correcta desde la raíz pública */
     background-size: cover;
     background-position: center;
     background-attachment: fixed;
 }
-
-/* Media query para reducir padding en pantallas más pequeñas */
-@media (max-width: 768px) {
-    body {
-        padding: 10px; /* Reduce el padding en pantallas más pequeñas */
-    }
-}
-
-@media (max-width: 480px) {
-    body {
-        padding: 5px; /* Más reducción para teléfonos muy pequeños */
-    }
-}
-
-/* Importar fuente de Google Fonts */
-@import url('https://fonts.googleapis.com/css2?family=Press+Start 2P&display=swap');
 
 /* --- Capa Semitransparente o Difuminada sobre el Fondo --- */
 body::before {
@@ -55,41 +39,22 @@ body::before {
     z-index: 0;
 }
 
-
 /* --- Contenedor Principal Estilo Pokedex --- */
 .pokedex-container {
     text-align: center;
     padding: 30px;
     max-width: 1000px;
-    width: 100%;
-    /* CAMBIO CLAVE: Eliminado 'position: center;' (propiedad inválida). */
-    /* Usamos margin: 20px auto; para centrar horizontalmente y darle espacio vertical. */
-    margin: 20px auto;
+    width: calc(100% - 40px); /* Ajustado: 100% del padre menos 40px (20px de margen a cada lado) */
+    margin: 20px auto; /* Centrado horizontal, margen superior/inferior */
     background-color: #c0392b;
     border: 10px solid #e74c3c;
     border-radius: 25px;
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
-    position: relative; /* Mantenemos 'relative' para la bisagra (::before) */
+    position: relative;
     z-index: 1;
-    box-sizing: border-box; /* Importante para que el padding y border no aumenten el width */
-}
-
-@media (max-width: 768px) {
-    .pokedex-container {
-        padding: 15px;
-        border-width: 10px;
-    }
-}
-
-@media (max-width: 480px) {
-    .pokedex-container {
-        padding: 10px;
-        margin: 5px auto;
-        border: 8px solid #c0392b;
-        /* Asegurarse de que no tenga un min-width o width fijo aquí */
-        width: calc(100% - 10px); /* 100% del viewport menos 2 * border */
-        max-width: 100%; /* Para que no se vaya de 100% */
-    }
+    box-sizing: border-box;
+    /* Añadido: asegurar que el contenedor pueda encogerse */
+    min-width: 280px; /* Un mínimo para que no se vea ridículamente pequeño en pantallas minúsculas */
 }
 
 /* Detalle de diseño: una "bisagra" o elemento decorativo */
@@ -107,7 +72,7 @@ body::before {
     z-index: 2;
 }
 
-
+/* --- Header y Logo (Dentro del Pokedex Container) --- */
 header {
     margin-bottom: 20px;
     padding-bottom: 15px;
@@ -115,29 +80,21 @@ header {
     position: relative;
     z-index: 2;
     display: flex;
-    justify-content: center;
+    justify-content: center; /* Centrar el logo horizontalmente */
     align-items: center;
+    /* Asegurarse de que el header no tenga ancho fijo que lo desborde */
+    width: 100%; /* Ocupa el 100% del .pokedex-container */
+    box-sizing: border-box; /* Importante para que el padding y border se incluyan en el 100% */
 }
 
-/* Estilos para la imagen del logo en el header */
 .pokedex-logo {
-    max-width: 250px;
+    max-width: 250px; /* Ancho máximo del logo en pantallas grandes */
     height: auto;
-    display: block;
-    margin: 0 auto;
+    display: block; /* Para que margin: auto funcione */
+    margin: 0 auto; /* Centra el logo */
     filter: drop-shadow(3px 3px 0px #333);
-}
-
-@media (max-width: 768px) {
-    .pokedex-logo {
-        max-width: 200px;
-    }
-}
-
-@media (max-width: 480px) {
-    .pokedex-logo {
-        max-width: 150px;
-    }
+    /* Asegurarse de que el logo se ajuste bien en móviles */
+    width: 90%; /* Ajuste para que ocupe el 90% del espacio en el header (se ajustará con max-width) */
 }
 
 /* --- Mensaje de Bienvenida --- */
@@ -169,24 +126,6 @@ header {
     font-family: monospace;
 }
 
-@media (max-width: 768px) {
-    .welcome-message h2 {
-        font-size: 1.4em;
-    }
-    .welcome-message p {
-        font-size: 0.9em;
-    }
-}
-
-@media (max-width: 480px) {
-    .welcome-message h2 {
-        font-size: 1.2em;
-    }
-    .welcome-message p {
-        font-size: 0.8em;
-    }
-}
-
 /* --- Contenedor de Controles de Búsqueda y Filtrado --- */
 .controls-container {
     background-color: #ecf0f1;
@@ -202,72 +141,31 @@ header {
     position: relative;
     z-index: 25;
     box-sizing: border-box;
-    min-width: 0; /* Permite que el contenedor se encoja a 0 si es necesario */
+    min-width: 0;
     align-items: center;
     font-family: monospace;
 }
 
-.controls-container div { /* Contenedores individuales de búsqueda, tipo, etc. */
+.controls-container div {
     display: flex;
-    align-items: center;
+    flex-direction: column; /* Cambiado a columna para que label e input/select se apilen en cada div */
+    align-items: flex-start; /* Alinea texto a la izquierda en cada control */
     gap: 5px;
-    flex-shrink: 1; /* Permite que el elemento se encoja */
-    justify-content: center;
-    font-family: monospace;
-    flex-basis: auto;
-    flex-grow: 1;
-    max-width: 100%; /* Asegura que no se desborden individualmente */
+    flex-shrink: 1;
+    flex-basis: 100%; /* Cada control ocupa todo el ancho en la configuración de columna */
+    max-width: 100%;
     box-sizing: border-box;
 }
 
-/* Media Queries para Controles (la parte más importante para móvil) */
-@media (max-width: 768px) {
-    .controls-container {
-        flex-direction: column; /* Apila los filtros verticalmente en móvil */
-        align-items: stretch; /* Estira los elementos para ocupar el ancho disponible */
-        gap: 10px;
-        padding: 8px;
-    }
-
-    .controls-container div {
-        width: 100%;
-        max-width: 100%; /* Muy importante para que no haya un límite aquí */
-        flex-basis: auto; /* Permite que se encoja si es necesario */
-        justify-content: center; /* Centra el contenido dentro de este div */
-        box-sizing: border-box;
-    }
-
-    .controls-container input,
-    .controls-container select {
-        width: 100%; /* Asegúrate de que tomen todo el ancho disponible de su padre */
-        max-width: 100%; /* Quita el límite de 280px para que se adapten por completo */
-        box-sizing: border-box; /* Crucial para incluir padding/border en el 100% */
-        margin: 0; /* Asegura que no haya márgenes externos que empujen */
-    }
-
-    .controls-container label {
-        width: auto;
-        text-align: center;
-        margin-bottom: 5px;
-    }
-
-    .generation-filter-container {
-        width: 100%;
-        text-align: center;
-    }
-    .generation-button {
-        width: 100%; /* Asegura que el botón de generación ocupe todo el ancho disponible */
-        max-width: 100%; /* Quita cualquier límite de ancho */
-        box-sizing: border-box; /* Para que el padding/border no sumen al 100% */
-        white-space: normal; /* Permite que el texto se divida en varias líneas si es muy largo */
-        font-size: 0.9em; /* Ajusta el tamaño de la fuente si el texto es muy largo */
-    }
-    .generation-dropdown-menu {
-        left: 50%;
-        transform: translateX(-50%);
-        min-width: 200px;
-        max-width: 90%;
-    }
+.controls-container label {
+    font-weight: bold;
+    margin-right: 0; /* No margin a la derecha si está en columna */
+    margin-bottom: 5px; /* Espacio debajo de la etiqueta */
+    font-size: 0.9em;
+    color: #34495e;
+    flex-shrink: 0;
+    width: 100%; /* Asegura que la etiqueta ocupe su propio ancho */
+    text-align: center; /* Centrar el texto de la etiqueta si se desea */
 }
 
 .controls-container input,
@@ -289,23 +187,16 @@ header {
     background-position: right 8px top 50%;
     background-size: 12px auto;
     padding-right: 30px;
-    width: 100%; /* Ocupa el 100% del ancho disponible en su div padre */
-    max-width: 280px; /* Límite para que no sean enormes en pantallas grandes */
+    width: 100%; /* Asegura que ocupe el 100% del ancho disponible en su div padre */
+    max-width: 100%; /* Eliminado el límite de 280px para que se adapte mejor en móvil */
     box-sizing: border-box;
+    text-align: center; /* Centrar el texto en input/select si se desea */
 }
 
 .controls-container input:focus,
 .controls-container select:focus {
     border-color: #f1c40f;
     box-shadow: 0 0 5px rgba(241, 196, 15, 0.5);
-}
-
-.controls-container label {
-    font-weight: bold;
-    margin-right: 5px;
-    font-size: 0.9em;
-    color: #34495e;
-    flex-shrink: 0;
 }
 
 /* --- Estilos Específicos para las Opciones del Selector de Tipo --- */
@@ -323,7 +214,7 @@ header {
     font-family: monospace;
 }
 
-/* --- Colores de Fondo para las Opciones de Tipo --- */
+/* --- Colores de Fondo para las Opciones de Tipo (Mantener) --- */
 .controls-container select#type-filter option[value="normal"] { background-color: #A8A77A; color: white; text-shadow: 1px 1px 2px rgba(0,0,0,0.3); }
 .controls-container select#type-filter option[value="fire"] { background-color: #EE8130; color: white; text-shadow: 1px 1px 2px rgba(0,0,0,0.3); }
 .controls-container select#type-filter option[value="water"] { background-color: #6390F0; color: white; text-shadow: 1px 1px 2px rgba(0,0,0,0.3); }
@@ -347,8 +238,9 @@ header {
 /* --- Estilos para el Botón y Menú Desplegable de Generaciones --- */
 .generation-filter-container {
     position: relative;
-    display: inline-block;
-    flex-shrink: 0;
+    display: block; /* Cambiado a block para que ocupe su propia línea si es necesario */
+    width: 100%; /* Asegura que ocupe todo el ancho disponible */
+    text-align: center; /* Centra el botón dentro del contenedor */
     font-family: monospace;
     font-weight: bold;
 }
@@ -367,6 +259,9 @@ header {
     transition: background-color 0.2s ease, border-color 0.2s ease;
     text-shadow: 1px 1px 0px rgba(0,0,0,0.3);
     white-space: nowrap;
+    width: 100%; /* Asegura que el botón de generación ocupe todo el ancho */
+    max-width: 300px; /* Un poco de max-width para que no sea excesivamente ancho en pantallas grandes */
+    box-sizing: border-box;
 }
 
 .generation-button:hover {
@@ -377,8 +272,8 @@ header {
 .generation-dropdown-menu {
     position: absolute;
     top: 100%;
-    left: 0;
-    right: 0;
+    left: 50%; /* Centra el menú desplegable horizontalmente */
+    transform: translateX(-50%); /* Ajuste para centrar */
     background-color: #ecf0f1;
     border: 2px solid #34495e;
     border-radius: 5px;
@@ -387,9 +282,11 @@ header {
     margin: 5px 0 0 0;
     z-index: 20;
     box-shadow: 0 5px 10px rgba(0,0,0,0.2);
-    text-align: left;
+    text-align: center; /* Centrar el texto en el menú */
     font-family: monospace;
     font-weight: bold;
+    min-width: 180px; /* Ancho mínimo para que se vea bien */
+    max-width: 90%; /* Limitar el ancho para que no se desborde en pantallas pequeñas */
 }
 
 .generation-dropdown-menu li {
@@ -397,8 +294,6 @@ header {
     cursor: pointer;
     font-size: 0.9em;
     color: #34495e;
-    font-family: sans-serif;
-    transition: background-color 0.1s ease;
     font-family: monospace;
     font-weight: bold;
 }
@@ -414,51 +309,36 @@ header {
     font-family: monospace;
 }
 
+/* --- Contenedor de la Lista de Pokémon (Grid) --- */
 .pokemon-list {
     display: grid;
-    /* Mantenemos tus minmax actuales, son un buen punto de partida */
-    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    /* Ajustado: En pantallas más pequeñas, queremos 2 columnas por defecto,
+       pero que puedan crecer y llenarse con más si hay espacio. */
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); /* Mínimo 150px para 2 columnas en móvil */
     gap: 15px;
     padding: 10px;
     justify-content: center;
     max-width: 1200px;
     margin: 20px auto;
     box-sizing: border-box;
+    /* Añadido: asegurar que la lista también pueda encogerse */
+    width: 100%; /* Ocupa todo el ancho de su padre */
 }
 
-@media (max-width: 480px) {
-    .pokemon-list {
-        gap: 8px; /* Reduce el gap entre las tarjetas */
-        padding: 0 5px; /* Reduce el padding del contenedor de la lista */
-        justify-content: center; /* Asegura que las tarjetas se centren */
-    }
-}
-
-@media (max-width: 375px) { /* Para móviles pequeños como iPhone SE o similar */
-    .pokemon-list {
-        /* CAMBIO CLAVE: Reducir aún más a 80px para garantizar 2 columnas en pantallas muy estrechas */
-        grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
-        gap: 5px; /* Reducir aún más el gap */
-        padding: 3px; /* Reducir aún más el padding del contenedor de la lista */
-    }
-}
-
-
-/* --- Estilos para PokemonCard --- */
+/* --- Estilos para PokemonCard Individual --- */
 .pokemon-card {
     background-color: #f8f8f8;
     border: 1px solid #ddd;
     border-radius: 10px;
-    /* CAMBIO CLAVE: Reducir padding base de la tarjeta */
-    padding: 8px; /* De 10px a 8px */
+    padding: 8px;
     text-align: center;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: space-between;
-    min-height: 180px; /* Mantener un alto mínimo razonable */
-    max-width: 100%; /* Asegura que la tarjeta no sea más ancha que su padre */
+    min-height: 180px;
+    max-width: 100%;
     box-sizing: border-box;
 }
 
@@ -469,16 +349,14 @@ header {
 }
 
 .pokemon-card .pokemon-image {
-    /* CAMBIO CLAVE: Eliminado width y height fijos. */
-    /* Ahora, el tamaño de la imagen se adaptará al espacio disponible, limitado por max-width/height */
     width: auto;
     height: auto;
-    max-width: 100px; /* Límite superior para la imagen en pantallas grandes */
-    max-height: 100px; /* Para mantener la proporción */
+    max-width: 100px;
+    max-height: 100px;
     margin-bottom: 10px;
     image-rendering: pixelated;
     display: block;
-    filter: drop-shadow(2px 2px 1px rgba(0,0,0,0.2));
+    filter: drop_shadow(2px 2px 1px rgba(0,0,0,0.2));
     object-fit: contain;
 }
 
@@ -492,38 +370,47 @@ header {
 .pokemon-name {
     font-size: 1.2em;
     font-weight: bold;
-    margin: 0 0 5px 0; /* CAMBIO: Reducir margen inferior para dar más espacio */
+    margin: 0 0 5px 0;
     text-transform: capitalize;
     color: #2c3e50;
-    white-space: nowrap; /* Mantiene el nombre en una sola línea */
-    overflow: hidden; /* Oculta lo que se desborda */
-    text-overflow: ellipsis; /* Añade puntos suspensivos si el texto es demasiado largo */
-    width: 100%; /* Asegura que ocupe el ancho disponible antes de aplicar ellipsis */
-    padding: 0 2px; /* Pequeño padding horizontal para que el texto no toque los bordes */
-    box-sizing: border-box; /* Asegura que el padding no cause desbordamiento */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 100%;
+    padding: 0 2px;
+    box-sizing: border-box;
 }
 
 .pokemon-types {
     display: flex;
     justify-content: center;
-    gap: 5px; /* CAMBIO: Reducir el gap entre los tipos */
+    gap: 5px;
     flex-wrap: wrap;
 }
 
 .pokemon-types span {
-    padding: 3px 8px; /* CAMBIO: Reducir padding de los tipos */
+    padding: 3px 8px;
     border-radius: 15px;
-    font-size: 0.7em; /* CAMBIO: Reducir tamaño de fuente de los tipos */
+    font-size: 0.7em;
     color: white;
     text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
     font-weight: bold;
     border: 2px solid rgba(0,0,0,0.2);
-    white-space: nowrap; /* Mantiene el tipo en una línea */
+    white-space: nowrap;
 }
 
-/* --- Colores de Tipos (Mantén o ajusta según tu paleta) --- */
-/* ... (esta sección se mantiene igual) ... */
-
+/* --- Estilos para Carga y Error --- */
+.loading, .error, .no-results {
+    font-family: monospace;
+    font-size: 1.2em;
+    color: #eee;
+    padding: 20px;
+    background-color: rgba(0,0,0,0.4);
+    border-radius: 10px;
+    margin: 20px auto;
+    text-align: center;
+    box-sizing: border-box;
+}
 .loading-card, .error-card {
     display: flex;
     align-items: center;
@@ -541,10 +428,9 @@ header {
 
 /* Estilos para el placeholder de imagen */
 .pokemon-image-placeholder {
-    /* CAMBIO CLAVE: Eliminar width y height fijos. */
     width: auto;
     height: auto;
-    max-width: 100px; /* Límite superior para el placeholder */
+    max-width: 100px;
     max-height: 100px;
     margin-bottom: 10px;
     background-color: #bdc3c7;
@@ -563,59 +449,235 @@ header {
     object-fit: contain;
 }
 
-@media (max-width: 480px) {
-    .pokemon-card {
-        flex-basis: calc(50% - 10px); /* Ajusta para 2 columnas con gap */
-        max-width: calc(50% - 10px); /* Asegura que no crezcan más de 50% */
-        min-width: 140px; /* Un mínimo para que la tarjeta no se vea muy pequeña, ajústalo si es necesario */
+/* ========================================================= */
+/* MEDIA QUERIES PARA RESPONSIVIDAD          */
+/* ========================================================= */
+
+/* --- Estilos para Tabletas (max-width: 768px) --- */
+@media (max-width: 768px) {
+    .pokedex-container {
+        padding: 15px;
+        border-width: 8px; /* Un borde ligeramente más delgado en tablets */
+        margin: 15px auto; /* Reducir el margen externo */
+        width: calc(100% - 30px); /* Ajustado: 100% menos 15px de margen a cada lado */
     }
-    .pokemon-card .pokemon-image,
-    .pokemon-image-placeholder {
-        /* CAMBIO CLAVE: Reducir tamaño a 70px para móviles pequeños */
-        width: 70px;
-        height: 70px;
+
+    .pokedex-logo {
+        max-width: 180px; /* Logo un poco más pequeño */
+    }
+
+    .welcome-message h2 {
+        font-size: 1.3em; /* Ajuste para que se vea bien */
+    }
+    .welcome-message p {
+        font-size: 0.8em; /* Ajuste para que se vea bien */
+    }
+
+    .controls-container {
+        flex-direction: column; /* Apila los filtros verticalmente */
+        align-items: stretch; /* Estira los elementos para ocupar el ancho disponible */
+        gap: 10px;
+        padding: 10px; /* Ajustar padding */
+    }
+
+    .controls-container div {
+        width: 100%;
+        max-width: 100%;
+        flex-basis: auto;
+        justify-content: center; /* Centra el contenido dentro del div de control */
+        flex-direction: column; /* Asegura que label e input/select se apilen dentro de cada control */
+    }
+
+    .controls-container label {
+        margin-bottom: 5px; /* Espacio debajo de la etiqueta */
+        text-align: center; /* Centra la etiqueta */
+    }
+
+    .controls-container input,
+    .controls-container select {
+        width: 100%;
+        max-width: 100%; /* Quita el límite de 280px para que se adapten por completo */
+        margin: 0 auto; /* Centra el input/select */
+    }
+
+    .generation-filter-container {
+        width: 100%;
+        text-align: center;
+    }
+    .generation-button {
+        width: 100%;
+        max-width: 250px; /* Límite para el botón en tablets */
+        margin: 0 auto; /* Centra el botón */
+        white-space: normal;
+        font-size: 0.9em;
+    }
+    .generation-dropdown-menu {
+        left: 50%;
+        transform: translateX(-50%);
+        min-width: 180px;
+        max-width: 90%;
+    }
+
+    /* Pokemon List y Cards para Tabletas */
+    .pokemon-list {
+        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); /* Más columnas si el ancho lo permite */
+        gap: 12px; /* Ajuste el gap */
+        padding: 8px; /* Ajuste el padding */
+    }
+    .pokemon-card {
+        min-height: 160px; /* Reduce un poco el alto mínimo */
+        padding: 6px;
+    }
+    .pokemon-card .pokemon-image {
+        max-width: 80px; /* Imágenes ligeramente más pequeñas */
+        max-height: 80px;
     }
     .pokemon-name {
-        font-size: 0.9em; /* CAMBIO: Reducir tamaño del nombre */
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
+        font-size: 1.1em;
     }
     .pokemon-types span {
-        font-size: 0.6em; /* CAMBIO: Reducir el tamaño de los tipos */
-        padding: 2px 6px; /* CAMBIO: Reducir padding de los tipos */
+        font-size: 0.65em;
     }
 }
 
-/* CAMBIO ADICIONAL: Nueva media query para pantallas muy muy pequeñas (ej. iPhone 5/SE o dispositivos muy estrechos) */
-@media (max-width: 320px) {
+/* --- Estilos para Móviles Pequeños (max-width: 480px) --- */
+@media (max-width: 480px) {
+    .pokedex-container {
+        padding: 10px;
+        margin: 10px auto; /* Un poco más de margen que en 375px */
+        border: 6px solid #e74c3c; /* Borde más delgado */
+        width: calc(100% - 20px); /* 100% del padre menos 10px de margen a cada lado */
+    }
+
+    .pokedex-logo {
+        max-width: 120px; /* Limita el ancho del logo para móviles */
+        margin-bottom: 5px; /* Reduce el margen inferior del logo */
+    }
+
+    .welcome-message h2 {
+        font-size: 1.1em;
+    }
+    .welcome-message p {
+        font-size: 0.7em;
+    }
+
+    .controls-container {
+        padding: 8px;
+        gap: 8px;
+    }
+
+    .generation-button {
+        font-size: 0.8em;
+    }
+    .generation-dropdown-menu {
+        min-width: 150px;
+        max-width: 95%;
+    }
+
+    /* Pokemon List y Cards para Móviles */
     .pokemon-list {
-        /* CAMBIO CLAVE: minmax aún más pequeño y gap mínimo */
-        grid-template-columns: repeat(auto-fit, minmax(75px, 1fr)); /* Podrías probar hasta 70px */
-        gap: 3px;
+        /* Para asegurar 2 columnas en la mayoría de los móviles */
+        grid-template-columns: repeat(2, 1fr); /* Fija a 2 columnas */
+        gap: 8px;
+        padding: 5px;
+    }
+
+    .pokemon-card {
+        padding: 5px;
+        min-height: 140px; /* Ajustar alto mínimo */
+        /* Asegurar que las tarjetas tomen el ancho disponible en el grid de 2 columnas */
+        max-width: 100%;
+        width: 100%;
+    }
+
+    .pokemon-card .pokemon-image,
+    .pokemon-image-placeholder {
+        width: 65px; /* Tamaño de la imagen para móviles pequeños */
+        height: 65px;
+        max-width: 65px;
+        max-height: 65px;
+    }
+    .pokemon-name {
+        font-size: 0.9em;
+    }
+    .pokemon-types span {
+        font-size: 0.6em;
+        padding: 2px 6px;
+    }
+}
+
+/* --- Estilos para Móviles Muy Pequeños (max-width: 375px) --- */
+@media (max-width: 375px) {
+    .pokedex-container {
+        padding: 8px; /* Padding interno más pequeño */
+        margin: 5px auto; /* Margen muy reducido */
+        border: 4px solid #e74c3c; /* Borde aún más delgado */
+        width: calc(100% - 10px); /* Ocupa casi todo el ancho */
+    }
+
+    .pokedex-logo {
+        max-width: 100px; /* Logo más pequeño aún */
+    }
+
+    .welcome-message {
+        padding: 10px;
+    }
+    .welcome-message h2 {
+        font-size: 1em;
+    }
+    .welcome-message p {
+        font-size: 0.65em;
+    }
+
+    .controls-container {
+        padding: 5px;
+        gap: 5px;
+    }
+    .controls-container input,
+    .controls-container select {
+        padding: 8px; /* Reduce padding de inputs/selects */
+        font-size: 0.7em;
+    }
+    .controls-container label {
+        font-size: 0.8em;
+    }
+    .generation-button {
+        font-size: 0.75em;
+        padding: 8px 10px;
+    }
+    .generation-dropdown-menu li {
+        font-size: 0.8em;
+        padding: 6px 10px;
+    }
+
+    .pokemon-list {
+        grid-template-columns: repeat(2, 1fr); /* Mantiene 2 columnas fijas */
+        gap: 5px;
         padding: 2px;
     }
     .pokemon-card {
         padding: 3px;
-        min-height: 130px;
+        min-height: 120px; /* Ajustar alto mínimo */
     }
     .pokemon-card .pokemon-image,
     .pokemon-image-placeholder {
-        width: 60px;
-        height: 60px;
+        width: 55px; /* Imágenes más pequeñas aún */
+        height: 55px;
+        max-width: 55px;
+        max-height: 55px;
     }
     .pokemon-name {
         font-size: 0.8em;
     }
     .pokemon-types span {
-        font-size: 0.5em; /* Reducir aún más */
+        font-size: 0.55em;
         padding: 1px 4px;
-        border-width: 1px; /* Hacer el borde un poco más delgado */
+        border-width: 1px;
     }
 }
 
 /* --- Estilos para PokemonDetail View --- */
-/* Esta sección se mantiene igual, ya que indicaste que funciona bien */
+/* Esta sección se mantiene igual a como la enviaste, solo ajusté la media query si fuera necesario */
 .pokemon-detail-view {
     padding: 30px;
     max-width: 750px;
@@ -628,6 +690,7 @@ header {
     z-index: 2;
     border: 5px solid #34495e;
     box-sizing: border-box;
+    width: calc(100% - 40px); /* Ajuste para que se adapte al ancho en móviles */
 }
 
 @media (max-width: 768px) {
