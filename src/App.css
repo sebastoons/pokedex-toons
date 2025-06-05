@@ -84,8 +84,11 @@ body::before {
 @media (max-width: 480px) {
     .pokedex-container {
         padding: 10px;
-        border-width: 8px;
-        margin: 10px auto; /* Ajustar margen en móviles para que no esté tan pegado */
+        margin: 5px auto;
+        border: 8px solid #c0392b;
+        /* Asegurarse de que no tenga un min-width o width fijo aquí */
+        width: calc(100% - 10px); /* 100% del viewport menos 2 * border */
+        max-width: 100%; /* Para que no se vaya de 100% */
     }
 }
 
@@ -222,21 +225,24 @@ header {
     .controls-container {
         flex-direction: column; /* Apila los filtros verticalmente en móvil */
         align-items: stretch; /* Estira los elementos para ocupar el ancho disponible */
-        gap: 15px;
-        padding: 10px;
+        gap: 10px;
+        padding: 8px;
     }
 
     .controls-container div {
         width: 100%;
-        max-width: none;
-        justify-content: center;
+        max-width: 100%; /* Muy importante para que no haya un límite aquí */
+        flex-basis: auto; /* Permite que se encoja si es necesario */
+        justify-content: center; /* Centra el contenido dentro de este div */
+        box-sizing: border-box;
     }
 
     .controls-container input,
     .controls-container select {
-        width: 90%; /* Se ajusta al 90% del div padre para dejar un pequeño margen */
-        max-width: 280px; /* Un límite para que no sean ridículamente anchos */
-        margin: 0 auto; /* Centrar input/select dentro de su div */
+        width: 100%; /* Asegúrate de que tomen todo el ancho disponible de su padre */
+        max-width: 100%; /* Quita el límite de 280px para que se adapten por completo */
+        box-sizing: border-box; /* Crucial para incluir padding/border en el 100% */
+        margin: 0; /* Asegura que no haya márgenes externos que empujen */
     }
 
     .controls-container label {
@@ -250,8 +256,11 @@ header {
         text-align: center;
     }
     .generation-button {
-        width: auto;
-        max-width: 250px;
+        width: 100%; /* Asegura que el botón de generación ocupe todo el ancho disponible */
+        max-width: 100%; /* Quita cualquier límite de ancho */
+        box-sizing: border-box; /* Para que el padding/border no sumen al 100% */
+        white-space: normal; /* Permite que el texto se divida en varias líneas si es muy largo */
+        font-size: 0.9em; /* Ajusta el tamaño de la fuente si el texto es muy largo */
     }
     .generation-dropdown-menu {
         left: 50%;
@@ -419,10 +428,9 @@ header {
 
 @media (max-width: 480px) {
     .pokemon-list {
-        /* CAMBIO CLAVE: Reducir minmax a 90px para dar más flexibilidad en móviles */
-        grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
-        gap: 8px; /* Reducir un poco más el espacio entre tarjetas */
-        padding: 5px;
+        gap: 8px; /* Reduce el gap entre las tarjetas */
+        padding: 0 5px; /* Reduce el padding del contenedor de la lista */
+        justify-content: center; /* Asegura que las tarjetas se centren */
     }
 }
 
@@ -557,8 +565,9 @@ header {
 
 @media (max-width: 480px) {
     .pokemon-card {
-        padding: 5px; /* CAMBIO: Reducir padding de la tarjeta aún más */
-        min-height: 150px; /* CAMBIO: Reducir min-height para permitir más tarjetas */
+        flex-basis: calc(50% - 10px); /* Ajusta para 2 columnas con gap */
+        max-width: calc(50% - 10px); /* Asegura que no crezcan más de 50% */
+        min-width: 140px; /* Un mínimo para que la tarjeta no se vea muy pequeña, ajústalo si es necesario */
     }
     .pokemon-card .pokemon-image,
     .pokemon-image-placeholder {
