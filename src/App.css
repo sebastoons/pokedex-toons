@@ -453,178 +453,6 @@ header {
 /* MEDIA QUERIES PARA RESPONSIVIDAD          */
 /* ========================================================= */
 
-/* --- Estilos para Tabletas (max-width: 768px) --- */
-@media (max-width: 768px) {
-    .pokedex-container {
-        padding: 15px;
-        border-width: 8px; /* Un borde ligeramente más delgado en tablets */
-        margin: 15px auto; /* Reducir el margen externo */
-        width: calc(100% - 30px); /* Ajustado: 100% menos 15px de margen a cada lado */
-    }
-
-    .pokedex-logo {
-        max-width: 180px; /* Logo un poco más pequeño */
-    }
-
-    .welcome-message h2 {
-        font-size: 1.3em; /* Ajuste para que se vea bien */
-    }
-    .welcome-message p {
-        font-size: 0.8em; /* Ajuste para que se vea bien */
-    }
-
-    .controls-container {
-        flex-direction: column; /* Apila los filtros verticalmente */
-        align-items: stretch; /* Estira los elementos para ocupar el ancho disponible */
-        gap: 10px;
-        padding: 10px; /* Ajustar padding */
-    }
-
-    .controls-container div {
-        width: 100%;
-        max-width: 100%;
-        flex-basis: auto;
-        justify-content: center; /* Centra el contenido dentro del div de control */
-        flex-direction: column; /* Asegura que label e input/select se apilen dentro de cada control */
-    }
-
-    .controls-container label {
-        margin-bottom: 5px; /* Espacio debajo de la etiqueta */
-        text-align: center; /* Centra la etiqueta */
-    }
-
-    .controls-container input,
-    .controls-container select {
-        width: 100%;
-        max-width: 100%; /* Quita el límite de 280px para que se adapten por completo */
-        margin: 0 auto; /* Centra el input/select */
-    }
-
-    .generation-filter-container {
-        width: 100%;
-        text-align: center;
-    }
-    .controls-container select#type-filter option[value="normal"] { background-color: #A8A77A; color: white; text-shadow: 1px 1px 2px rgba(0,0,0,0.3); }
-    .controls-container select#type-filter option[value="fire"] { background-color: #EE8130; color: white; text-shadow: 1px 1px 2px rgba(0,0,0,0.3); }
-    .controls-container select#type-filter option[value="water"] { background-color: #6390F0; color: white; text-shadow: 1px 1px 2px rgba(0,0,0,0.3); }
-    .controls-container select#type-filter option[value="electric"] { background-color: #F7D02C; color: #333; text-shadow: 1px 1px 0px rgba(255,255,255,0.5); }
-    .controls-container select#type-filter option[value="grass"] { background-color: #7AC74C; color: white; text-shadow: 1px 1px 2px rgba(0,0,0,0.3); }
-    .controls-container select#type-filter option[value="ice"] { background-color: #96D9D6; color: #333; text-shadow: 1px 1px 0px rgba(255,255,255,0.5); }
-    .controls-container select#type-filter option[value="fighting"] { background-color: #C22E28; color: white; text-shadow: 1px 1px 2px rgba(0,0,0,0.3); }
-    .controls-container select#type-filter option[value="poison"] { background-color: #A33EA1; color: white; text-shadow: 1px 1px 2px rgba(0,0,0,0.3); }
-    .controls-container select#type-filter option[value="ground"] { background-color: #E2BF65; color: #333; text-shadow: 1px 1px 0px rgba(255,255,255,0.5); }
-    .controls-container select#type-filter option[value="flying"] { background-color: #A98FF3; color: #333; text-shadow: 1px 1px 0px rgba(255,255,255,0.5); }
-    .controls-container select#type-filter option[value="psychic"] { background-color: #F95587; color: white; text-shadow: 1px 1px 2px rgba(0,0,0,0.3); }
-    .controls-container select#type-filter option[value="bug"] { background-color: #A6B91A; color: white; text-shadow: 1px 1px 2px rgba(0,0,0,0.3); }
-    .controls-container select#type-filter option[value="rock"] { background-color: #B6A136; color: white; text-shadow: 1px 1px 2px rgba(0,0,0,0.3); }
-    .controls-container select#type-filter option[value="ghost"] { background-color: #735797; color: white; text-shadow: 1px 1px 2px rgba(0,0,0,0.3); }
-    .controls-container select#type-filter option[value="dragon"] { background-color: #6F35FC; color: white; text-shadow: 1px 1px 2px rgba(0,0,0,0.3); }
-    .controls-container select#type-filter option[value="dark"] { background-color: #705746; color: white; text-shadow: 1px 1px 2px rgba(0,0,0,0.3); }
-    .controls-container select#type-filter option[value="steel"] { background-color: #B7B7CE; color: #333; text-shadow: 1px 1px 0px rgba(255,255,255,0.5); }
-    .controls-container select#type-filter option[value="fairy"] { background-color: #D685AD; color: white; text-shadow: 1px 1px 2px rgba(0,0,0,0.3); }
-    
-    .generation-button {
-        width: 100%;
-        max-width: 250px; /* Límite para el botón en tablets */
-        margin: 0 auto; /* Centra el botón */
-        white-space: normal;
-        font-size: 0.9em;
-    }
-    .generation-dropdown-menu {
-        left: 50%;
-        transform: translateX(-50%);
-        min-width: 180px;
-        max-width: 90%;
-    }
-
-    /* Pokemon List y Cards para Tabletas */
-    .pokemon-list {
-        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); /* Más columnas si el ancho lo permite */
-        gap: 12px; /* Ajuste el gap */
-        padding: 8px; /* Ajuste el padding */
-    }
-    .pokemon-card {
-        min-height: 160px; /* Reduce un poco el alto mínimo */
-        padding: 6px;
-    }
-    .pokemon-card .pokemon-image {
-        max-width: 80px; /* Imágenes ligeramente más pequeñas */
-        max-height: 80px;
-    }
-    .pokemon-name {
-        font-size: 1.1em;
-    }
-    .pokemon-types span {
-        font-size: 0.65em;
-    }
-}
-
-/* --- Estilos para Móviles Pequeños (max-width: 480px) --- */
-@media (max-width: 480px) {
-    .pokedex-container {
-        padding: 10px;
-        margin: 10px auto; /* Un poco más de margen que en 375px */
-        border: 6px solid #e74c3c; /* Borde más delgado */
-        width: calc(100% - 20px); /* 100% del padre menos 10px de margen a cada lado */
-    }
-
-    .pokedex-logo {
-        max-width: 120px; /* Limita el ancho del logo para móviles */
-        margin-bottom: 5px; /* Reduce el margen inferior del logo */
-    }
-
-    .welcome-message h2 {
-        font-size: 1.1em;
-    }
-    .welcome-message p {
-        font-size: 0.7em;
-    }
-
-    .controls-container {
-        padding: 8px;
-        gap: 8px;
-    }
-
-    .generation-button {
-        font-size: 0.8em;
-    }
-    .generation-dropdown-menu {
-        min-width: 150px;
-        max-width: 95%;
-    }
-
-    /* Pokemon List y Cards para Móviles */
-    .pokemon-list {
-        /* Para asegurar 2 columnas en la mayoría de los móviles */
-        grid-template-columns: repeat(2, 1fr); /* Fija a 2 columnas */
-        gap: 8px;
-        padding: 5px;
-    }
-
-    .pokemon-card {
-        padding: 5px;
-        min-height: 140px; /* Ajustar alto mínimo */
-        /* Asegurar que las tarjetas tomen el ancho disponible en el grid de 2 columnas */
-        max-width: 100%;
-        width: 100%;
-    }
-
-    .pokemon-card .pokemon-image,
-    .pokemon-image-placeholder {
-        width: 65px; /* Tamaño de la imagen para móviles pequeños */
-        height: 65px;
-        max-width: 65px;
-        max-height: 65px;
-    }
-    .pokemon-name {
-        font-size: 0.9em;
-    }
-    .pokemon-types span {
-        font-size: 0.6em;
-        padding: 2px 6px;
-    }
-}
-
 /* --- Estilos para Móviles Muy Pequeños (max-width: 375px) --- */
 @media (max-width: 375px) {
     .pokedex-container {
@@ -695,8 +523,179 @@ header {
     }
 }
 
+/* --- Estilos para Móviles PEQUEÑOS (max-width: 480px) --- */
+/* Este rango cubre móviles estándar y más pequeños */
+@media (max-width: 480px) {
+    .pokedex-container {
+        padding: 10px;
+        margin: 10px auto;
+        border: 6px solid #e74c3c;
+        width: calc(100% - 20px);
+    }
+
+    .pokedex-logo {
+        max-width: 120px;
+        margin-bottom: 5px;
+    }
+
+    .welcome-message h2 {
+        font-size: 1.1em;
+    }
+    .welcome-message p {
+        font-size: 0.7em;
+    }
+
+    .controls-container {
+        padding: 8px;
+        gap: 8px;
+    }
+
+    .generation-button {
+        font-size: 0.8em;
+    }
+    .generation-dropdown-menu {
+        min-width: 150px;
+        max-width: 95%;
+    }
+
+    .pokemon-list {
+        grid-template-columns: repeat(2, 1fr); /* Fija a 2 columnas */
+        gap: 8px;
+        padding: 5px;
+    }
+
+    .pokemon-card {
+        padding: 5px;
+        min-height: 140px;
+        max-width: 100%;
+        width: 100%;
+    }
+
+    .pokemon-card .pokemon-image,
+    .pokemon-image-placeholder {
+        width: 65px;
+        height: 65px;
+        max-width: 65px;
+        max-height: 65px;
+    }
+    .pokemon-name {
+        font-size: 0.9em;
+    }
+    .pokemon-types span {
+        font-size: 0.6em;
+        padding: 2px 6px;
+    }
+}
+
+/* --- Estilos para Tabletas (min-width: 481px y max-width: 1024px) --- */
+/* Este rango cubre tablets en modo vertical y horizontal */
+@media (min-width: 481px) and (max-width: 1024px) {
+    .pokedex-container {
+        padding: 25px; /* Un poco más de padding que en móviles */
+        border-width: 9px;
+        margin: 20px auto;
+        width: calc(100% - 35px); /* Ajustado para margen lateral */
+    }
+
+    .pokedex-logo {
+        max-width: 200px; /* Logo más grande */
+    }
+
+    .welcome-message h2 {
+        font-size: 1.3em;
+    }
+    .welcome-message p {
+        font-size: 0.8em;
+    }
+
+    .controls-container {
+        /* Intenta mantener los controles más en línea si el espacio lo permite */
+        flex-direction: row;
+        justify-content: space-around;
+        gap: 15px;
+        padding: 15px;
+    }
+
+    .controls-container div {
+        /* Para tabletas, permite que los controles se muestren en línea */
+        flex-direction: row; /* Label e input/select en la misma fila */
+        align-items: center; /* Alinea verticalmente */
+        gap: 8px; /* Espacio entre label y input/select */
+        flex-basis: 30%; /* Intenta distribuir en 3 columnas flexibles */
+        max-width: 33%; /* Límite para que quepan 3 */
+        flex-wrap: nowrap; /* Evita que se envuelvan si hay espacio */
+    }
+
+    .controls-container label {
+        margin-bottom: 0; /* No margin inferior si están en fila */
+        text-align: right; /* Alinea el texto de la etiqueta a la derecha */
+        width: auto;
+        flex-shrink: 0; /* Evita que la etiqueta se encoja mucho */
+    }
+
+    .controls-container input,
+    .controls-container select {
+        width: auto; /* Ancho automático, crecerá con flex-grow */
+        flex-grow: 1; /* Permite que ocupe el espacio restante */
+        max-width: none; /* Eliminar restricción de ancho */
+        font-size: 0.8em;
+        padding: 9px;
+        text-align: left; /* Alinea el texto del input/select a la izquierda */
+    }
+    
+    .generation-button {
+        max-width: none; /* Quita el límite de ancho para que se ajuste al flex */
+        width: auto; /* Permite que el botón se ajuste naturalmente */
+        font-size: 0.9em;
+    }
+    .generation-dropdown-menu {
+        min-width: 180px;
+        max-width: none;
+    }
+
+    .pokemon-list {
+        grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); /* Permitir 3 o 4 columnas en tablets */
+        gap: 15px;
+        padding: 12px;
+    }
+    .pokemon-card {
+        min-height: 180px;
+        padding: 8px;
+    }
+    .pokemon-card .pokemon-image {
+        max-width: 100px;
+        max-height: 100px;
+    }
+    .pokemon-name {
+        font-size: 1.2em;
+    }
+    .pokemon-types span {
+        font-size: 0.7em;
+    }
+
+    /* Ajuste para PokemonDetail View dentro de este rango */
+    .pokemon-detail-view {
+        padding: 25px;
+        margin: 15px auto;
+        max-width: 700px; /* Un poco más estrecho que el general para pc */
+    }
+    .pokemon-detail-view h2 {
+        font-size: 1.7em;
+    }
+    .pokemon-detail-image {
+        width: 220px;
+        height: 220px;
+    }
+    .stats-container, .characteristics-container, .abilities-container, .moves-container {
+        padding: 0 15px;
+    }
+    .stat-name, .stat-value, .characteristic-label, .characteristic-value, .ability-badge, .type-badge {
+        font-size: 0.9em;
+    }
+}
+
+
 /* --- Estilos para PokemonDetail View --- */
-/* Esta sección se mantiene igual a como la enviaste, solo ajusté la media query si fuera necesario */
 .pokemon-detail-view {
     padding: 30px;
     max-width: 750px;
@@ -712,55 +711,8 @@ header {
     width: calc(100% - 40px); /* Ajuste para que se adapte al ancho en móviles */
 }
 
-@media (max-width: 768px) {
-    .pokemon-detail-view {
-        padding: 15px;
-        margin: 10px auto;
-    }
-    .pokemon-detail-view h2 {
-        font-size: 1.5em;
-    }
-}
+/* Los media queries para detail view están agrupados con los generales para mantener orden */
 
-@media (max-width: 480px) {
-    .pokemon-detail-view {
-        padding: 10px;
-        margin: 5px auto;
-    }
-    .pokemon-detail-view h2 {
-        font-size: 1.3em;
-    }
-    .pokemon-detail-image {
-        width: 180px;
-        height: 180px;
-        max-width: 90%;
-    }
-    .stat-item {
-        flex-direction: column;
-        align-items: flex-start;
-        margin-bottom: 8px;
-    }
-    .stat-name {
-        width: auto;
-        margin-bottom: 3px;
-        font-size: 0.9em;
-    }
-    .stat-bar-background {
-        width: 100%;
-        height: 20px;
-    }
-    .stat-value {
-        font-size: 0.9em;
-    }
-    .characteristics-container, .abilities-container, .moves-container {
-        padding: 0 10px;
-        gap: 5px;
-    }
-    .characteristic-item, .ability-badge, .type-badge {
-        padding: 5px 10px;
-        font-size: 0.8em;
-    }
-}
 
 .pokemon-detail-view h2 {
     color: #2c3e50;
@@ -786,12 +738,6 @@ header {
     object-fit: contain;
 }
 
-@media (max-width: 480px) {
-    .pokemon-detail-image {
-        width: 180px;
-        height: 180px;
-    }
-}
 
 /* Ajustar tamaños de fuente de estadísticas y habilidades */
 .stat-name, .stat-value,
@@ -800,21 +746,6 @@ header {
     font-size: 0.9em;
 }
 
-@media (max-width: 480px) {
-    .stat-name, .stat-value,
-    .characteristic-label, .characteristic-value,
-    .ability-badge, .type-badge {
-        font-size: 0.8em;
-    }
-    .stat-item {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-    .stat-name {
-        width: auto;
-        margin-bottom: 5px;
-    }
-}
 
 .pokemon-detail-view h3 {
     color: #34495e;
