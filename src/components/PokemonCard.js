@@ -8,25 +8,9 @@ import manualPokemonImages from '../data/manualPokemonImages'; // Asegúrate de 
 // Recibe un objeto 'pokemon' como prop.
 // Este objeto ahora DEBE incluir el 'id' y los 'types' (fetcheados en App.jsx).
 function PokemonCard({ pokemon }) {
-  // Ya no necesitamos fetchear los detalles completos aquí,
-  // App.jsx ya nos proporciona el ID y los Tipos necesarios para la lista.
-  // const [pokemonDetails, setPokemonDetails] = useState(null);
-  // const [loadingDetails, setLoadingDetails] = useState(true);
-  // const [errorDetails, setErrorDetails] = useState(null);
-
+ 
   // Estado para indicar si la imagen manual no pudo cargar.
   const [imageLoadError, setImageLoadError] = useState(false);
-
-  // useEffect hook: Ya no necesitamos fetchear detalles aquí.
-  // Mantenemos un useEffect simple si necesitas hacer algo cuando el componente se monta,
-  // pero el fetch de detalles se elimina.
-  /*
-  useEffect(() => {
-      // Código opcional si necesitas hacer algo al montar la tarjeta
-      // Por ejemplo, podrías loggear el nombre del Pokémon
-      console.log(`Rendering card for: ${pokemon.name}`);
-  }, [pokemon.id]); // Dependencia en el ID del Pokémon
-  */
 
   // Función para manejar el error de carga de la imagen.
   const handleImageLoadError = (e) => {
@@ -34,19 +18,11 @@ function PokemonCard({ pokemon }) {
       setImageLoadError(true); // Establece el estado imageLoadError a true.
   };
 
-  // --- Determinar la URL de la Imagen ---
-  // **MODIFICADO:** Ahora solo intentamos obtener la URL de tu objeto manual.
-  // Si no está ahí, usamos el placeholder.
   const pokemonId = pokemon.id; // Obtenemos el ID directamente de la prop 'pokemon'
   const imageUrl = manualPokemonImages[pokemonId]; // Intenta obtener la URL del objeto manual
 
   // Si no se encontró una URL manual, la URL final será el placeholder.
   const finalImageUrl = imageUrl || `https://placehold.co/100x100/e0e0e0/333?text=No+Img`;
-
-
-  // --- Renderizado de la Tarjeta ---
-  // No necesitamos renderizado condicional por loadingDetails o errorDetails aquí.
-  // Eso lo maneja App.jsx antes de renderizar la lista.
 
   return (
     // Envuelve la tarjeta con el componente Link para hacerla clicable.

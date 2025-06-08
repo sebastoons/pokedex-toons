@@ -6,14 +6,12 @@ export async function fetchPokemon(nameOrId) {
   try {
     const response = await fetch(`${BASE_URL}pokemon/${nameOrId}`);
     if (!response.ok) {
-      // Si la respuesta no es OK, lanza un error con el estado
       throw new Error(`Error al obtener el Pokémon: ${response.statusText} (${response.status})`);
     }
     const data = await response.json();
     return data;
   } catch (error) {
     console.error(`Error fetching Pokémon ${nameOrId}:`, error);
-    // Vuelve a lanzar el error para que el componente que llama lo pueda manejar
     throw error;
   }
 }
@@ -28,17 +26,11 @@ export async function fetchTypeDetails(typeName) {
     return data.damage_relations;
   } catch (error) {
     console.error(`Error fetching type details for ${typeName}:`, error);
-    throw error; // Propagar el error
+    throw error;
   }
 }
 
 export async function getPokemonTypeEffectiveness(pokemonTypes) {
-  const effectiveness = {
-    double_damage_from: [], // Debilidades (recibe 2x daño)
-    half_damage_from: [],   // Resistencias (recibe 0.5x daño)
-    no_damage_from: [],     // Inmunidades (recibe 0x daño)
-  };
-
   const damageMultipliers = {}; // Objeto para llevar la cuenta de la efectividad acumulada para cada tipo de ataque
 
   for (const typeInfo of pokemonTypes) {
@@ -65,21 +57,35 @@ export async function getPokemonTypeEffectiveness(pokemonTypes) {
         }
     } catch (error) {
         console.warn(`No se pudieron obtener las relaciones de daño para el tipo ${typeName}. Continuando con otros tipos.`, error);
-        // Si hay un error en un tipo, no impedimos que se procesen otros tipos
     }
   }
 
   // Clasifica los tipos según el multiplicador de daño final
+  // Ahora devolveremos un array de objetos para cada categoría
+  const effectiveness = {
+    double_damage_from: [], // Débil a (2x o 4x)
+    half_damage_from: [],   // Resistente a (0.5x o 0.25x)
+    no_damage_from: [],     // Inmune a (0x)
+    // normal_damage_from: [], // Si quisieras mostrar también los de daño normal (1x)
+  };
+
   for (const type in damageMultipliers) {
     const multiplier = damageMultipliers[type];
     if (multiplier === 0) {
-      effectiveness.no_damage_from.push(type);
-    } else if (multiplier < 1) { // Esto cubrirá 0.5x y 0.25x
-      effectiveness.half_damage_from.push(type);
-    } else if (multiplier > 1) { // Esto cubrirá 2x y 4x
-      effectiveness.double_damage_from.push(type);
+      effectiveness.no_damage_from.push({ type: type, multiplier: 0 });
+    } else if (multiplier < 1) { // 0.5x o 0.25x
+      effectiveness.half_damage_from.push({ type: type, multiplier: multiplier });
+    } else if (multiplier > 1) { // 2x o 4x
+      effectiveness.double_damage_from.push({ type: type, multiplier: multiplier });
     }
+    // Si el multiplicador es 1, no lo añadimos a ninguna de estas listas
   }
+
+  // Opcional: ordenar los arrays por nombre de tipo para consistencia
+  effectiveness.double_damage_from.sort((a, b) => a.type.localeCompare(b.type));
+  effectiveness.half_damage_from.sort((a, b) => a.type.localeCompare(b.type));
+  effectiveness.no_damage_from.sort((a, b) => a.type.localeCompare(b.type));
+
 
   return effectiveness;
 }

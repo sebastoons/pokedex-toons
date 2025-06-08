@@ -586,7 +586,7 @@ header {
     }
     .pokemon-types span {
         font-size: 0.6em;
-        padding: 2px 6px;
+        padding: 3px 10px;
     }
 }
 
@@ -721,7 +721,7 @@ header {
     color: #2c3e50;
     margin-bottom: 15px;
     text-transform: capitalize;
-    font-size: 1.8em;
+    font-size: 1.2em;
     font-family: 'Press Start 2P', cursive;
     text-shadow: 2px 2px 0px #bdc3c7;
 }
@@ -757,14 +757,15 @@ header {
     border-bottom: 2px solid #bdc3c7;
     padding-bottom: 8px;
     font-family: 'Press Start 2P', cursive;
-    font-size: 1.2em;
+    font-size: 0.8em;
 }
 
 /* --- Estilos para las Estadísticas (Barras) --- */
 .stats-container {
-    margin-top: 20px;
+    margin-top: 18px;
     text-align: left;
     padding: 0 20px;
+    font-size: 0.8em;
 }
 
 .stat-item {
@@ -786,7 +787,7 @@ header {
 
 .stat-bar-background {
     flex-grow: 1;
-    height: 25px;
+    height: 15px;
     background-color: #bdc3c7;
     border-radius: 12px;
     overflow: hidden;
@@ -826,8 +827,8 @@ header {
     background-color: #3498db;
     border: 3px solid #2980b9;
     border-radius: 8px;
-    padding: 12px 25px;
-    font-size: 1.1em;
+    padding: 6px 25px;
+    font-size: 0.7em;
     cursor: pointer;
     transition: background-color 0.2s ease, transform 0.1s ease;
     display: inline-block;
@@ -857,9 +858,8 @@ header {
     margin-bottom: 15px;
     text-align: left;
     padding-left: 20px;
-    font-size: 1.1em;
-    font-family: sans-serif;
-    font-weight: bold;
+    font-size: 0.9em;
+    font-family: 'press start 2p', cursive;
 }
 
 .characteristics-container {
@@ -878,6 +878,9 @@ header {
     border-radius: 8px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08);
     transition: transform 0.2s ease-in-out;
+    margin-bottom: 4px;
+    font-size: 0.9em;
+    height: 15px;
 }
 
 .characteristic-item:hover {
@@ -966,24 +969,74 @@ header {
 .moves-container {
     display: flex;
     flex-wrap: wrap;
-    gap: 8px;
+    gap: 1px;
     margin-top: 10px;
     margin-bottom: 20px;
-    padding: 0 20px;
+    padding: 0 15px;
     justify-content: center;
 }
 
 /* Estilo base para los badges */
 .type-badge {
-    padding: 6px 12px;
-    border-radius: 16px;
+    padding: 2px 8px;
+    border-radius: 10px;
     color: white;
-    font-size: 0.85em;
+    font-size: 0.8em;
     font-weight: bold;
     text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.4);
     text-align: center;
     display: inline-block;
-    margin: 3px;
+    margin: 2px;
+}
+
+/* Contenedor general para las relaciones de tipo */
+.type-effectiveness-container {
+    background-color: #f0f0f0; /* Un fondo gris claro para el contenedor */
+    padding: 15px;
+    border-radius: 8px;
+    margin-top: 20px;
+}
+
+/* Estilos para los títulos de cada categoría de efectividad */
+.type-effectiveness-container p strong {
+    display: block; /* Asegura que el título ocupe su propia línea */
+    font-size: 1.1em;
+    margin-bottom: 8px; /* Espacio entre el título y los badges */
+    color: #333;
+    /* Opcional: añadir un color de fondo para diferenciar el encabezado de la categoría */
+    background-color: #e5e5e5;
+    padding: 5px 10px;
+    border-radius: 5px;
+}
+
+/* Estilos para los badges de DEBILIDADES */
+.type-effectiveness-container p:has(strong:contains("Débil a")) .type-badge {
+    background-color: #ff6b6b; /* Rojo para debilidades */
+    border: 1px solid #c0392b;
+}
+
+/* Estilos para los badges de RESISTENCIAS */
+.type-effectiveness-container p:has(strong:contains("Resistente a")) .type-badge {
+    background-color: #6bcc85; /* Verde para resistencias */
+    border: 1px solid #27ae60;
+}
+
+/* Estilos para los badges de INMUNIDADES */
+.type-effectiveness-container p:has(strong:contains("Inmune a")) .type-badge {
+    background-color: #8c8c8c; /* Gris oscuro para inmunidades */
+    border: 1px solid #5d5d5d;
+}
+
+/* Media queries para adaptar a diferentes pantallas (ejemplo básico) */
+@media (max-width: 768px) {
+    .pokemon-detail-view {
+        padding: 10px;
+    }
+    .type-badge {
+        font-size: 0.8em;
+        padding: 3px 6px;
+        margin: 3px;
+    }
 }
 
 .type-normal { background-color: #A8A77A; }

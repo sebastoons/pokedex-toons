@@ -1,9 +1,10 @@
+// src/components/PokemonDetail.js
+
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import '../App.css'; // Asegúrate de que la ruta sea correcta
 
-// IMPORTAR LAS FUNCIONES DE LA API AQUÍ
-import { fetchPokemon, getPokemonTypeEffectiveness } from '../services/pokeapi'; // Ajusta la ruta si es necesario
+import { fetchPokemon, getPokemonTypeEffectiveness } from '../services/pokeapi';
 
 function PokemonDetail() {
   const { pokemonId } = useParams();
@@ -15,26 +16,22 @@ function PokemonDetail() {
   const [speciesData, setSpeciesData] = useState(null);
   const [detailedAbilities, setDetailedAbilities] = useState([]);
   const [pokemonMoves, setPokemonMoves] = useState([]);
-  // NUEVO ESTADO PARA LAS FORTALEZAS/DEBILIDADES
-  const [typeEffectiveness, setTypeEffectiveness] = useState(null);
+  const [typeEffectiveness, setTypeEffectiveness] = useState(null); // Estado para las fortalezas/debilidades
 
   useEffect(() => {
-    const fetchAllPokemonDetails = async () => { // Renombré la función para reflejar que trae todo
+    const fetchAllPokemonDetails = async () => {
       setLoading(true);
       setError(null);
-      // Limpiar estados al iniciar un nuevo fetch
       setPokemonData(null);
       setSpeciesData(null);
       setDetailedAbilities([]);
       setPokemonMoves([]);
-      setTypeEffectiveness(null); // Limpiar también las fortalezas/debilidades
+      setTypeEffectiveness(null);
 
       try {
-        // --- Fetch datos principales del Pokémon usando la nueva función ---
         const pokemonJson = await fetchPokemon(pokemonId);
         setPokemonData(pokemonJson);
 
-        // --- Fetch datos de la especie ---
         if (pokemonJson.species?.url) {
           const speciesResponse = await fetch(pokemonJson.species.url);
           if (!speciesResponse.ok) {
@@ -47,7 +44,6 @@ function PokemonDetail() {
             setSpeciesData({ flavor_text_entries: [] });
         }
 
-        // --- Fetch detalles y nombres en español de las habilidades ---
         if (pokemonJson.abilities && pokemonJson.abilities.length > 0) {
           const abilitiesPromises = pokemonJson.abilities.map(async (abilityInfo) => {
             try {
@@ -73,9 +69,8 @@ function PokemonDetail() {
           setDetailedAbilities([]);
         }
 
-        // --- Fetch detalles y nombres en español de los primeros 4 Movimientos ---
         if (pokemonJson.moves && pokemonJson.moves.length > 0) {
-          const selectedMovesData = pokemonJson.moves.slice(10, 14); // Tomar los primeros 4 movimientos
+          const selectedMovesData = pokemonJson.moves.slice(1, 10);
 
           const movesPromises = selectedMovesData.map(async (moveEntry) => {
             try {
@@ -86,7 +81,7 @@ function PokemonDetail() {
                 return {
                   id: moveEntry.move.name,
                   name: fallbackName,
-                  type: 'unknown', // Tipo desconocido como fallback
+                  type: 'unknown',
                 };
               }
               const moveJson = await moveResponse.json();
@@ -99,7 +94,7 @@ function PokemonDetail() {
               return {
                 id: moveJson.id,
                 name: translatedName,
-                type: moveJson.type.name.toLowerCase(), // ej. 'fire', 'water', 'normal' (asegurar minúsculas para la clase CSS)
+                type: moveJson.type.name.toLowerCase(),
               };
             } catch (moveFetchError) {
                 console.error(`Error al obtener detalle de movimiento para ${moveEntry.move.name}:`, moveFetchError);
@@ -117,12 +112,12 @@ function PokemonDetail() {
           setPokemonMoves([]);
         }
 
-        // --- NUEVO: Fetch Fortalezas y Debilidades ---
+        // --- Fetch Fortalezas y Debilidades ---
         if (pokemonJson.types && pokemonJson.types.length > 0) {
           const effectivenessData = await getPokemonTypeEffectiveness(pokemonJson.types);
           setTypeEffectiveness(effectivenessData);
         } else {
-          setTypeEffectiveness(null); // No hay tipos, no hay efectividad
+          setTypeEffectiveness(null);
         }
 
       } catch (err) {
@@ -137,7 +132,7 @@ function PokemonDetail() {
         fetchAllPokemonDetails();
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pokemonId]); // El efecto se ejecuta cuando cambia el pokemonId
+  }, [pokemonId]);
 
   const handleGoBack = () => {
     navigate('/');
@@ -160,6 +155,25 @@ function PokemonDetail() {
     const spanishEntry = flavorTextEntries.find(entry => entry.language.name === 'es');
     return spanishEntry ? spanishEntry.flavor_text.replace(/[\n\r\f]/g, ' ') : "Descripción en español no disponible.";
   };
+
+  // Función auxiliar para renderizar los tipos de efectividad con su multiplicador
+  const renderEffectivenessTypes = (typesArray, typeLabel) => {
+    if (!typesArray || typesArray.length === 0) return null;
+
+    return (
+      <p>
+        <strong>{typeLabel}:</strong>{' '}
+        {typesArray.map((effectType, index) => (
+          <span key={effectType.type} className={`type-badge type-${effectType.type}`}>
+            {effectType.type.charAt(0).toUpperCase() + effectType.type.slice(1)}
+            {/* Solo muestra el multiplicador si es diferente de 1, 0, 0.5 o 2 */}
+            {(effectType.multiplier !== 1 && effectType.multiplier !== 0 && effectType.multiplier !== 0.5 && effectType.multiplier !== 2) && ` (${effectType.multiplier}x)`}
+          </span>
+        ))}
+      </p>
+    );
+  };
+
 
   if (loading) {
     return <div className="loading">Cargando datos del Pokémon ID {pokemonId}...</div>;
@@ -191,9 +205,6 @@ function PokemonDetail() {
     pokemonData.sprites.other?.["official-artwork"]?.front_default ||
     pokemonData.sprites.front_default ||
     `https://placehold.co/250x250/e0e0e0/333?text=No+Img`;
-
-  // Asegúrate de que esta línea esté presente si usas firstPokemonType para algo más que el color de la habilidad
-  // const firstPokemonType = pokemonData?.types?.[0]?.type.name; 
 
   return (
     <div className="pokemon-detail-view">
@@ -246,7 +257,7 @@ function PokemonDetail() {
           {detailedAbilities.map(abilityDetail => (
             <span
               key={abilityDetail.id}
-              className={`ability-badge`} // Puedes quitar el tipo aquí si no quieres que la habilidad tenga el color del primer tipo. O dejarlo como estaba si te gusta.
+              className={`ability-badge`}
             >
               {abilityDetail.name}
               {abilityDetail.isHidden && " (Habilidad Oculta)"}
@@ -278,46 +289,20 @@ function PokemonDetail() {
       <h3>Entrada de Pokedex</h3>
       <p>{getSpanishDescription(speciesData?.flavor_text_entries)}</p>
 
-      <h3>Línea Evolutiva</h3>
+      <h3>Evoluciones</h3>
       <p>Información de evolución no disponible aún.</p>
 
-      {/* >>>>> NUEVO: SECCIÓN DE FORTALEZAS Y DEBILIDADES <<<<< */}
+      {/* >>>>> SECCIÓN DE FORTALEZAS Y DEBILIDADES <<<<< */}
       <h3>Fortalezas y Debilidades</h3>
       {typeEffectiveness ? (
         <div className="type-effectiveness-container">
-          {typeEffectiveness.double_damage_from.length > 0 && (
-            <p>
-              **Débil a:**{' '}
-              {typeEffectiveness.double_damage_from.map((type, index) => (
-                <span key={type} className={`type-badge type-${type}`}>
-                  {type.charAt(0).toUpperCase() + type.slice(1)}
-                </span>
-              ))}
-            </p>
-          )}
-          {typeEffectiveness.half_damage_from.length > 0 && (
-            <p>
-              **Resistente a:**{' '}
-              {typeEffectiveness.half_damage_from.map((type, index) => (
-                <span key={type} className={`type-badge type-${type}`}>
-                  {type.charAt(0).toUpperCase() + type.slice(1)}
-                </span>
-              ))}
-            </p>
-          )}
-          {typeEffectiveness.no_damage_from.length > 0 && (
-            <p>
-              **Inmune a:**{' '}
-              {typeEffectiveness.no_damage_from.map((type, index) => (
-                <span key={type} className={`type-badge type-${type}`}>
-                  {type.charAt(0).toUpperCase() + type.slice(1)}
-                </span>
-              ))}
-            </p>
-          )}
-          {(typeEffectiveness.double_damage_from.length === 0 &&
-            typeEffectiveness.half_damage_from.length === 0 &&
-            typeEffectiveness.no_damage_from.length === 0) && (
+          {renderEffectivenessTypes(typeEffectiveness.double_damage_from, 'Débil a')}
+          {renderEffectivenessTypes(typeEffectiveness.half_damage_from, 'Resistente a')}
+          {renderEffectivenessTypes(typeEffectiveness.no_damage_from, 'Inmune a')}
+
+          {typeEffectiveness.double_damage_from.length === 0 &&
+           typeEffectiveness.half_damage_from.length === 0 &&
+           typeEffectiveness.no_damage_from.length === 0 && (
             <p>No se encontraron relaciones de daño específicas.</p>
           )}
         </div>
@@ -325,7 +310,6 @@ function PokemonDetail() {
         <p>Cargando información de tipos efectivos...</p>
       )}
       {/* >>>>> FIN SECCIÓN DE FORTALEZAS Y DEBILIDADES <<<<< */}
-
 
       <button onClick={handleGoBack} className="back-button" style={{ marginTop: '30px' }}>
         ← Volver a la Pokedex
