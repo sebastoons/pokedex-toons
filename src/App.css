@@ -721,7 +721,7 @@ header {
     color: #2c3e50;
     margin-bottom: 15px;
     text-transform: capitalize;
-    font-size: 1.2em;
+    font-size: 1.1em;
     font-family: 'Press Start 2P', cursive;
     text-shadow: 2px 2px 0px #bdc3c7;
 }
@@ -919,18 +919,7 @@ header {
     }
 }
 
-/* Contenedor flexible para las insignias de habilidades */
-.abilities-container {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin-top: 10px;
-    margin-bottom: 20px;
-    padding: 0 20px;
-    justify-content: center;
-}
-
-/* Estilos para cada insignia de habilidad */
+/* Tus estilos originales para cada insignia de habilidad (¡MANTENER ESTO!) */
 .ability-badge {
     padding: 5px 10px;
     border-radius: 15px;
@@ -939,6 +928,37 @@ header {
     font-weight: bold;
     text-transform: capitalize;
     text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+    /* Puedes añadir aquí el display: inline-block; si quieres que sea una propiedad base */
+    display: inline-block;
+}
+
+/* Contenedor específico para la habilidad (NUEVO) */
+.ability-detail-container {
+    background-color: #f8f8f8;
+    padding: 10px 15px;
+    border-radius: 8px;
+    margin-top: 15px;
+    margin-bottom: 20px;
+    text-align: center;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* Sobrescribir o añadir solo propiedades específicas para el badge dentro de este contenedor */
+.ability-detail-container .ability-badge {
+    margin-bottom: 10px; /* Esto añade el espacio entre el badge y la descripción */
+    /* No necesitas repetir padding, border-radius, color, etc. si ya están en .ability-badge */
+}
+
+
+/* Estilos para la descripción de la habilidad (NUEVO) */
+.ability-description {
+    font-size: 0.95em;
+    color: #555;
+    line-height: 1.4;
+    text-align: justify;
+    margin-top: 10px;
 }
 
 /* Asegurarse de que las clases de tipo existentes tengan color de texto contrastante */
@@ -992,21 +1012,24 @@ header {
 /* Contenedor general para las relaciones de tipo */
 .type-effectiveness-container {
     background-color: #f0f0f0; /* Un fondo gris claro para el contenedor */
-    padding: 15px;
+    padding: 2px;
     border-radius: 8px;
-    margin-top: 20px;
+    margin-top: 1px;
 }
 
 /* Estilos para los títulos de cada categoría de efectividad */
 .type-effectiveness-container p strong {
     display: block; /* Asegura que el título ocupe su propia línea */
-    font-size: 1.1em;
-    margin-bottom: 8px; /* Espacio entre el título y los badges */
+    font-size: 0.8em;
+    margin-bottom: 5px; /* Espacio entre el título y los badges */
     color: #333;
     /* Opcional: añadir un color de fondo para diferenciar el encabezado de la categoría */
     background-color: #e5e5e5;
-    padding: 5px 10px;
-    border-radius: 5px;
+    padding: 3px 10px;
+    border-radius: 10px;
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 100px;
 }
 
 /* Estilos para los badges de DEBILIDADES */
@@ -1033,7 +1056,7 @@ header {
         padding: 10px;
     }
     .type-badge {
-        font-size: 0.8em;
+        font-size: 0.7em;
         padding: 3px 6px;
         margin: 3px;
     }

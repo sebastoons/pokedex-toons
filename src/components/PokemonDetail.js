@@ -1,5 +1,4 @@
 // src/components/PokemonDetail.js
-
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import '../App.css'; // Asegúrate de que la ruta sea correcta
@@ -14,7 +13,8 @@ function PokemonDetail() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [speciesData, setSpeciesData] = useState(null);
-  const [detailedAbilities, setDetailedAbilities] = useState([]);
+  // MODIFICADO: Ahora detailedAbility será un solo objeto, no un array
+  const [detailedAbility, setDetailedAbility] = useState(null); //
   const [pokemonMoves, setPokemonMoves] = useState([]);
   const [typeEffectiveness, setTypeEffectiveness] = useState(null); // Estado para las fortalezas/debilidades
 
@@ -24,7 +24,7 @@ function PokemonDetail() {
       setError(null);
       setPokemonData(null);
       setSpeciesData(null);
-      setDetailedAbilities([]);
+      setDetailedAbility(null); // Reiniciar la habilidad detallada
       setPokemonMoves([]);
       setTypeEffectiveness(null);
 
@@ -44,33 +44,61 @@ function PokemonDetail() {
             setSpeciesData({ flavor_text_entries: [] });
         }
 
+        // --- MODIFICADO: Fetch UN solo detalle de habilidad ---
         if (pokemonJson.abilities && pokemonJson.abilities.length > 0) {
-          const abilitiesPromises = pokemonJson.abilities.map(async (abilityInfo) => {
+          // Intentar encontrar una habilidad no oculta primero
+          let chosenAbilityInfo = pokemonJson.abilities.find(ab => !ab.is_hidden);
+          // Si no hay no ocultas, toma la primera que haya (podría ser oculta)
+          if (!chosenAbilityInfo) {
+            chosenAbilityInfo = pokemonJson.abilities[0];
+          }
+
+          if (chosenAbilityInfo) {
             try {
-              const abilityResponse = await fetch(abilityInfo.ability.url);
+              const abilityResponse = await fetch(chosenAbilityInfo.ability.url);
               if (!abilityResponse.ok) {
-                console.warn(`No se pudieron obtener detalles para la habilidad: ${abilityInfo.ability.name}. Estado: ${abilityResponse.status}`);
-                const fallbackName = abilityInfo.ability.name.replace(/-/g, ' ').split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
-                return { id: abilityInfo.ability.name, name: fallbackName, isHidden: abilityInfo.is_hidden };
+                console.warn(`No se pudieron obtener detalles para la habilidad: ${chosenAbilityInfo.ability.name}. Estado: ${abilityResponse.status}`);
+                const fallbackName = chosenAbilityInfo.ability.name.replace(/-/g, ' ').split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+                setDetailedAbility({
+                  id: chosenAbilityInfo.ability.name,
+                  name: fallbackName,
+                  isHidden: chosenAbilityInfo.is_hidden,
+                  description: 'Descripción no disponible.'
+                });
+              } else {
+                const abilityJson = await abilityResponse.json();
+                const spanishNameEntry = abilityJson.names.find(nameEntry => nameEntry.language.name === 'es');
+                const translatedName = spanishNameEntry ? spanishNameEntry.name : chosenAbilityInfo.ability.name.replace(/-/g, ' ').split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+                
+                const spanishEffectEntry = abilityJson.effect_entries.find(entry => entry.language.name === 'es');
+                const description = spanishEffectEntry ? spanishEffectEntry.effect : 'Descripción no disponible.';
+
+                setDetailedAbility({
+                  id: abilityJson.id,
+                  name: translatedName,
+                  isHidden: chosenAbilityInfo.is_hidden,
+                  description: description // Guardar la descripción
+                });
               }
-              const abilityJson = await abilityResponse.json();
-              const spanishNameEntry = abilityJson.names.find(nameEntry => nameEntry.language.name === 'es');
-              const translatedName = spanishNameEntry ? spanishNameEntry.name : abilityInfo.ability.name.replace(/-/g, ' ').split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
-              return { id: abilityJson.id, name: translatedName, isHidden: abilityInfo.is_hidden };
             } catch (abilityFetchError) {
-                console.error(`Error al obtener detalle de habilidad para ${abilityInfo.ability.name}:`, abilityFetchError);
-                const fallbackName = abilityInfo.ability.name.replace(/-/g, ' ').split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
-                return { id: abilityInfo.ability.name, name: fallbackName, isHidden: abilityInfo.is_hidden };
+                console.error(`Error al obtener detalle de habilidad para ${chosenAbilityInfo.ability.name}:`, abilityFetchError);
+                const fallbackName = chosenAbilityInfo.ability.name.replace(/-/g, ' ').split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+                setDetailedAbility({
+                  id: chosenAbilityInfo.ability.name,
+                  name: fallbackName,
+                  isHidden: chosenAbilityInfo.is_hidden,
+                  description: 'Error al cargar la descripción.'
+                });
             }
-          });
-          const resolvedAbilities = await Promise.all(abilitiesPromises);
-          setDetailedAbilities(resolvedAbilities);
+          } else {
+            setDetailedAbility(null); // No hay habilidades
+          }
         } else {
-          setDetailedAbilities([]);
+          setDetailedAbility(null);
         }
 
         if (pokemonJson.moves && pokemonJson.moves.length > 0) {
-          const selectedMovesData = pokemonJson.moves.slice(1, 10);
+          const selectedMovesData = pokemonJson.moves.slice(1, 16);
 
           const movesPromises = selectedMovesData.map(async (moveEntry) => {
             try {
@@ -206,6 +234,9 @@ function PokemonDetail() {
     pokemonData.sprites.front_default ||
     `https://placehold.co/250x250/e0e0e0/333?text=No+Img`;
 
+  // Obtenemos el primer tipo del Pokémon para el color del badge de habilidad
+  const firstPokemonType = pokemonData?.types?.[0]?.type.name;
+
   return (
     <div className="pokemon-detail-view">
       <button onClick={handleGoBack} className="back-button">
@@ -251,25 +282,27 @@ function PokemonDetail() {
         <span className="characteristic-value">{(pokemonData.weight / 10).toFixed(1)} kg</span>
       </div>
 
-      <h4>Habilidades:</h4>
-      {detailedAbilities.length > 0 ? (
-        <div className="abilities-container">
-          {detailedAbilities.map(abilityDetail => (
-            <span
-              key={abilityDetail.id}
-              className={`ability-badge`}
-            >
-              {abilityDetail.name}
-              {abilityDetail.isHidden && " (Habilidad Oculta)"}
-            </span>
-          ))}
+      {/* MODIFICADO: Sección de Habilidades */}
+      <h4>Habilidad:</h4>
+      {detailedAbility ? (
+        <div className="ability-detail-container"> {/* Contenedor específico para una habilidad */}
+          <span
+            key={detailedAbility.id}
+            // Usa el color del primer tipo del Pokémon para la habilidad
+            className={`ability-badge type-${firstPokemonType ? firstPokemonType.toLowerCase() : 'normal'}`}
+          >
+            {detailedAbility.name}
+            {detailedAbility.isHidden && " (Habilidad Oculta)"}
+          </span>
+          <p className="ability-description">{detailedAbility.description}</p> {/* Descripción de la habilidad */}
         </div>
       ) : (
         <p style={{ paddingLeft: '20px', marginBottom: '20px' }}>Este Pokémon no tiene habilidades listadas.</p>
       )}
+      {/* FIN MODIFICADO: Sección de Habilidades */}
 
       {/* >>>>> SECCIÓN DE MOVIMIENTOS <<<<< */}
-      <h4>Movimientos Destacados:</h4>
+      <h4>Movimientos:</h4>
       {pokemonMoves.length > 0 ? (
         <div className="moves-container">
           {pokemonMoves.map(moveDetail => (
@@ -296,8 +329,8 @@ function PokemonDetail() {
       <h3>Fortalezas y Debilidades</h3>
       {typeEffectiveness ? (
         <div className="type-effectiveness-container">
-          {renderEffectivenessTypes(typeEffectiveness.double_damage_from, 'Débil a')}
-          {renderEffectivenessTypes(typeEffectiveness.half_damage_from, 'Resistente a')}
+          {renderEffectivenessTypes(typeEffectiveness.double_damage_from, 'Débil contra')}
+          {renderEffectivenessTypes(typeEffectiveness.half_damage_from, 'Fuerte Contra')}
           {renderEffectivenessTypes(typeEffectiveness.no_damage_from, 'Inmune a')}
 
           {typeEffectiveness.double_damage_from.length === 0 &&
