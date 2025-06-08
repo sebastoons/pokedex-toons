@@ -49,10 +49,6 @@ function PokemonDetail() {
           // Intentar encontrar una habilidad no oculta primero
           let chosenAbilityInfo = pokemonJson.abilities.find(ab => !ab.is_hidden);
           // Si no hay no ocultas, toma la primera que haya (podría ser oculta)
-          if (!chosenAbilityInfo) {
-            chosenAbilityInfo = pokemonJson.abilities[0];
-          }
-
           if (chosenAbilityInfo) {
             try {
               const abilityResponse = await fetch(chosenAbilityInfo.ability.url);
@@ -63,15 +59,28 @@ function PokemonDetail() {
                   id: chosenAbilityInfo.ability.name,
                   name: fallbackName,
                   isHidden: chosenAbilityInfo.is_hidden,
-                  description: 'Descripción no disponible.'
+                  description: 'Descripción no disponible.' // Mensaje genérico si falla la carga completa
                 });
               } else {
                 const abilityJson = await abilityResponse.json();
                 const spanishNameEntry = abilityJson.names.find(nameEntry => nameEntry.language.name === 'es');
                 const translatedName = spanishNameEntry ? spanishNameEntry.name : chosenAbilityInfo.ability.name.replace(/-/g, ' ').split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
                 
+                // --- MODIFICADO: Lógica simplificada para la descripción ---
+                let description = 'Descripción no disponible.'; // Default
+
+                // Intenta obtener de effect_entries en español
                 const spanishEffectEntry = abilityJson.effect_entries.find(entry => entry.language.name === 'es');
-                const description = spanishEffectEntry ? spanishEffectEntry.effect : 'Descripción no disponible.';
+                if (spanishEffectEntry) {
+                    description = spanishEffectEntry.effect.replace(/[\n\r\f]/g, ' '); // Limpiar saltos de línea
+                } else {
+                    // Si no hay en español, busca en inglés
+                    const englishEffectEntry = abilityJson.effect_entries.find(entry => entry.language.name === 'en');
+                    if (englishEffectEntry) {
+                        description = englishEffectEntry.effect.replace(/[\n\r\f]/g, ' ');
+                    }
+                }
+                // --- FIN MODIFICACIÓN ---
 
                 setDetailedAbility({
                   id: abilityJson.id,
