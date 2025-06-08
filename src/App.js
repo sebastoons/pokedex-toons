@@ -20,24 +20,24 @@ const ALL_POKEMON_GENERATIONS = [
 
 // MODIFICADO: Lista de tipos también fuera del componente si es constante
 const ALL_POKEMON_TYPES = [
-    { value: 'normal', display: 'Normal' },
-    { value: 'fire', display: 'Fuego' },
-    { value: 'water', display: 'Agua' },
-    { value: 'electric', display: 'Eléctrico' },
-    { value: 'grass', display: 'Planta' },
-    { value: 'ice', display: 'Hielo' },
-    { value: 'fighting', display: 'Lucha' },
-    { value: 'poison', display: 'Veneno' },
-    { value: 'ground', display: 'Tierra' },
-    { value: 'flying', display: 'Volador' },
-    { value: 'psychic', display: 'Psíquico' },
-    { value: 'bug', display: 'Bicho' },
-    { value: 'rock', display: 'Roca' },
-    { value: 'ghost', display: 'Fantasma' },
-    { value: 'dragon', display: 'Dragón' },
-    { value: 'dark', display: 'Siniestro' },
-    { value: 'steel', display: 'Acero' },
-    { value: 'fairy', display: 'Hada' },
+  { value: 'normal', display: 'Normal', color: '#A8A77A' }, // Un gris/marrón claro
+  { value: 'fire', display: 'Fuego', color: '#EE8130' },   // Naranja
+  { value: 'water', display: 'Agua', color: '#6390F0' },   // Azul
+  { value: 'electric', display: 'Eléctrico', color: '#F7D02C' }, // Amarillo
+  { value: 'grass', display: 'Planta', color: '#7AC74C' }, // Verde
+  { value: 'ice', display: 'Hielo', color: '#96D9D6' },     // Azul claro
+  { value: 'fighting', display: 'Lucha', color: '#C22E28' }, // Rojo oscuro
+  { value: 'poison', display: 'Veneno', color: '#A33EA1' }, // Morado
+  { value: 'ground', display: 'Tierra', color: '#E2BF65' }, // Marrón claro
+  { value: 'flying', display: 'Volador', color: '#A98FF3' }, // Morado claro
+  { value: 'psychic', display: 'Psíquico', color: '#F95587' }, // Rosa
+  { value: 'bug', display: 'Bicho', color: '#A6B91A' },     // Verde lima
+  { value: 'rock', display: 'Roca', color: '#B6A136' },     // Marrón ocre
+  { value: 'ghost', display: 'Fantasma', color: '#735797' }, // Morado oscuro
+  { value: 'dragon', display: 'Dragón', color: '#6F35FC' }, // Morado azulado
+  { value: 'dark', display: 'Siniestro', color: '#705746' }, // Marrón oscuro
+  { value: 'steel', display: 'Acero', color: '#B7B7CE' },   // Gris metálico
+  { value: 'fairy', display: 'Hada', color: '#D685AD' },   // Rosa claro
 ];
 
 function App() {

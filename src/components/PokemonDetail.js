@@ -2,6 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import '../App.css'; // Asegúrate de que la ruta sea correcta
 
+// IMPORTAR LAS FUNCIONES DE LA API AQUÍ
+import { fetchPokemon, getPokemonTypeEffectiveness } from '../services/pokeapi'; // Ajusta la ruta si es necesario
+
 function PokemonDetail() {
   const { pokemonId } = useParams();
   const navigate = useNavigate();
@@ -11,24 +14,24 @@ function PokemonDetail() {
   const [error, setError] = useState(null);
   const [speciesData, setSpeciesData] = useState(null);
   const [detailedAbilities, setDetailedAbilities] = useState([]);
-  const [pokemonMoves, setPokemonMoves] = useState([]); // Estado para los movimientos
+  const [pokemonMoves, setPokemonMoves] = useState([]);
+  // NUEVO ESTADO PARA LAS FORTALEZAS/DEBILIDADES
+  const [typeEffectiveness, setTypeEffectiveness] = useState(null);
 
   useEffect(() => {
-    const fetchPokemonData = async () => {
+    const fetchAllPokemonDetails = async () => { // Renombré la función para reflejar que trae todo
       setLoading(true);
       setError(null);
+      // Limpiar estados al iniciar un nuevo fetch
       setPokemonData(null);
       setSpeciesData(null);
       setDetailedAbilities([]);
-      setPokemonMoves([]); // Limpiar movimientos previos
+      setPokemonMoves([]);
+      setTypeEffectiveness(null); // Limpiar también las fortalezas/debilidades
 
       try {
-        // --- Fetch datos principales del Pokémon ---
-        const pokemonResponse = await fetch(`https://pokeapi.co/api/v2/pokemon/${pokemonId}`);
-        if (!pokemonResponse.ok) {
-          throw new Error(`HTTP error! status: ${pokemonResponse.status}`);
-        }
-        const pokemonJson = await pokemonResponse.json();
+        // --- Fetch datos principales del Pokémon usando la nueva función ---
+        const pokemonJson = await fetchPokemon(pokemonId);
         setPokemonData(pokemonJson);
 
         // --- Fetch datos de la especie ---
@@ -47,7 +50,6 @@ function PokemonDetail() {
         // --- Fetch detalles y nombres en español de las habilidades ---
         if (pokemonJson.abilities && pokemonJson.abilities.length > 0) {
           const abilitiesPromises = pokemonJson.abilities.map(async (abilityInfo) => {
-            // ... (código de fetch de habilidades como en la respuesta anterior)
             try {
               const abilityResponse = await fetch(abilityInfo.ability.url);
               if (!abilityResponse.ok) {
@@ -115,6 +117,14 @@ function PokemonDetail() {
           setPokemonMoves([]);
         }
 
+        // --- NUEVO: Fetch Fortalezas y Debilidades ---
+        if (pokemonJson.types && pokemonJson.types.length > 0) {
+          const effectivenessData = await getPokemonTypeEffectiveness(pokemonJson.types);
+          setTypeEffectiveness(effectivenessData);
+        } else {
+          setTypeEffectiveness(null); // No hay tipos, no hay efectividad
+        }
+
       } catch (err) {
         setError(err);
         console.error(`Error al obtener datos del Pokémon ID ${pokemonId}: `, err);
@@ -124,10 +134,10 @@ function PokemonDetail() {
     };
 
     if (pokemonId) {
-        fetchPokemonData();
+        fetchAllPokemonDetails();
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pokemonId]);
+  }, [pokemonId]); // El efecto se ejecuta cuando cambia el pokemonId
 
   const handleGoBack = () => {
     navigate('/');
@@ -182,7 +192,8 @@ function PokemonDetail() {
     pokemonData.sprites.front_default ||
     `https://placehold.co/250x250/e0e0e0/333?text=No+Img`;
 
-  const firstPokemonType = pokemonData?.types?.[0]?.type.name;
+  // Asegúrate de que esta línea esté presente si usas firstPokemonType para algo más que el color de la habilidad
+  // const firstPokemonType = pokemonData?.types?.[0]?.type.name; 
 
   return (
     <div className="pokemon-detail-view">
@@ -218,17 +229,15 @@ function PokemonDetail() {
       </div>
 
       <h3>Características</h3>
-      <div className="characteristics-container">
-        <div className="characteristic-item">
-          <span className="characteristic-icon" role="img" aria-label="Altura">📏</span>
-          <span className="characteristic-label">Altura:</span>
-          <span className="characteristic-value">{(pokemonData.height / 10).toFixed(1)} m</span>
-        </div>
-        <div className="characteristic-item">
-          <span className="characteristic-icon" role="img" aria-label="Peso">⚖️</span>
-          <span className="characteristic-label">Peso:</span>
-          <span className="characteristic-value">{(pokemonData.weight / 10).toFixed(1)} kg</span>
-        </div>
+      <div className="characteristic-item">
+        <span className="characteristic-icon" role="img" aria-label="Altura">📏</span>
+        <span className="characteristic-label">Altura:</span>
+        <span className="characteristic-value">{(pokemonData.height / 10).toFixed(1)} m</span>
+      </div>
+      <div className="characteristic-item">
+        <span className="characteristic-icon" role="img" aria-label="Peso">⚖️</span>
+        <span className="characteristic-label">Peso:</span>
+        <span className="characteristic-value">{(pokemonData.weight / 10).toFixed(1)} kg</span>
       </div>
 
       <h4>Habilidades:</h4>
@@ -237,7 +246,7 @@ function PokemonDetail() {
           {detailedAbilities.map(abilityDetail => (
             <span
               key={abilityDetail.id}
-              className={`ability-badge ${firstPokemonType ? `type-${firstPokemonType.toLowerCase()}` : 'type-normal'}`}
+              className={`ability-badge`} // Puedes quitar el tipo aquí si no quieres que la habilidad tenga el color del primer tipo. O dejarlo como estaba si te gusta.
             >
               {abilityDetail.name}
               {abilityDetail.isHidden && " (Habilidad Oculta)"}
@@ -251,11 +260,11 @@ function PokemonDetail() {
       {/* >>>>> SECCIÓN DE MOVIMIENTOS <<<<< */}
       <h4>Movimientos Destacados:</h4>
       {pokemonMoves.length > 0 ? (
-        <div className="moves-container"> {/* Puedes reutilizar .abilities-container si el estilo es idéntico o crear .moves-container */}
+        <div className="moves-container">
           {pokemonMoves.map(moveDetail => (
             <span
               key={moveDetail.id}
-              className={`type-badge type-${moveDetail.type}`} // Usa el tipo del movimiento para el color. Ej: type-fire, type-water
+              className={`type-badge type-${moveDetail.type}`}
             >
               {moveDetail.name}
             </span>
@@ -272,8 +281,51 @@ function PokemonDetail() {
       <h3>Línea Evolutiva</h3>
       <p>Información de evolución no disponible aún.</p>
 
+      {/* >>>>> NUEVO: SECCIÓN DE FORTALEZAS Y DEBILIDADES <<<<< */}
       <h3>Fortalezas y Debilidades</h3>
-      <p>Información de tipos efectiva no disponible aún.</p>
+      {typeEffectiveness ? (
+        <div className="type-effectiveness-container">
+          {typeEffectiveness.double_damage_from.length > 0 && (
+            <p>
+              **Débil a:**{' '}
+              {typeEffectiveness.double_damage_from.map((type, index) => (
+                <span key={type} className={`type-badge type-${type}`}>
+                  {type.charAt(0).toUpperCase() + type.slice(1)}
+                </span>
+              ))}
+            </p>
+          )}
+          {typeEffectiveness.half_damage_from.length > 0 && (
+            <p>
+              **Resistente a:**{' '}
+              {typeEffectiveness.half_damage_from.map((type, index) => (
+                <span key={type} className={`type-badge type-${type}`}>
+                  {type.charAt(0).toUpperCase() + type.slice(1)}
+                </span>
+              ))}
+            </p>
+          )}
+          {typeEffectiveness.no_damage_from.length > 0 && (
+            <p>
+              **Inmune a:**{' '}
+              {typeEffectiveness.no_damage_from.map((type, index) => (
+                <span key={type} className={`type-badge type-${type}`}>
+                  {type.charAt(0).toUpperCase() + type.slice(1)}
+                </span>
+              ))}
+            </p>
+          )}
+          {(typeEffectiveness.double_damage_from.length === 0 &&
+            typeEffectiveness.half_damage_from.length === 0 &&
+            typeEffectiveness.no_damage_from.length === 0) && (
+            <p>No se encontraron relaciones de daño específicas.</p>
+          )}
+        </div>
+      ) : (
+        <p>Cargando información de tipos efectivos...</p>
+      )}
+      {/* >>>>> FIN SECCIÓN DE FORTALEZAS Y DEBILIDADES <<<<< */}
+
 
       <button onClick={handleGoBack} className="back-button" style={{ marginTop: '30px' }}>
         ← Volver a la Pokedex

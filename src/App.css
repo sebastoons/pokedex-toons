@@ -95,6 +95,7 @@ header {
     filter: drop-shadow(3px 3px 0px #333);
     /* Asegurarse de que el logo se ajuste bien en móviles */
     width: 90%; /* Ajuste para que ocupe el 90% del espacio en el header (se ajustará con max-width) */
+    margin-top: 0;
 }
 
 /* --- Mensaje de Bienvenida --- */
@@ -262,6 +263,7 @@ header {
     width: 100%; /* Asegura que el botón de generación ocupe todo el ancho */
     max-width: 300px; /* Un poco de max-width para que no sea excesivamente ancho en pantallas grandes */
     box-sizing: border-box;
+    margin: auto;
 }
 
 .generation-button:hover {
@@ -535,7 +537,8 @@ header {
 
     .pokedex-logo {
         max-width: 120px;
-        margin-bottom: 5px;
+        margin-bottom: 3px;
+        margin-top:10px;
     }
 
     .welcome-message h2 {
