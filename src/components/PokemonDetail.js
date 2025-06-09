@@ -204,13 +204,6 @@ function PokemonDetail() {
                 // La cadena de evolución de la API tiene una propiedad 'chain' que es el eslabón inicial
                 await parseEvolutionChain(evolutionChainData.chain);
                 
-                // Antes de establecer el estado, aplanamos el array `evolutions`
-                // y eliminamos duplicados (si un Pokémon aparece más de una vez en diferentes ramas)
-                const uniqueEvolutionIds = new Set();
-                const flattenedAndUniqueEvolutions = [];
-                // La función recursiva ya añade los Pokémon en el orden en que se encuentran
-                // al recorrer la cadena. Si queremos un orden específico (base -> etapa1 -> etapa2)
-                // y que se muestren las ramas, la forma de parsear debe ser más cuidadosa.
                 // Sin embargo, para un listado simple:
                 const getEvolutionLineFlat = (chain) => {
                     const line = [];
