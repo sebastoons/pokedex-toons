@@ -20,6 +20,33 @@ function PokemonDetail() {
   // NUEVO ESTADO: Para la línea evolutiva
   const [evolutionLine, setEvolutionLine] = useState([]); 
 
+  // NUEVA FUNCIÓN: Para traducir nombres de tipos
+  const translateTypeName = (typeName) => {
+    switch (typeName.toLowerCase()) {
+      case 'normal': return 'Normal';
+      case 'fire': return 'Fuego';
+      case 'water': return 'Agua';
+      case 'grass': return 'Planta';
+      case 'electric': return 'Eléctrico';
+      case 'ice': return 'Hielo';
+      case 'fighting': return 'Lucha';
+      case 'poison': return 'Veneno';
+      case 'ground': return 'Tierra';
+      case 'flying': return 'Volador';
+      case 'psychic': return 'Psíquico';
+      case 'bug': return 'Bicho';
+      case 'rock': return 'Roca';
+      case 'ghost': return 'Fantasma';
+      case 'dragon': return 'Dragón';
+      case 'steel': return 'Acero';
+      case 'dark': return 'Siniestro';
+      case 'fairy': return 'Hada';
+      case 'unknown': return 'Desconocido';
+      case 'shadow': return 'Sombra';
+      default: return typeName.charAt(0).toUpperCase() + typeName.slice(1); // Capitaliza si no hay traducción
+    }
+  };
+
   useEffect(() => {
     const fetchAllPokemonDetails = async () => {
       setLoading(true);
@@ -171,40 +198,7 @@ function PokemonDetail() {
         if (currentSpeciesData?.evolution_chain?.url) {
             try {
                 const evolutionChainData = await fetchEvolutionChain(currentSpeciesData.evolution_chain.url);
-                const evolutions = [];
-
-                // Función recursiva para procesar la cadena de evolución
-                const parseEvolutionChain = async (chainLink) => {
-                    // Obtener el ID del Pokémon del URL para fetchPokemonBasicInfo
-                    const urlParts = chainLink.species.url.split('/');
-                    const pokemonIdFromUrl = urlParts[urlParts.length - 2];
-
-                    // Usar Promise.all para obtener la información básica de todas las evoluciones en paralelo
-                    // Esto es importante porque una cadena puede tener múltiples ramificaciones
-                    const currentEvolutions = [];
-                    currentEvolutions.push(fetchPokemonBasicInfo(pokemonIdFromUrl));
-
-                    // Si hay evoluciones a las que evoluciona este Pokémon, procesarlas
-                    if (chainLink.evolves_to && chainLink.evolves_to.length > 0) {
-                        for (const nextEvolution of chainLink.evolves_to) {
-                            // Recursivamente llamar a parseEvolutionChain para las siguientes etapas
-                            await parseEvolutionChain(nextEvolution);
-                        }
-                    }
-                    
-                    // Asegúrate de que las evoluciones se añadan en el orden correcto
-                    // La PokeAPI a veces devuelve la cadena de forma que el primer elemento es la base
-                    // Y luego sus evoluciones están en `evolves_to`
-                    // Por lo tanto, aseguramos que la base se añade primero
-                    const resolvedCurrentEvolutions = await Promise.all(currentEvolutions);
-                    evolutions.push(...resolvedCurrentEvolutions);
-                };
-
-                // Iniciar el parseo desde la base de la cadena
-                // La cadena de evolución de la API tiene una propiedad 'chain' que es el eslabón inicial
-                await parseEvolutionChain(evolutionChainData.chain);
                 
-                // Sin embargo, para un listado simple:
                 const getEvolutionLineFlat = (chain) => {
                     const line = [];
                     // Asegúrate de obtener el ID del URL correctamente
@@ -284,6 +278,7 @@ function PokemonDetail() {
     return spanishEntry ? spanishEntry.flavor_text.replace(/[\n\r\f]/g, ' ') : "Descripción en español no disponible.";
   };
 
+  // MODIFICADO: renderEffectivenessTypes para usar translateTypeName
   const renderEffectivenessTypes = (typesArray, typeLabel) => {
     if (!typesArray || typesArray.length === 0) return null;
 
@@ -292,7 +287,7 @@ function PokemonDetail() {
         <strong>{typeLabel}:</strong>{' '}
         {typesArray.map((effectType, index) => (
           <span key={effectType.type} className={`type-badge type-${effectType.type}`}>
-            {effectType.type.charAt(0).toUpperCase() + effectType.type.slice(1)}
+            {translateTypeName(effectType.type)} {/* USAR LA FUNCIÓN AQUÍ */}
             {(effectType.multiplier !== 1 && effectType.multiplier !== 0 && effectType.multiplier !== 0.5 && effectType.multiplier !== 2) && ` (${effectType.multiplier}x)`}
           </span>
         ))}
@@ -348,7 +343,7 @@ function PokemonDetail() {
       <div className="pokemon-types" style={{ marginBottom: '20px' }}>
         {pokemonData.types.map(typeInfo => (
           <span key={typeInfo.type.name} className={`type-badge type-${typeInfo.type.name.toLowerCase()}`}>
-            {typeInfo.type.name.charAt(0).toUpperCase() + typeInfo.type.name.slice(1)}
+            {translateTypeName(typeInfo.type.name)} {/* USAR LA FUNCIÓN AQUÍ */}
           </span>
         ))}
       </div>
@@ -407,7 +402,7 @@ function PokemonDetail() {
               key={moveDetail.id}
               className={`type-badge type-${moveDetail.type}`}
             >
-              {moveDetail.name}
+              {translateTypeName(moveDetail.type)} {/* USAR LA FUNCIÓN AQUÍ para el tipo de movimiento */}
             </span>
           ))}
         </div>
