@@ -1009,6 +1009,64 @@ header {
     margin: 2px;
 }
 
+/* Estilos para el contenedor de la línea evolutiva */
+.evolution-line-container {
+    display: flex; /* Para que los Pokémon y las flechas se alineen horizontalmente */
+    flex-wrap: wrap; /* Para que los elementos pasen a la siguiente línea si no caben */
+    justify-content: center; /* Centrar los elementos horizontalmente */
+    align-items: center; /* Alinear los elementos verticalmente */
+    gap: 15px; /* Espacio entre los elementos y las flechas */
+    margin-top: 20px;
+    margin-bottom: 30px;
+    padding: 15px;
+    background-color: #f8f8f8;
+    border-radius: 8px;
+    max-width: 700px; /* Limita el ancho del contenedor */
+    margin-left: auto;
+    margin-right: auto;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* Sombra suave */
+}
+
+/* Estilos para cada etapa de la evolución (imagen + nombre) */
+.evolution-stage {
+    display: flex;
+    flex-direction: column; /* Imagen arriba, nombre abajo */
+    align-items: center;
+    cursor: pointer; /* Indica que es clickeable */
+    transition: transform 0.2s ease-in-out; /* Animación al pasar el ratón */
+}
+
+.evolution-stage:hover {
+    transform: translateY(-5px); /* Pequeño efecto de elevación al pasar el ratón */
+}
+
+/* Estilos para la imagen del Pokémon evolutivo */
+.evolution-sprite {
+    width: 80px; /* Tamaño de la imagen, ajusta si es necesario */
+    height: 80px;
+    object-fit: contain; /* Asegura que la imagen se vea completa */
+    background-color: #e0e0e0; /* Fondo claro para los sprites */
+    border-radius: 50%; /* Hacerlos redondos */
+    padding: 5px;
+    border: 1px solid #ccc;
+}
+
+/* Estilos para el nombre del Pokémon evolutivo */
+.evolution-name {
+    margin-top: 5px;
+    font-size: 0.9em;
+    font-weight: bold;
+    color: #333;
+    text-align: center;
+}
+
+/* Estilos para la flecha entre evoluciones */
+.evolution-arrow {
+    font-size: 2em; /* Tamaño de la flecha */
+    color: #888;
+    margin: 0 5px; /* Espacio alrededor de la flecha */
+}
+
 /* Contenedor general para las relaciones de tipo */
 .type-effectiveness-container {
     background-color: #f0f0f0; /* Un fondo gris claro para el contenedor */

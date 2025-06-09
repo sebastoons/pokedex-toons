@@ -61,12 +61,10 @@ export async function getPokemonTypeEffectiveness(pokemonTypes) {
   }
 
   // Clasifica los tipos según el multiplicador de daño final
-  // Ahora devolveremos un array de objetos para cada categoría
   const effectiveness = {
     double_damage_from: [], // Débil a (2x o 4x)
     half_damage_from: [],   // Resistente a (0.5x o 0.25x)
     no_damage_from: [],     // Inmune a (0x)
-    // normal_damage_from: [], // Si quisieras mostrar también los de daño normal (1x)
   };
 
   for (const type in damageMultipliers) {
@@ -78,14 +76,58 @@ export async function getPokemonTypeEffectiveness(pokemonTypes) {
     } else if (multiplier > 1) { // 2x o 4x
       effectiveness.double_damage_from.push({ type: type, multiplier: multiplier });
     }
-    // Si el multiplicador es 1, no lo añadimos a ninguna de estas listas
   }
 
-  // Opcional: ordenar los arrays por nombre de tipo para consistencia
   effectiveness.double_damage_from.sort((a, b) => a.type.localeCompare(b.type));
   effectiveness.half_damage_from.sort((a, b) => a.type.localeCompare(b.type));
   effectiveness.no_damage_from.sort((a, b) => a.type.localeCompare(b.type));
 
-
   return effectiveness;
+}
+
+// NUEVA FUNCIÓN: Para obtener la cadena de evolución
+export async function fetchEvolutionChain(url) {
+    try {
+        const response = await fetch(url);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status} fetching evolution chain from ${url}`);
+        }
+        return await response.json();
+    } catch (error) {
+        console.error("Error fetching evolution chain:", error);
+        throw error;
+    }
+}
+
+// NUEVA FUNCIÓN: Para obtener detalles básicos de un Pokémon (nombre y sprite)
+export async function fetchPokemonBasicInfo(idOrName) {
+    try {
+        const url = `${BASE_URL}pokemon/${idOrName}/`;
+        const response = await fetch(url);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status} fetching basic info for ${idOrName}`);
+        }
+        const data = await response.json();
+        // Intentar obtener el nombre en español si está disponible (desde la especie)
+        const speciesResponse = await fetch(data.species.url);
+        const speciesData = await speciesResponse.json();
+        const spanishNameEntry = speciesData.names.find(nameEntry => nameEntry.language.name === 'es');
+        // Usa el nombre traducido, o el nombre original capitalizado si no hay traducción
+        const translatedName = spanishNameEntry ? spanishNameEntry.name : data.name.charAt(0).toUpperCase() + data.name.slice(1);
+
+        return {
+            id: data.id,
+            name: translatedName,
+            // Prioriza official-artwork, si no está usa front_default, si no, un placeholder
+            sprite: data.sprites.other?.['official-artwork']?.front_default || data.sprites.front_default || `https://placehold.co/96x96/e0e0e0/333?text=No+Img`,
+        };
+    } catch (error) {
+        console.error(`Error fetching basic info for ${idOrName}:`, error);
+        // Retornar un objeto con información parcial o un placeholder si falla
+        return {
+            id: idOrName,
+            name: idOrName.charAt(0).toUpperCase() + idOrName.slice(1),
+            sprite: `https://placehold.co/96x96/e0e0e0/333?text=No+Img`,
+        };
+    }
 }

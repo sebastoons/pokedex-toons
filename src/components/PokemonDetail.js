@@ -3,7 +3,8 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import '../App.css'; // Asegúrate de que la ruta sea correcta
 
-import { fetchPokemon, getPokemonTypeEffectiveness } from '../services/pokeapi';
+// Importa las nuevas funciones de pokeapi.js
+import { fetchPokemon, getPokemonTypeEffectiveness, fetchEvolutionChain, fetchPokemonBasicInfo } from '../services/pokeapi';
 
 function PokemonDetail() {
   const { pokemonId } = useParams();
@@ -13,10 +14,11 @@ function PokemonDetail() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [speciesData, setSpeciesData] = useState(null);
-  // MODIFICADO: Ahora detailedAbility será un solo objeto, no un array
-  const [detailedAbility, setDetailedAbility] = useState(null); //
+  const [detailedAbility, setDetailedAbility] = useState(null);
   const [pokemonMoves, setPokemonMoves] = useState([]);
-  const [typeEffectiveness, setTypeEffectiveness] = useState(null); // Estado para las fortalezas/debilidades
+  const [typeEffectiveness, setTypeEffectiveness] = useState(null);
+  // NUEVO ESTADO: Para la línea evolutiva
+  const [evolutionLine, setEvolutionLine] = useState([]); 
 
   useEffect(() => {
     const fetchAllPokemonDetails = async () => {
@@ -24,88 +26,91 @@ function PokemonDetail() {
       setError(null);
       setPokemonData(null);
       setSpeciesData(null);
-      setDetailedAbility(null); // Reiniciar la habilidad detallada
+      setDetailedAbility(null);
       setPokemonMoves([]);
       setTypeEffectiveness(null);
+      setEvolutionLine([]); // Reiniciar la línea evolutiva
 
       try {
         const pokemonJson = await fetchPokemon(pokemonId);
         setPokemonData(pokemonJson);
 
+        let currentSpeciesData = null; // Variable para almacenar la especie para uso local
         if (pokemonJson.species?.url) {
           const speciesResponse = await fetch(pokemonJson.species.url);
           if (!speciesResponse.ok) {
             throw new Error(`HTTP error! status: ${speciesResponse.status} fetching species`);
           }
-          const speciesJson = await speciesResponse.json();
-          setSpeciesData(speciesJson);
+          currentSpeciesData = await speciesResponse.json(); // Asignar a la variable
+          setSpeciesData(currentSpeciesData); // Actualizar el estado
         } else {
             console.warn("Species URL not found for this Pokémon.");
             setSpeciesData({ flavor_text_entries: [] });
+            currentSpeciesData = { evolution_chain: { url: null } }; // Asegurarse de que no falle más tarde
         }
 
-        // --- MODIFICADO: Fetch UN solo detalle de habilidad ---
+        // --- Lógica de Habilidades (ya la tienes, intacta) ---
         if (pokemonJson.abilities && pokemonJson.abilities.length > 0) {
-          // Intentar encontrar una habilidad no oculta primero
-          let chosenAbilityInfo = pokemonJson.abilities.find(ab => !ab.is_hidden);
-          // Si no hay no ocultas, toma la primera que haya (podría ser oculta)
-          if (chosenAbilityInfo) {
-            try {
-              const abilityResponse = await fetch(chosenAbilityInfo.ability.url);
-              if (!abilityResponse.ok) {
-                console.warn(`No se pudieron obtener detalles para la habilidad: ${chosenAbilityInfo.ability.name}. Estado: ${abilityResponse.status}`);
-                const fallbackName = chosenAbilityInfo.ability.name.replace(/-/g, ' ').split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
-                setDetailedAbility({
-                  id: chosenAbilityInfo.ability.name,
-                  name: fallbackName,
-                  isHidden: chosenAbilityInfo.is_hidden,
-                  description: 'Descripción no disponible.' // Mensaje genérico si falla la carga completa
-                });
-              } else {
-                const abilityJson = await abilityResponse.json();
-                const spanishNameEntry = abilityJson.names.find(nameEntry => nameEntry.language.name === 'es');
-                const translatedName = spanishNameEntry ? spanishNameEntry.name : chosenAbilityInfo.ability.name.replace(/-/g, ' ').split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
-                
-                // --- MODIFICADO: Lógica simplificada para la descripción ---
-                let description = 'Descripción no disponible.'; // Default
-
-                // Intenta obtener de effect_entries en español
-                const spanishEffectEntry = abilityJson.effect_entries.find(entry => entry.language.name === 'es');
-                if (spanishEffectEntry) {
-                    description = spanishEffectEntry.effect.replace(/[\n\r\f]/g, ' '); // Limpiar saltos de línea
-                } else {
-                    // Si no hay en español, busca en inglés
-                    const englishEffectEntry = abilityJson.effect_entries.find(entry => entry.language.name === 'en');
-                    if (englishEffectEntry) {
-                        description = englishEffectEntry.effect.replace(/[\n\r\f]/g, ' ');
-                    }
-                }
-                // --- FIN MODIFICACIÓN ---
-
-                setDetailedAbility({
-                  id: abilityJson.id,
-                  name: translatedName,
-                  isHidden: chosenAbilityInfo.is_hidden,
-                  description: description // Guardar la descripción
-                });
-              }
-            } catch (abilityFetchError) {
-                console.error(`Error al obtener detalle de habilidad para ${chosenAbilityInfo.ability.name}:`, abilityFetchError);
-                const fallbackName = chosenAbilityInfo.ability.name.replace(/-/g, ' ').split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
-                setDetailedAbility({
-                  id: chosenAbilityInfo.ability.name,
-                  name: fallbackName,
-                  isHidden: chosenAbilityInfo.is_hidden,
-                  description: 'Error al cargar la descripción.'
-                });
+            let chosenAbilityInfo = pokemonJson.abilities.find(ab => !ab.is_hidden);
+            if (!chosenAbilityInfo) {
+                chosenAbilityInfo = pokemonJson.abilities[0];
             }
-          } else {
-            setDetailedAbility(null); // No hay habilidades
-          }
-        } else {
-          setDetailedAbility(null);
-        }
 
+            if (chosenAbilityInfo) {
+                try {
+                    const abilityResponse = await fetch(chosenAbilityInfo.ability.url);
+                    if (!abilityResponse.ok) {
+                        console.warn(`No se pudieron obtener detalles para la habilidad: ${chosenAbilityInfo.ability.name}. Estado: ${abilityResponse.status}`);
+                        const fallbackName = chosenAbilityInfo.ability.name.replace(/-/g, ' ').split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+                        setDetailedAbility({
+                            id: chosenAbilityInfo.ability.name,
+                            name: fallbackName,
+                            isHidden: chosenAbilityInfo.is_hidden,
+                            description: 'Descripción no disponible.'
+                        });
+                    } else {
+                        const abilityJson = await abilityResponse.json();
+                        const spanishNameEntry = abilityJson.names.find(nameEntry => nameEntry.language.name === 'es');
+                        const translatedName = spanishNameEntry ? spanishNameEntry.name : chosenAbilityInfo.ability.name.replace(/-/g, ' ').split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+                        
+                        let description = 'Descripción no disponible.';
+                        const spanishEffectEntry = abilityJson.effect_entries.find(entry => entry.language.name === 'es');
+                        if (spanishEffectEntry) {
+                            description = spanishEffectEntry.effect.replace(/[\n\r\f]/g, ' ');
+                        } else {
+                            const englishEffectEntry = abilityJson.effect_entries.find(entry => entry.language.name === 'en');
+                            if (englishEffectEntry) {
+                                description = englishEffectEntry.effect.replace(/[\n\r\f]/g, ' ');
+                            }
+                        }
+
+                        setDetailedAbility({
+                            id: abilityJson.id,
+                            name: translatedName,
+                            isHidden: chosenAbilityInfo.is_hidden,
+                            description: description
+                        });
+                    }
+                } catch (abilityFetchError) {
+                    console.error(`Error al obtener detalle de habilidad para ${chosenAbilityInfo.ability.name}:`, abilityFetchError);
+                    const fallbackName = chosenAbilityInfo.ability.name.replace(/-/g, ' ').split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+                    setDetailedAbility({
+                        id: chosenAbilityInfo.ability.name,
+                        name: fallbackName,
+                        isHidden: chosenAbilityInfo.is_hidden,
+                        description: 'Error al cargar la descripción.'
+                    });
+                }
+            } else {
+                setDetailedAbility(null);
+            }
+        } else {
+            setDetailedAbility(null);
+        }
+        // --- Fin Lógica de Habilidades ---
+
+
+        // --- Lógica de Movimientos (ya la tienes, intacta) ---
         if (pokemonJson.moves && pokemonJson.moves.length > 0) {
           const selectedMovesData = pokemonJson.moves.slice(1, 16);
 
@@ -148,14 +153,107 @@ function PokemonDetail() {
         } else {
           setPokemonMoves([]);
         }
+        // --- Fin Lógica de Movimientos ---
 
-        // --- Fetch Fortalezas y Debilidades ---
+
+        // --- Lógica de Fortalezas y Debilidades (ya la tienes, intacta) ---
         if (pokemonJson.types && pokemonJson.types.length > 0) {
           const effectivenessData = await getPokemonTypeEffectiveness(pokemonJson.types);
           setTypeEffectiveness(effectivenessData);
         } else {
           setTypeEffectiveness(null);
         }
+        // --- Fin Lógica de Fortalezas y Debilidades ---
+
+
+        // --- NUEVA LÓGICA: Obtener la línea evolutiva ---
+        // Verifica si currentSpeciesData y su URL de cadena de evolución existen
+        if (currentSpeciesData?.evolution_chain?.url) {
+            try {
+                const evolutionChainData = await fetchEvolutionChain(currentSpeciesData.evolution_chain.url);
+                const evolutions = [];
+
+                // Función recursiva para procesar la cadena de evolución
+                const parseEvolutionChain = async (chainLink) => {
+                    // Obtener el ID del Pokémon del URL para fetchPokemonBasicInfo
+                    const urlParts = chainLink.species.url.split('/');
+                    const pokemonIdFromUrl = urlParts[urlParts.length - 2];
+
+                    // Usar Promise.all para obtener la información básica de todas las evoluciones en paralelo
+                    // Esto es importante porque una cadena puede tener múltiples ramificaciones
+                    const currentEvolutions = [];
+                    currentEvolutions.push(fetchPokemonBasicInfo(pokemonIdFromUrl));
+
+                    // Si hay evoluciones a las que evoluciona este Pokémon, procesarlas
+                    if (chainLink.evolves_to && chainLink.evolves_to.length > 0) {
+                        for (const nextEvolution of chainLink.evolves_to) {
+                            // Recursivamente llamar a parseEvolutionChain para las siguientes etapas
+                            await parseEvolutionChain(nextEvolution);
+                        }
+                    }
+                    
+                    // Asegúrate de que las evoluciones se añadan en el orden correcto
+                    // La PokeAPI a veces devuelve la cadena de forma que el primer elemento es la base
+                    // Y luego sus evoluciones están en `evolves_to`
+                    // Por lo tanto, aseguramos que la base se añade primero
+                    const resolvedCurrentEvolutions = await Promise.all(currentEvolutions);
+                    evolutions.push(...resolvedCurrentEvolutions);
+                };
+
+                // Iniciar el parseo desde la base de la cadena
+                // La cadena de evolución de la API tiene una propiedad 'chain' que es el eslabón inicial
+                await parseEvolutionChain(evolutionChainData.chain);
+                
+                // Antes de establecer el estado, aplanamos el array `evolutions`
+                // y eliminamos duplicados (si un Pokémon aparece más de una vez en diferentes ramas)
+                const uniqueEvolutionIds = new Set();
+                const flattenedAndUniqueEvolutions = [];
+                // La función recursiva ya añade los Pokémon en el orden en que se encuentran
+                // al recorrer la cadena. Si queremos un orden específico (base -> etapa1 -> etapa2)
+                // y que se muestren las ramas, la forma de parsear debe ser más cuidadosa.
+                // Sin embargo, para un listado simple:
+                const getEvolutionLineFlat = (chain) => {
+                    const line = [];
+                    // Asegúrate de obtener el ID del URL correctamente
+                    const idParts = chain.species.url.split('/');
+                    const id = idParts[idParts.length - 2];
+                    line.push({ name: chain.species.name, id: id }); // Guarda el nombre y el ID
+
+                    if (chain.evolves_to && chain.evolves_to.length > 0) {
+                        chain.evolves_to.forEach(evo => {
+                            line.push(...getEvolutionLineFlat(evo)); // Añade evoluciones recursivamente
+                        });
+                    }
+                    return line;
+                };
+
+                const flatEvolutionsRaw = getEvolutionLineFlat(evolutionChainData.chain);
+                
+                // Ahora, obtenemos la información detallada (sprite, nombre traducido)
+                // y eliminamos duplicados de forma más robusta
+                const finalEvolutionLinePromises = [];
+                const addedIds = new Set();
+                
+                for(const evo of flatEvolutionsRaw) {
+                    if (!addedIds.has(evo.id)) {
+                        finalEvolutionLinePromises.push(fetchPokemonBasicInfo(evo.id));
+                        addedIds.add(evo.id);
+                    }
+                }
+                
+                const finalEvolutionLine = await Promise.all(finalEvolutionLinePromises);
+                setEvolutionLine(finalEvolutionLine);
+
+            } catch (evolutionError) {
+                console.error("Error al obtener la cadena de evolución:", evolutionError);
+                setEvolutionLine([]); // Asegúrate de que el estado se limpia en caso de error
+            }
+        } else {
+            // Si no hay URL de cadena de evolución (ej. Pokémon sin evolución)
+            setEvolutionLine([]);
+        }
+        // --- FIN NUEVA LÓGICA ---
+
 
       } catch (err) {
         setError(err);
@@ -169,7 +267,7 @@ function PokemonDetail() {
         fetchAllPokemonDetails();
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pokemonId]);
+  }, [pokemonId]); // Asegúrate de que pokemonId esté en las dependencias
 
   const handleGoBack = () => {
     navigate('/');
@@ -193,7 +291,6 @@ function PokemonDetail() {
     return spanishEntry ? spanishEntry.flavor_text.replace(/[\n\r\f]/g, ' ') : "Descripción en español no disponible.";
   };
 
-  // Función auxiliar para renderizar los tipos de efectividad con su multiplicador
   const renderEffectivenessTypes = (typesArray, typeLabel) => {
     if (!typesArray || typesArray.length === 0) return null;
 
@@ -203,7 +300,6 @@ function PokemonDetail() {
         {typesArray.map((effectType, index) => (
           <span key={effectType.type} className={`type-badge type-${effectType.type}`}>
             {effectType.type.charAt(0).toUpperCase() + effectType.type.slice(1)}
-            {/* Solo muestra el multiplicador si es diferente de 1, 0, 0.5 o 2 */}
             {(effectType.multiplier !== 1 && effectType.multiplier !== 0 && effectType.multiplier !== 0.5 && effectType.multiplier !== 2) && ` (${effectType.multiplier}x)`}
           </span>
         ))}
@@ -243,7 +339,6 @@ function PokemonDetail() {
     pokemonData.sprites.front_default ||
     `https://placehold.co/250x250/e0e0e0/333?text=No+Img`;
 
-  // Obtenemos el primer tipo del Pokémon para el color del badge de habilidad
   const firstPokemonType = pokemonData?.types?.[0]?.type.name;
 
   return (
@@ -331,8 +426,31 @@ function PokemonDetail() {
       <h3>Entrada de Pokedex</h3>
       <p>{getSpanishDescription(speciesData?.flavor_text_entries)}</p>
 
-      <h3>Evoluciones</h3>
-      <p>Información de evolución no disponible aún.</p>
+      {/* NUEVO: Sección de Evoluciones */}
+      <h3>Línea Evolutiva</h3>
+      {evolutionLine.length > 0 ? (
+        <div className="evolution-line-container">
+          {evolutionLine.map((evoPokemon, index) => (
+            <React.Fragment key={evoPokemon.id}>
+              <div 
+                className="evolution-stage"
+                onClick={() => navigate(`/pokemon/${evoPokemon.id}`)} // Navegar al hacer click
+              >
+                <img src={evoPokemon.sprite} alt={evoPokemon.name} className="evolution-sprite" />
+                <span className="evolution-name">{evoPokemon.name}</span>
+              </div>
+              {/* Añadir flecha solo si no es el último Pokémon */}
+              {index < evolutionLine.length - 1 && (
+                <span className="evolution-arrow">→</span>
+              )}
+            </React.Fragment>
+          ))}
+        </div>
+      ) : (
+        <p>Cargando línea evolutiva o no disponible.</p>
+      )}
+      {/* FIN NUEVO: Sección de Evoluciones */}
+
 
       {/* >>>>> SECCIÓN DE FORTALEZAS Y DEBILIDADES <<<<< */}
       <h3>Fortalezas y Debilidades</h3>
