@@ -1,9 +1,9 @@
 // src/components/PokemonDetail.js
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react'; // ¡Importa useRef!
 import { useParams, useNavigate } from 'react-router-dom';
-import '../App.css'; // Asegúrate de que la ruta sea correcta
+import '../App.css'; 
 
-// Importa las nuevas funciones de pokeapi.js
+// Importa las funciones de pokeapi.js
 import { fetchPokemon, getPokemonTypeEffectiveness, fetchEvolutionChain, fetchPokemonBasicInfo } from '../services/pokeapi';
 
 function PokemonDetail() {
@@ -17,10 +17,14 @@ function PokemonDetail() {
   const [detailedAbility, setDetailedAbility] = useState(null);
   const [pokemonMoves, setPokemonMoves] = useState([]);
   const [typeEffectiveness, setTypeEffectiveness] = useState(null);
-  // NUEVO ESTADO: Para la línea evolutiva
-  const [evolutionLine, setEvolutionLine] = useState([]); 
+  const [evolutionLine, setEvolutionLine] = useState([]);
 
-  // NUEVA FUNCIÓN: Para traducir nombres de tipos
+  // NUEVOS ESTADOS PARA SONIDO Y SPRITES CLÁSICOS
+  const [pokemonSoundUrl, setPokemonSoundUrl] = useState(null);
+  const [classicSprites, setClassicSprites] = useState([]);
+  const audioRef = useRef(null); // Referencia al elemento de audio
+
+  // Función para traducir nombres de tipos
   const translateTypeName = (typeName) => {
     switch (typeName.toLowerCase()) {
       case 'normal': return 'Normal';
@@ -43,7 +47,15 @@ function PokemonDetail() {
       case 'fairy': return 'Hada';
       case 'unknown': return 'Desconocido';
       case 'shadow': return 'Sombra';
-      default: return typeName.charAt(0).toUpperCase() + typeName.slice(1); // Capitaliza si no hay traducción
+      default: return typeName.charAt(0).toUpperCase() + typeName.slice(1);
+    }
+  };
+
+  // Función para reproducir el sonido
+  const playPokemonCry = () => {
+    if (audioRef.current) {
+      audioRef.current.currentTime = 0; // Reinicia el audio si ya se está reproduciendo
+      audioRef.current.play().catch(e => console.error("Error al reproducir el sonido:", e));
     }
   };
 
@@ -56,27 +68,82 @@ function PokemonDetail() {
       setDetailedAbility(null);
       setPokemonMoves([]);
       setTypeEffectiveness(null);
-      setEvolutionLine([]); // Reiniciar la línea evolutiva
+      setEvolutionLine([]);
+      setPokemonSoundUrl(null); // Reiniciar al cargar nuevo Pokémon
+      setClassicSprites([]); // Reiniciar al cargar nuevo Pokémon
 
       try {
         const pokemonJson = await fetchPokemon(pokemonId);
         setPokemonData(pokemonJson);
 
-        let currentSpeciesData = null; // Variable para almacenar la especie para uso local
+        // OBTENER SONIDO
+        if (pokemonJson.cries?.latest) { // Preferir el más reciente
+            setPokemonSoundUrl(pokemonJson.cries.latest);
+        } else if (pokemonJson.cries?.legacy) { // Fallback al legacy
+            setPokemonSoundUrl(pokemonJson.cries.legacy);
+        }
+
+        // OBTENER SPRITES CLÁSICOS
+        const fetchedSprites = [];
+        const versions = pokemonJson.sprites.versions;
+
+        // Game Boy
+        if (versions?.["generation-i"]?.["red-blue"]?.front_default) {
+            fetchedSprites.push({
+                name: "GB (Rojo/Azul)",
+                url: versions["generation-i"]["red-blue"].front_default
+            });
+        } else if (versions?.["generation-i"]?.yellow?.front_default) {
+            fetchedSprites.push({
+                name: "GB (Amarillo)",
+                url: versions["generation-i"].yellow.front_default
+            });
+        }
+
+        // Game Boy Advance
+        if (versions?.["generation-iii"]?.ruby_sapphire?.front_default) {
+            fetchedSprites.push({
+                name: "GBA (Rubí/Zafiro)",
+                url: versions["generation-iii"].ruby_sapphire.front_default
+            });
+        } else if (versions?.["generation-iii"]?.emerald?.front_default) {
+            fetchedSprites.push({
+                name: "GBA (Esmeralda)",
+                url: versions["generation-iii"].emerald.front_default
+            });
+        }
+
+        // Nintendo DS (Gen IV)
+        if (versions?.["generation-iv"]?.["diamond-pearl"]?.front_default) {
+            fetchedSprites.push({
+                name: "DS (Diamante/Perla)",
+                url: versions["generation-iv"]["diamond-pearl"].front_default
+            });
+        } else if (versions?.["generation-iv"]?.["heartgold-soulsilver"]?.front_default) {
+            fetchedSprites.push({
+                name: "DS (HG/SS)",
+                url: versions["generation-iv"]["heartgold-soulsilver"].front_default
+            });
+        }
+        
+        setClassicSprites(fetchedSprites);
+
+
+        let currentSpeciesData = null;
         if (pokemonJson.species?.url) {
           const speciesResponse = await fetch(pokemonJson.species.url);
           if (!speciesResponse.ok) {
             throw new Error(`HTTP error! status: ${speciesResponse.status} fetching species`);
           }
-          currentSpeciesData = await speciesResponse.json(); // Asignar a la variable
-          setSpeciesData(currentSpeciesData); // Actualizar el estado
+          currentSpeciesData = await speciesResponse.json();
+          setSpeciesData(currentSpeciesData);
         } else {
             console.warn("Species URL not found for this Pokémon.");
             setSpeciesData({ flavor_text_entries: [] });
-            currentSpeciesData = { evolution_chain: { url: null } }; // Asegurarse de que no falle más tarde
+            currentSpeciesData = { evolution_chain: { url: null } };
         }
 
-        // --- Lógica de Habilidades (ya la tienes, intacta) ---
+        // Lógica de Habilidades (sin cambios)
         if (pokemonJson.abilities && pokemonJson.abilities.length > 0) {
             let chosenAbilityInfo = pokemonJson.abilities.find(ab => !ab.is_hidden);
             if (!chosenAbilityInfo) {
@@ -134,12 +201,10 @@ function PokemonDetail() {
         } else {
             setDetailedAbility(null);
         }
-        // --- Fin Lógica de Habilidades ---
-
-
-        // --- Lógica de Movimientos (ya la tienes, intacta) ---
+        
+        // Lógica de Movimientos (sin cambios)
         if (pokemonJson.moves && pokemonJson.moves.length > 0) {
-          const selectedMovesData = pokemonJson.moves.slice(1, 16);
+          const selectedMovesData = pokemonJson.moves.slice(1, 26);
 
           const movesPromises = selectedMovesData.map(async (moveEntry) => {
             try {
@@ -180,35 +245,29 @@ function PokemonDetail() {
         } else {
           setPokemonMoves([]);
         }
-        // --- Fin Lógica de Movimientos ---
-
-
-        // --- Lógica de Fortalezas y Debilidades (ya la tienes, intacta) ---
+        
+        // Lógica de Fortalezas y Debilidades (sin cambios)
         if (pokemonJson.types && pokemonJson.types.length > 0) {
           const effectivenessData = await getPokemonTypeEffectiveness(pokemonJson.types);
           setTypeEffectiveness(effectivenessData);
         } else {
           setTypeEffectiveness(null);
         }
-        // --- Fin Lógica de Fortalezas y Debilidades ---
-
-
-        // --- NUEVA LÓGICA: Obtener la línea evolutiva ---
-        // Verifica si currentSpeciesData y su URL de cadena de evolución existen
+        
+        // LÓGICA: Obtener la línea evolutiva (sin cambios)
         if (currentSpeciesData?.evolution_chain?.url) {
             try {
                 const evolutionChainData = await fetchEvolutionChain(currentSpeciesData.evolution_chain.url);
                 
                 const getEvolutionLineFlat = (chain) => {
                     const line = [];
-                    // Asegúrate de obtener el ID del URL correctamente
                     const idParts = chain.species.url.split('/');
                     const id = idParts[idParts.length - 2];
-                    line.push({ name: chain.species.name, id: id }); // Guarda el nombre y el ID
+                    line.push({ name: chain.species.name, id: id });
 
                     if (chain.evolves_to && chain.evolves_to.length > 0) {
                         chain.evolves_to.forEach(evo => {
-                            line.push(...getEvolutionLineFlat(evo)); // Añade evoluciones recursivamente
+                            line.push(...getEvolutionLineFlat(evo));
                         });
                     }
                     return line;
@@ -216,8 +275,6 @@ function PokemonDetail() {
 
                 const flatEvolutionsRaw = getEvolutionLineFlat(evolutionChainData.chain);
                 
-                // Ahora, obtenemos la información detallada (sprite, nombre traducido)
-                // y eliminamos duplicados de forma más robusta
                 const finalEvolutionLinePromises = [];
                 const addedIds = new Set();
                 
@@ -233,15 +290,12 @@ function PokemonDetail() {
 
             } catch (evolutionError) {
                 console.error("Error al obtener la cadena de evolución:", evolutionError);
-                setEvolutionLine([]); // Asegúrate de que el estado se limpia en caso de error
+                setEvolutionLine([]);
             }
         } else {
-            // Si no hay URL de cadena de evolución (ej. Pokémon sin evolución)
             setEvolutionLine([]);
         }
-        // --- FIN NUEVA LÓGICA ---
-
-
+        
       } catch (err) {
         setError(err);
         console.error(`Error al obtener datos del Pokémon ID ${pokemonId}: `, err);
@@ -254,7 +308,7 @@ function PokemonDetail() {
         fetchAllPokemonDetails();
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pokemonId]); // Asegúrate de que pokemonId esté en las dependencias
+  }, [pokemonId]);
 
   const handleGoBack = () => {
     navigate('/');
@@ -273,12 +327,32 @@ function PokemonDetail() {
   };
 
   const getSpanishDescription = (flavorTextEntries) => {
-    if (!flavorTextEntries || flavorTextEntries.length === 0) return "Descripción no disponible.";
+    // console.log("Entradas de texto de sabor recibidas:", flavorTextEntries); // Comentados para un output más limpio
+    if (!flavorTextEntries || flavorTextEntries.length === 0) {
+        // console.log("No hay entradas de texto de sabor o están vacías.");
+        return "Descripción no disponible.";
+    }
+
     const spanishEntry = flavorTextEntries.find(entry => entry.language.name === 'es');
-    return spanishEntry ? spanishEntry.flavor_text.replace(/[\n\r\f]/g, ' ') : "Descripción en español no disponible.";
+    // console.log("Entrada en español encontrada:", spanishEntry);
+
+    if (spanishEntry) {
+        const cleanedText = spanishEntry.flavor_text.replace(/[\n\r\f]/g, ' ');
+        // console.log("Texto en español limpiado:", cleanedText);
+        return cleanedText;
+    } else {
+        // console.log("No se encontró entrada en español, buscando en inglés...");
+        const englishEntry = flavorTextEntries.find(entry => entry.language.name === 'en');
+        if (englishEntry) {
+            const cleanedText = englishEntry.flavor_text.replace(/[\n\r\f]/g, ' ');
+            // console.log("Texto en inglés limpiado (fallback):", cleanedText);
+            return cleanedText;
+        }
+        // console.log("No se encontró ninguna entrada de texto de sabor utilizable.");
+        return "Descripción en español no disponible.";
+    }
   };
 
-  // MODIFICADO: renderEffectivenessTypes para usar translateTypeName
   const renderEffectivenessTypes = (typesArray, typeLabel) => {
     if (!typesArray || typesArray.length === 0) return null;
 
@@ -287,7 +361,7 @@ function PokemonDetail() {
         <strong>{typeLabel}:</strong>{' '}
         {typesArray.map((effectType, index) => (
           <span key={effectType.type} className={`type-badge type-${effectType.type}`}>
-            {translateTypeName(effectType.type)} {/* USAR LA FUNCIÓN AQUÍ */}
+            {translateTypeName(effectType.type)}
             {(effectType.multiplier !== 1 && effectType.multiplier !== 0 && effectType.multiplier !== 0.5 && effectType.multiplier !== 2) && ` (${effectType.multiplier}x)`}
           </span>
         ))}
@@ -343,7 +417,7 @@ function PokemonDetail() {
       <div className="pokemon-types" style={{ marginBottom: '20px' }}>
         {pokemonData.types.map(typeInfo => (
           <span key={typeInfo.type.name} className={`type-badge type-${typeInfo.type.name.toLowerCase()}`}>
-            {translateTypeName(typeInfo.type.name)} {/* USAR LA FUNCIÓN AQUÍ */}
+            {translateTypeName(typeInfo.type.name)}
           </span>
         ))}
       </div>
@@ -374,47 +448,47 @@ function PokemonDetail() {
         <span className="characteristic-value">{(pokemonData.weight / 10).toFixed(1)} kg</span>
       </div>
 
-      {/* MODIFICADO: Sección de Habilidades */}
       <h4>Habilidad:</h4>
       {detailedAbility ? (
-        <div className="ability-detail-container"> {/* Contenedor específico para una habilidad */}
+        <div className="ability-detail-container">
           <span
             key={detailedAbility.id}
-            // Usa el color del primer tipo del Pokémon para la habilidad
             className={`ability-badge type-${firstPokemonType ? firstPokemonType.toLowerCase() : 'normal'}`}
           >
             {detailedAbility.name}
             {detailedAbility.isHidden && " (Habilidad Oculta)"}
           </span>
-          <p className="ability-description">{detailedAbility.description}</p> {/* Descripción de la habilidad */}
+          <p className="ability-description">{detailedAbility.description}</p>
         </div>
       ) : (
         <p style={{ paddingLeft: '20px', marginBottom: '20px' }}>Este Pokémon no tiene habilidades listadas.</p>
       )}
-      {/* FIN MODIFICADO: Sección de Habilidades */}
 
-      {/* >>>>> SECCIÓN DE MOVIMIENTOS <<<<< */}
       <h4>Movimientos:</h4>
       {pokemonMoves.length > 0 ? (
         <div className="moves-container">
           {pokemonMoves.map(moveDetail => (
             <span
               key={moveDetail.id}
-              className={`type-badge type-${moveDetail.type}`}
+              className={`type-badge type-${moveDetail.type}`} 
             >
-              {translateTypeName(moveDetail.type)} {/* USAR LA FUNCIÓN AQUÍ para el tipo de movimiento */}
+              {moveDetail.name}
             </span>
           ))}
         </div>
       ) : (
         <p style={{ paddingLeft: '20px', marginBottom: '20px' }}>No se encontraron movimientos destacados para este Pokémon.</p>
       )}
-      {/* >>>>> FIN SECCIÓN DE MOVIMIENTOS <<<<< */}
 
-      <h3>Entrada de Pokedex</h3>
-      <p>{getSpanishDescription(speciesData?.flavor_text_entries)}</p>
+      <h3>Descripcion Pokémon</h3>
+      {speciesData && speciesData.flavor_text_entries && speciesData.flavor_text_entries.length > 0 ? (
+          <p className="pokedex-entry-text">
+              {getSpanishDescription(speciesData.flavor_text_entries)}
+          </p>
+      ) : (
+          <p className="pokedex-entry-text">Cargando descripción o no disponible.</p>
+      )}
 
-      {/* NUEVO: Sección de Evoluciones */}
       <h3>Línea Evolutiva</h3>
       {evolutionLine.length > 0 ? (
         <div className="evolution-line-container">
@@ -422,12 +496,11 @@ function PokemonDetail() {
             <React.Fragment key={evoPokemon.id}>
               <div 
                 className="evolution-stage"
-                onClick={() => navigate(`/pokemon/${evoPokemon.id}`)} // Navegar al hacer click
+                onClick={() => navigate(`/pokemon/${evoPokemon.id}`)}
               >
                 <img src={evoPokemon.sprite} alt={evoPokemon.name} className="evolution-sprite" />
                 <span className="evolution-name">{evoPokemon.name}</span>
               </div>
-              {/* Añadir flecha solo si no es el último Pokémon */}
               {index < evolutionLine.length - 1 && (
                 <span className="evolution-arrow">→</span>
               )}
@@ -437,10 +510,42 @@ function PokemonDetail() {
       ) : (
         <p>Cargando línea evolutiva o no disponible.</p>
       )}
-      {/* FIN NUEVO: Sección de Evoluciones */}
+
+      {/* >>>>> NUEVA SECCIÓN: Medios y Sprites Clásicos <<<<< */}
+      <h3>Sonido y Sprites Clásicos</h3>
+      <div className="media-section-container">
+        {pokemonSoundUrl && (
+          <div className="pokemon-cry-section">
+            <h4>Sonido del Pokémon:</h4>
+            <audio ref={audioRef} src={pokemonSoundUrl} preload="auto"></audio>
+            <button onClick={playPokemonCry} className="play-cry-button">
+              ▶ {/* ¡CAMBIO AQUÍ! Usamos el carácter Unicode para el icono de play */}
+            </button>
+          </div>
+        )}
+
+        {classicSprites.length > 0 && (
+          <div className="classic-sprites-gallery">
+            <h4>Sprites Clásicos:</h4>
+            <div className="sprites-grid">
+              {classicSprites.map((sprite, index) => (
+                <div key={index} className="sprite-item">
+                  <img src={sprite.url} alt={sprite.name} className="classic-sprite-image" />
+                  <span className="sprite-name">{sprite.name}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Mensaje si no hay sonido ni sprites clásicos */}
+        {!pokemonSoundUrl && classicSprites.length === 0 && (
+            <p>No se encontró sonido o sprites clásicos para este Pokémon.</p>
+        )}
+      </div>
+      {/* >>>>> FIN NUEVA SECCIÓN <<<<< */}
 
 
-      {/* >>>>> SECCIÓN DE FORTALEZAS Y DEBILIDADES <<<<< */}
       <h3>Fortalezas y Debilidades</h3>
       {typeEffectiveness ? (
         <div className="type-effectiveness-container">
@@ -457,7 +562,6 @@ function PokemonDetail() {
       ) : (
         <p>Cargando información de tipos efectivos...</p>
       )}
-      {/* >>>>> FIN SECCIÓN DE FORTALEZAS Y DEBILIDADES <<<<< */}
 
       <button onClick={handleGoBack} className="back-button" style={{ marginTop: '30px' }}>
         ← Volver a la Pokedex

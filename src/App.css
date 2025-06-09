@@ -404,10 +404,10 @@ header {
 /* --- Estilos para Carga y Error --- */
 .loading, .error, .no-results {
     font-family: monospace;
-    font-size: 1.2em;
+    font-size: 1.1em;
     color: #eee;
     padding: 20px;
-    background-color: rgba(0,0,0,0.4);
+    background-color: rgba(0, 0, 0, 0.13);
     border-radius: 10px;
     margin: 20px auto;
     text-align: center;
@@ -545,7 +545,7 @@ header {
         font-size: 1.1em;
     }
     .welcome-message p {
-        font-size: 0.7em;
+        font-size: 0.75em;
     }
 
     .controls-container {
@@ -959,6 +959,7 @@ header {
     line-height: 1.4;
     text-align: justify;
     margin-top: 10px;
+    font-family: monospace;
 }
 
 /* Asegurarse de que las clases de tipo existentes tengan color de texto contrastante */
@@ -1007,6 +1008,21 @@ header {
     text-align: center;
     display: inline-block;
     margin: 2px;
+}
+
+/* Estilos para la sección de Entrada de Pokedex */
+.pokedex-entry-text {
+    background-color: #f8f8f8; /* Un fondo gris claro para el cuadro de texto */
+    padding: 15px; /* Espacio interno para que el texto no esté pegado a los bordes */
+    border-radius: 8px; /* Bordes ligeramente redondeados */
+    margin: 10px auto 20px auto; /* Centrar y añadir margen superior/inferior */
+    max-width: 600px; /* Limita el ancho del texto para que no sea demasiado largo */
+    line-height: 1.5; /* Mejora la legibilidad del texto */
+    color: #333; /* Color de texto oscuro */
+    text-align: left; /* Alinea el texto a la izquierda dentro de su propio contenedor */
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* Sombra suave para darle profundidad */
+    font-family: monospace;
+    font-size: 0.95em;
 }
 
 /* Estilos para el contenedor de la línea evolutiva */
@@ -1078,8 +1094,8 @@ header {
 /* Estilos para los títulos de cada categoría de efectividad */
 .type-effectiveness-container p strong {
     display: block; /* Asegura que el título ocupe su propia línea */
-    font-size: 0.8em;
-    margin-bottom: 5px; /* Espacio entre el título y los badges */
+    font-size: 0.95em;
+    margin-bottom: 10px; /* Espacio entre el título y los badges */
     color: #333;
     /* Opcional: añadir un color de fondo para diferenciar el encabezado de la categoría */
     background-color: #e5e5e5;
@@ -1087,7 +1103,8 @@ header {
     border-radius: 10px;
     margin-left: auto;
     margin-right: auto;
-    max-width: 100px;
+    max-width: 130px;
+    font-family: monospace;
 }
 
 /* Estilos para los badges de DEBILIDADES */
@@ -1166,4 +1183,106 @@ header {
 
 .no-results {
     color: #34495e;
+}
+
+/* --- NUEVOS ESTILOS PARA LA SECCIÓN DE MEDIOS Y SPRITES CLÁSICOS --- */
+.media-section-container {
+    background-color: #f6f6f6; /* Un azul claro para el fondo */
+    padding: 20px;
+    border-radius: 10px;
+    margin: 20px auto;
+    max-width: 700px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    text-align: center; /* Centra el contenido de esta sección */
+}
+
+.pokemon-cry-section {
+    margin-bottom: 25px;
+}
+
+.pokemon-cry-section h4 {
+    margin-top: 0;
+    margin-bottom: 10px;
+    color: #004793; /* Un azul más oscuro */
+    font-size: 0.7em;
+}
+
+.play-cry-button {
+    background-color: #0066d3; /* Azul vibrante */
+    color: white;
+    /* Ajustes para el botón con icono */
+    width: 50px; /* Ancho fijo para un botón cuadrado o casi cuadrado */
+    height: 50px; /* Alto fijo */
+    border-radius: 50%; /* Lo hace redondo */
+    display: flex; /* Para centrar el icono */
+    justify-content: center; /* Centra horizontalmente */
+    align-items: center; /* Centra verticalmente */
+    font-size: 1.6em; /* Tamaño del icono */
+    line-height: 1; /* Asegura que el icono no tenga espacio extra */
+    padding: 0; /* Elimina padding por defecto para mejor centrado */
+    
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.1s ease; /* Añadido transform */
+    box-shadow: 0 4px 8px rgba(0,0,0,0.3); /* Sombra más pronunciada para botón 3D */
+    margin: 0 auto; /* Centrar el botón si su padre lo permite */
+}
+
+.play-cry-button:hover {
+    background-color: #0056b3; /* Azul más oscuro al pasar el ratón */
+    transform: scale(1.05); /* Ligeramente más grande al pasar el ratón */
+}
+
+.play-cry-button:active {
+    transform: scale(0.95); /* Ligeramente más pequeño al hacer click */
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2); /* Sombra menos pronunciada al hacer click */
+}
+
+.classic-sprites-gallery {
+    margin-top: 25px;
+}
+
+.classic-sprites-gallery h4 {
+    margin-bottom: 15px;
+    color: #004793;
+    font-size: 0.7em;
+}
+
+.sprites-grid {
+    display: flex;
+    flex-wrap: wrap; /* Permite que los sprites pasen a la siguiente línea */
+    justify-content: center; /* Centra los sprites en la cuadrícula */
+    gap: 20px; /* Espacio entre los sprites */
+    padding: 10px;
+}
+
+.sprite-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #ffffff; /* Fondo blanco para cada sprite */
+    border-radius: 8px;
+    padding: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    transition: transform 0.2s ease;
+}
+
+.sprite-item:hover {
+    transform: translateY(-5px); /* Efecto de elevación al pasar el ratón */
+}
+
+.classic-sprite-image {
+    width: 74px; /* Tamaño típico de los sprites clásicos, ajusta si es necesario */
+    height: 74px;
+    image-rendering: pixelated; /* Mantiene los píxeles nítidos para sprites retro */
+    image-rendering: -moz-crisp-edges; /* Para Firefox */
+    image-rendering: crisp-edges; /* Para otros navegadores */
+    margin-bottom: 2px;
+}
+
+.sprite-name {
+    font-size: 0.7em;
+    color: #555;
+    font-weight: bold;
+    text-align: center;
 }
