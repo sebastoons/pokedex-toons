@@ -4,6 +4,7 @@ import PokemonCard from './components/PokemonCard';
 import { Routes, Route, Link } from 'react-router-dom';
 import PokemonDetail from './components/PokemonDetail';
 
+
 // Mueve la definición de 'generations' FUERA del componente App
 // De esta manera, es una constante que solo se define una vez
 const ALL_POKEMON_GENERATIONS = [
