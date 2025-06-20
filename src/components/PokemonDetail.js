@@ -73,75 +73,78 @@ function PokemonDetail() {
       setClassicSprites([]); // Reiniciar al cargar nuevo Pokémon
 
       try {
-        const pokemonJson = await fetchPokemon(pokemonId);
-        setPokemonData(pokemonJson);
+    const pokemonJson = await fetchPokemon(pokemonId);
+    setPokemonData(pokemonJson);
 
-        // OBTENER SONIDO
-        if (pokemonJson.cries?.latest) { // Preferir el más reciente
-            setPokemonSoundUrl(pokemonJson.cries.latest);
-        } else if (pokemonJson.cries?.legacy) { // Fallback al legacy
-            setPokemonSoundUrl(pokemonJson.cries.legacy);
-        }
+    // OBTENER SONIDO (PRIORIDAD: VOCALIZADO -> CLÁSICO)
+    if (pokemonJson.cries?.latest) { // Preferir el vocalizado/más reciente
+        setPokemonSoundUrl(pokemonJson.cries.latest);
+    } else if (pokemonJson.cries?.legacy) { // Fallback al legado/clásico de juego
+        setPokemonSoundUrl(pokemonJson.cries.legacy);
+    } else {
+        setPokemonSoundUrl(''); // Si no hay ningún sonido disponible
+        console.warn(`No cry URL found for ${pokemonJson.name}`);
+    }
 
-        // OBTENER SPRITES CLÁSICOS
-        const fetchedSprites = [];
-        const versions = pokemonJson.sprites.versions;
+    // OBTENER SPRITES CLÁSICOS
+    const fetchedSprites = [];
+    const versions = pokemonJson.sprites.versions;
 
-        // Game Boy
-        if (versions?.["generation-i"]?.["red-blue"]?.front_default) {
-            fetchedSprites.push({
-                name: "GB (Rojo/Azul)",
-                url: versions["generation-i"]["red-blue"].front_default
-            });
-        } else if (versions?.["generation-i"]?.yellow?.front_default) {
-            fetchedSprites.push({
-                name: "GB (Amarillo)",
-                url: versions["generation-i"].yellow.front_default
-            });
-        }
+    // Game Boy
+    if (versions?.["generation-i"]?.["red-blue"]?.front_default) {
+        fetchedSprites.push({
+            name: "GB (Rojo/Azul)",
+            url: versions["generation-i"]["red-blue"].front_default
+        });
+    } else if (versions?.["generation-i"]?.yellow?.front_default) {
+        fetchedSprites.push({
+            name: "GB (Amarillo)",
+            url: versions["generation-i"].yellow.front_default
+        });
+    }
 
-        // Game Boy Advance
-        if (versions?.["generation-iii"]?.ruby_sapphire?.front_default) {
-            fetchedSprites.push({
-                name: "GBA (Rubí/Zafiro)",
-                url: versions["generation-iii"].ruby_sapphire.front_default
-            });
-        } else if (versions?.["generation-iii"]?.emerald?.front_default) {
-            fetchedSprites.push({
-                name: "GBA (Esmeralda)",
-                url: versions["generation-iii"].emerald.front_default
-            });
-        }
+    // Game Boy Advance
+    if (versions?.["generation-iii"]?.ruby_sapphire?.front_default) {
+        fetchedSprites.push({
+            name: "GBA (Rubí/Zafiro)",
+            url: versions["generation-iii"].ruby_sapphire.front_default
+        });
+    } else if (versions?.["generation-iii"]?.emerald?.front_default) {
+        fetchedSprites.push({
+            name: "GBA (Esmeralda)",
+            url: versions["generation-iii"].emerald.front_default
+        });
+    }
 
-        // Nintendo DS (Gen IV)
-        if (versions?.["generation-iv"]?.["diamond-pearl"]?.front_default) {
-            fetchedSprites.push({
-                name: "DS (Diamante/Perla)",
-                url: versions["generation-iv"]["diamond-pearl"].front_default
-            });
-        } else if (versions?.["generation-iv"]?.["heartgold-soulsilver"]?.front_default) {
-            fetchedSprites.push({
-                name: "DS (HG/SS)",
-                url: versions["generation-iv"]["heartgold-soulsilver"].front_default
-            });
-        }
-        
-        setClassicSprites(fetchedSprites);
+    // Nintendo DS (Gen IV)
+    if (versions?.["generation-iv"]?.["diamond-pearl"]?.front_default) {
+        fetchedSprites.push({
+            name: "DS (Diamante/Perla)",
+            url: versions["generation-iv"]["diamond-pearl"].front_default
+        });
+    } else if (versions?.["generation-iv"]?.["heartgold-soulsilver"]?.front_default) {
+        fetchedSprites.push({
+            name: "DS (HG/SS)",
+            url: versions["generation-iv"]["heartgold-soulsilver"].front_default
+        });
+    }
+    
+    setClassicSprites(fetchedSprites);
 
 
-        let currentSpeciesData = null;
-        if (pokemonJson.species?.url) {
-          const speciesResponse = await fetch(pokemonJson.species.url);
-          if (!speciesResponse.ok) {
-            throw new Error(`HTTP error! status: ${speciesResponse.status} fetching species`);
-          }
-          currentSpeciesData = await speciesResponse.json();
-          setSpeciesData(currentSpeciesData);
-        } else {
-            console.warn("Species URL not found for this Pokémon.");
-            setSpeciesData({ flavor_text_entries: [] });
-            currentSpeciesData = { evolution_chain: { url: null } };
-        }
+    let currentSpeciesData = null;
+    if (pokemonJson.species?.url) {
+      const speciesResponse = await fetch(pokemonJson.species.url);
+      if (!speciesResponse.ok) {
+        throw new Error(`HTTP error! status: ${speciesResponse.status} fetching species`);
+      }
+      currentSpeciesData = await speciesResponse.json();
+      setSpeciesData(currentSpeciesData);
+    } else {
+        console.warn("Species URL not found for this Pokémon.");
+        setSpeciesData({ flavor_text_entries: [] });
+        currentSpeciesData = { evolution_chain: { url: null } };
+    }
 
         // Lógica de Habilidades (sin cambios)
         if (pokemonJson.abilities && pokemonJson.abilities.length > 0) {
