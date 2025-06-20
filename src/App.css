@@ -499,7 +499,7 @@ header {
         padding: 6px 10px;
     }
 
-    .pokemon-list {
+     .pokemon-list {
         grid-template-columns: repeat(2, 1fr); /* Mantiene 2 columnas fijas */
         gap: 5px;
         padding: 2px;
@@ -657,7 +657,8 @@ header {
     }
 
     .pokemon-list {
-        grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); /* Permitir 3 o 4 columnas en tablets */
+        /* CAMBIO CLAVE AQUÍ: Aseguramos 3 columnas fijas */
+        grid-template-columns: repeat(3, 1fr); /* ¡Fija a 3 columnas para tablets! */
         gap: 15px;
         padding: 12px;
     }
@@ -694,6 +695,63 @@ header {
     }
     .stat-name, .stat-value, .characteristic-label, .characteristic-value, .ability-badge, .type-badge {
         font-size: 0.9em;
+    }
+}
+
+/* Añadido para asegurar el comportamiento en pantallas grandes */
+@media (min-width: 1025px) {
+    .pokemon-list {
+        /* Para escritorios, puedes decidir si quieres 4 columnas o mantener 3 grandes */
+        grid-template-columns: repeat(5, 1fr); /* Ejemplo: 4 columnas para pantallas más grandes */
+        /* O si prefieres 3 columnas grandes: */
+        /* grid-template-columns: repeat(3, 1fr); */
+        gap: 20px; /* Un poco más de espacio en pantallas grandes */
+        padding: 20px;
+    }
+    .pokemon-card .pokemon-image {
+        max-width: 120px; /* Un poco más grandes en desktop */
+        max-height: 120px;
+    }
+    .pokemon-name {
+        font-size: 1.3em;
+    }
+    .pokemon-number {
+        font-size: 1.1em;
+    }
+    .pokemon-types span {
+        font-size: 0.8em;
+    }
+
+    /* Ajustes para el contenedor principal y logo en desktop */
+    .pokedex-container {
+        padding: 40px;
+        border-width: 12px;
+        max-width: 1200px; /* Aumenta el max-width si lo deseas */
+    }
+    .pokedex-logo {
+        max-width: 300px; /* Logo más grande en desktop */
+    }
+    .welcome-message h2 {
+        font-size: 1.5em;
+    }
+    .welcome-message p {
+        font-size: 0.9em;
+    }
+    .controls-container {
+        justify-content: center; /* Centrar los controles en una sola fila */
+        gap: 30px;
+        padding: 20px;
+    }
+    .controls-container div {
+        flex-basis: auto; /* Permite que cada control tome el ancho que necesite */
+        max-width: none;
+    }
+    .controls-container input,
+    .controls-container select {
+        max-width: 250px; /* Limitar el ancho de los inputs/selects individuales en desktop */
+    }
+    .generation-button {
+        max-width: 250px; /* Limitar el ancho del botón de generación en desktop */
     }
 }
 
