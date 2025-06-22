@@ -2,11 +2,6 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { useSearchParams, Link, useNavigate } from 'react-router-dom';
 
-// Función auxiliar para formatear el ID con ceros a la izquierda (ej. 1 -> 001)
-const formatPokemonId = (id) => {
-    return String(id).padStart(3, '0');
-};
-
 // --- SIMPLIFICACIÓN: Estadísticas y movimientos básicos para la batalla ---
 const getBattleStats = (pokemon) => {
     // Volvemos a 100 HP y ajustamos ataque/poder para un balance intermedio.
