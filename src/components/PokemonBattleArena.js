@@ -30,7 +30,7 @@ function PokemonBattleArena({ pokemonList }) {
     const [opponentTeam, setOpponentTeam] = useState([]); // El equipo de 1 (o más) Pokémon del oponente
 
     const [playerActivePokemonIndex, setPlayerActivePokemonIndex] = useState(0); // Índice del Pokémon activo del jugador en playerTeam
-    const [opponentActivePokemonIndex, setOpponentActivePokemonIndex] = useState(0); // Índice del Pokémon activo del oponente en opponentTeam
+    const [opponentActivePokemonIndex] = useState(0); // Índice del Pokémon activo del oponente en opponentTeam
 
     const [playerTeamHp, setPlayerTeamHp] = useState([]); // Array de HP actuales para el equipo del jugador
     const [opponentTeamHp, setOpponentTeamHp] = useState([]); // Array de HP actuales para el equipo del oponente
