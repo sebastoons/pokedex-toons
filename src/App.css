@@ -451,6 +451,444 @@ header {
     object-fit: contain;
 }
 
+/* ========================================= */
+/* Estilos para PokemonBattleSelector.js */
+/* ========================================= */
+.battle-selector-container {
+    padding: 30px;
+    background-color: #e6f7ff; /* Un fondo más claro y azulado */
+    border-radius: 15px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    max-width: 1000px;
+    margin: 30px auto;
+    text-align: center;
+}
+
+.battle-selector-container h1 {
+    color: #005fc5;
+    margin-bottom: 20px;
+    font-size: 1.3em;
+    font-family: Verdana;
+    text-transform: uppercase;
+}
+
+.pokemon-selection-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 25px;
+    justify-content: center;
+    margin-bottom: 30px;
+}
+
+.selection-slot {
+    background-color: #ffffff;
+    border: 2px dashed #a7d9f7;
+    border-radius: 12px;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+}
+
+.selection-slot h2 {
+    color: #555;
+    font-size: 1.3em;
+    margin-bottom: 10px;
+    font-family: monospace;
+    text-transform: uppercase;
+}
+
+.selection-slot select {
+    width: 80%;
+    padding: 5px;
+    margin-bottom: 35px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 0.95em;
+    cursor: pointer;
+    background-color: #f0f0f0;
+    font-family: monospace;
+}
+
+.selected-pokemon-card {
+    border: 1px solid #eee;
+    border-radius: 8px;
+    padding: 15px;
+    background-color: #fdfdfd;
+    width: 100%;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.selected-pokemon-card img {
+    width: 80px; /* Tamaño de la miniatura */
+    height: 80px;
+    image-rendering: pixelated;
+    margin-bottom: 10px;
+    background-color: #f5f5f5;
+    border-radius: 5px;
+    padding: 5px;
+    border: 1px solid #eee;
+}
+
+.selected-pokemon-card h3 {
+    text-transform: uppercase;
+    margin: 2px 0;
+    color: #444;
+    font-family: monospace;
+}
+
+.selected-pokemon-card p {
+    font-size: 0.9em;
+    color: #666;
+    font-family: monospace;
+    text-transform: uppercase;
+}
+
+.start-battle-button {
+    padding: 10px 20px;
+    font-size: 1.2em;
+    background-color: #66c65f; /* Naranja brillante */
+    color: white;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+    margin-top: 5px;
+    font-family: monospace;
+    text-transform: uppercase;
+}
+
+.start-battle-button:hover:not(:disabled) {
+    background-color: #1f8418;
+    transform: translateY(-3px);
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.3);
+}
+
+.start-battle-button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+    box-shadow: none;
+    font-family: monospace;
+    text-transform: uppercase;
+}
+
+/* Estilos para el enlace/botón "Volver a la Pokédex" */
+.pokemon-link-button {
+    background-color: #3498db;
+    border: 3px solid #2980b9;
+    border-radius: 8px;
+    padding: 6px 20px;
+    font-size: 0.6em;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+    display: inline-block;
+    margin-bottom: 1px;
+    margin-top: 35px;
+    font-family: 'Press Start 2P', cursive;
+    text-shadow: 1px 1px 0px rgba(0,0,0,0.3);
+    color: white;
+}
+
+.pokemon-link-button:hover {
+    background-color: #2980b9;
+    transform: translateY(-2px);
+}
+
+.pokemon-link-button:active {
+    transform: translateY(0);
+}
+
+/* ========================================= */
+/* Estilos para PokemonBattleArena.js */
+/* ========================================= */
+
+.battle-arena-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 90%; /* Ajuste para que ocupe más espacio en pantallas grandes, pero deje algo de margen */
+    max-width: 850px; /* **AJUSTE CLAVE PC**: Mayor ancho máximo para PC, para que se vea "estirado" */
+    margin: 25px auto; /* Margen superior/inferior para separarlo de otros elementos, y auto para centrar */
+    padding: 30px; /* Más padding para una apariencia más grande en PC */
+    background-color: #e8f5e9;
+    border-radius: 15px; /* Bordes más redondeados para un look moderno */
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.18); /* Sombra más pronunciada para profundidad */
+    position: relative;
+    min-height: 600px; /* Altura mínima para PC */
+    font-size: 1em; /* **AJUSTE CLAVE PC**: Tamaño de fuente base para PC (1em = 16px por defecto) */
+}
+
+.battle-arena-container h1 {
+    color: #3f51b5;
+    margin-bottom: 25px;
+    font-size: 2.8em; /* Título grande para PC */
+    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.loading-battle {
+    font-size: 1.5em;
+    color: #666;
+    margin: 50px 0;
+}
+
+/* Contenedores de Pokebolas */
+.pokeball-team-container {
+    width: 100%; /* Ocupa el ancho completo del contenedor padre */
+    margin-bottom: 20px; /* Espacio debajo de cada equipo de pokebolas */
+    padding: 10px 0;
+    background-color: rgba(255, 255, 255, 0.8);
+    border-radius: 10px; /* **AJUSTE CLAVE**: Hace que el contenedor sea rectangular con esquinas redondeadas, no ovalado */
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    display: flex; /* Asegura que el contenido (pokebolas) se centre */
+    justify-content: center; /* Centra las pokebolas horizontalmente */
+    align-items: center;
+}
+
+.pokeball-team-container.player-team {
+    order: 1;
+    margin-top: 5px;
+    margin-bottom: 0;
+}
+
+.pokeball-team-container.opponent-team {
+    order: 2;
+    margin-top: 10px;
+}
+
+.pokeball-team-container h3 {
+    display: none;
+}
+
+.pokeball-grid {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+}
+
+.pokeball-slot {
+    position: relative;
+    width: 50px; /* Tamaño de la pokebola para PC */
+    height: 50px;
+    border-radius: 50%; /* Asegura que la pokebola misma sea redonda */
+    background-color: #f0f0f0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid #ccc;
+    overflow: visible;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+    flex-direction: column;
+    padding-bottom: 22px; /* Espacio para el nombre debajo */
+}
+
+.pokeball-icon {
+    width: 90%;
+    height: 90%;
+    object-fit: contain;
+    filter: brightness(1);
+    transition: filter 0.3s ease;
+}
+
+.pokeball-slot.fainted .pokeball-icon {
+    filter: grayscale(100%) brightness(0.5);
+}
+
+.pokeball-slot.active {
+    border-color: #007bff;
+    box-shadow: 0 0 10px rgba(0,123,255,0.7);
+    transform: scale(1.12); /* Efecto de escala */
+}
+
+.pokemon-name-pokeball {
+    position: absolute;
+    bottom: -16px; /* Posición del nombre */
+    font-size: 0.75em; /* Tamaño de fuente para PC */
+    font-weight: bold;
+    color: #444;
+    width: 100%;
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.fainted-overlay {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: rgba(220, 53, 69, 0.85);
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.65em;
+    font-weight: bold;
+    text-transform: uppercase;
+    z-index: 10;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+
+
+/* Display de los Pokémon en combate */
+.battle-display {
+    display: flex;
+    justify-content: space-around;
+    align-items: flex-end;
+    width: 100%;
+    margin-top: 30px;
+    margin-bottom: 30px;
+    padding: 20px 0;
+    background: linear-gradient(to top, #c8e6c9 0%, #e8f5e9 100%);
+    border-radius: 12px;
+    box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.08);
+}
+
+.battle-pokemon {
+    text-align: center;
+    padding: 20px;
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.12);
+    flex: 1;
+    margin: 0 15px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 250px; /* Ancho mínimo para PC */
+}
+
+.battle-pokemon h3 {
+    color: #333;
+    margin-bottom: 10px;
+    font-size: 1.5em; /* Nombres de Pokémon más grandes para PC */
+    text-transform: uppercase;
+    font-family: monospace;
+}
+
+.active-pokemon-image {
+    width: 200px; /* Imágenes más grandes para PC */
+    height: 200px;
+    object-fit: contain;
+    margin: 15px auto;
+    display: block;
+    filter: drop-shadow(4px 4px 8px rgba(0,0,0,0.2));
+}
+
+.active-pokemon-image.player {
+    transform: scaleX(-1);
+}
+
+.hp-bar-container {
+    width: 95%;
+    height: 16px; /* Barra HP para PC */
+    background-color: #ddd;
+    border-radius: 8px;
+    margin: 15px auto;
+    overflow: hidden;
+    border: 1px solid #aaa;
+    box-shadow: inset 0 1px 4px rgba(0,0,0,0.2);
+}
+
+.hp-bar {
+    height: 100%;
+    border-radius: 8px;
+    transition: width 0.5s ease-in-out, background-color 0.5s ease-in-out;
+}
+
+.battle-pokemon p {
+    font-size: 1.1em; /* HP texto para PC */
+    color: #555;
+    margin-top: 10px;
+    font-weight: bold;
+}
+
+.battle-vs {
+    font-size: 2.2em; /* VS para PC */
+    font-weight: bold;
+    color: #777;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+    align-self: center;
+}
+
+/* Log de la batalla */
+.battle-log {
+    background-color: #fcfcfc;
+    border: 1px solid #e0e0e0;
+    border-radius: 10px;
+    padding: 20px;
+    margin-top: 40px;
+    width: 95%;
+    max-height: 160px; /* Altura para PC */
+    overflow-y: auto;
+    font-size: 0.95em; /* Log para PC */
+    line-height: 1.6;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+    text-align: left;
+    font-family: 'Arial', sans-serif;
+    color: #444;
+}
+
+.battle-log p {
+    margin-bottom: 5px;
+    color: #555;
+    font-family: monospace;
+}
+
+.battle-log p:last-child {
+    font-weight: bold;
+    color: #000;
+}
+
+/* Controles de la batalla */
+.battle-controls {
+    margin-top: 40px;
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.battle-controls button {
+    padding: 14px 30px; /* Botones para PC */
+    font-size: 1.1em; /* Texto en botones para PC */
+    font-weight: bold;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.1s ease, box-shadow 0.2s ease;
+    background-color: #4CAF50;
+    color: white;
+    box-shadow: 0 5px 12px rgba(0,0,0,0.15);
+}
+
+.battle-controls button:hover:not(:disabled) {
+    background-color: #43a047;
+    transform: translateY(-3px);
+    box-shadow: 0 8px 18px rgba(0,0,0,0.2);
+}
+
+.battle-controls button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+.restart-button.pokemon-link-button {
+    background-color: #007bff;
+    margin-top: 0;
+}
+.restart-button.pokemon-link-button:hover {
+    background-color: #0056b3;
+}
+
 /* ========================================================= */
 /* MEDIA QUERIES PARA RESPONSIVIDAD          */
 /* ========================================================= */
@@ -523,11 +961,82 @@ header {
         padding: 1px 4px;
         border-width: 1px;
     }
+    .battle-arena-container {
+        padding: 10px;
+        font-size: 0.7em;
+    }
+
+    .battle-arena-container h1 {
+        font-size: 1.6em;
+    }
+
+    .active-pokemon-image {
+        width: 100px;
+        height: 100px;
+    }
+
+    .pokeball-slot {
+        width: 30px;
+        height: 30px;
+    }
+
+    .pokemon-name-pokeball {
+        font-size: 0.55em;
+    }
+
+    .battle-log {
+        font-size: 0.7em;
+        max-height: 80px;
+    }
+
+    .battle-controls button {
+        padding: 8px 15px;
+        font-size: 0.8em;
+    }
+    .back-to-pokedex {
+        font-size: 0.9em;
+        padding: 5px 10px;
+    }
 }
 
 /* --- Estilos para Móviles PEQUEÑOS (max-width: 480px) --- */
 /* Este rango cubre móviles estándar y más pequeños */
 @media (max-width: 480px) {
+    .battle-arena-container {
+        padding: 8px;
+        font-size: 0.75em;
+    }
+
+    .battle-arena-container h1 {
+        font-size: 1.5em;
+    }
+
+    .active-pokemon-image {
+        width: 90px;
+        height: 90px;
+    }
+
+    .pokeball-slot {
+        width: 30px;
+        height: 30px;
+        padding-bottom: 12px;
+    }
+
+    .pokemon-name-pokeball {
+        font-size: 0.5em;
+        bottom: -8px;
+    }
+
+    .battle-log {
+        font-size: 0.7em;
+        padding: 6px;
+    }
+
+    .battle-controls button {
+        padding: 6px 12px;
+        font-size: 0.8em;
+    }
+
     .pokedex-container {
         padding: 10px;
         margin: 10px auto;
@@ -587,6 +1096,10 @@ header {
     .pokemon-types span {
         font-size: 0.6em;
         padding: 3px 10px;
+    }
+    .back-to-pokedex {
+        font-size: 0.9em;
+        padding: 5px 10px;
     }
 }
 
@@ -696,6 +1209,107 @@ header {
     .stat-name, .stat-value, .characteristic-label, .characteristic-value, .ability-badge, .type-badge {
         font-size: 0.9em;
     }
+    .battle-arena-container {
+        width: 98%; /* Ocupa casi todo el ancho disponible en móviles */
+        max-width: 450px; /* Ancho máximo para móviles */
+        margin: 15px auto;
+        padding: 15px;
+        min-height: auto; /* La altura se ajusta al contenido */
+        font-size: 0.8em; /* Reduce aún más el tamaño de fuente base */
+    }
+
+    .battle-arena-container h1 {
+        font-size: 2em;
+        margin-bottom: 15px;
+    }
+
+    .pokeball-team-container {
+        margin-bottom: 8px;
+        padding: 5px 0;
+    }
+
+    .pokeball-grid {
+        gap: 6px;
+    }
+
+    .pokeball-slot {
+        width: 35px; /* Pokebola más pequeña para móvil */
+        height: 35px;
+        padding-bottom: 15px;
+    }
+
+    .pokemon-name-pokeball {
+        font-size: 0.6em; /* Nombre de Pokémon más pequeño */
+        bottom: -10px;
+    }
+
+    .battle-display {
+        flex-direction: column; /* Apila los Pokémon en vertical en móvil */
+        align-items: center;
+        margin-top: 15px;
+        margin-bottom: 15px;
+        padding: 10px 0;
+    }
+
+    .battle-pokemon {
+        width: 95%; /* Ocupa casi todo el ancho disponible */
+        margin: 0 auto 10px auto; /* Centra y añade margen inferior */
+        padding: 10px;
+        min-width: unset; /* Ancho flexible */
+    }
+
+    .battle-pokemon:last-child {
+        margin-bottom: 0; /* Elimina el margen inferior del último Pokémon */
+    }
+
+    .battle-pokemon h3 {
+        font-size: 1.2em;
+    }
+
+    .active-pokemon-image {
+        width: 140px; /* Imágenes más pequeñas para móvil */
+        height: 140px;
+        margin: 10px auto;
+    }
+
+    .hp-bar-container {
+        height: 12px;
+    }
+
+    .battle-pokemon p {
+        font-size: 0.9em;
+    }
+
+    .battle-vs {
+        margin: 10px 0;
+        font-size: 1.8em;
+    }
+
+    .battle-log {
+        margin-top: 20px;
+        max-height: 100px;
+        font-size: 0.8em;
+        padding: 10px;
+    }
+
+    .battle-controls {
+        margin-top: 20px;
+        gap: 10px;
+    }
+
+    .battle-controls button {
+        padding: 10px 20px;
+        font-size: 0.9em;
+        flex-basis: 48%; /* Dos botones por fila */
+    }
+
+    .battle-controls button:last-child:nth-child(odd) { /* Si hay un número impar de botones, centra el último */
+        flex-basis: 100%;
+    }
+    .back-to-pokedex {
+        font-size: 0.9em;
+        padding: 5px 10px;
+    }
 }
 
 /* Añadido para asegurar el comportamiento en pantallas grandes */
@@ -753,8 +1367,97 @@ header {
     .generation-button {
         max-width: 250px; /* Limitar el ancho del botón de generación en desktop */
     }
-}
+    .battle-arena-container {
+        max-width: 700px; /* Ancho máximo para tablets */
+        padding: 25px;
+        min-height: 550px;
+        font-size: 0.9em; /* Reduce el tamaño de fuente base */
+    }
 
+    .battle-arena-container h1 {
+        font-size: 2em;
+        margin-bottom: 5px;
+        margin-top: 5px;
+        font-family: monospace;
+        text-transform: uppercase;
+        font-weight: bold;
+    }
+
+    .pokeball-team-container {
+        padding: 18px 0;
+    }
+
+    .pokeball-slot {
+        width: 30px;
+        height: 30px;
+        padding-bottom: 0px;
+    }
+
+    .pokemon-name-pokeball {
+        font-size: 0.65em;
+        bottom: -14px;
+    }
+
+    .battle-display {
+        margin-top: 20px;
+        margin-bottom: 15px;
+        padding: 15px 10px;
+        justify-content: center;
+    }
+
+    .battle-pokemon {
+        padding: 20px;
+        min-width: 200px;
+    }
+
+    .battle-pokemon h3 {
+        font-size: 1.3em;
+    }
+
+    .active-pokemon-image {
+        width: 170px;
+        height: 170px;
+    }
+
+    .hp-bar-container {
+        height: 14px;
+    }
+
+    .battle-pokemon p {
+        font-size: 1em;
+    }
+
+    .battle-vs {
+        font-size: 2em;
+    }
+
+    .battle-log {
+        padding: 10px;
+        margin-top: 5px;
+        max-height: 140px;
+        font-size: 0.85em;
+        text-align: center;
+    }
+
+    .battle-controls {
+        margin-top: 15px;
+        gap: 10px;
+    }
+
+    .battle-controls button {
+        padding: 8px 15px;
+        font-size: 0.75em;
+        margin-bottom: 15px;
+    }
+    .back-to-pokedex {
+        font-size: 1em;
+        padding: 6px 12px;
+    }
+    .restart-button {
+        padding: 10px 20px;
+        font-size: 1em;
+    }
+}
 
 /* --- Estilos para PokemonDetail View --- */
 .pokemon-detail-view {

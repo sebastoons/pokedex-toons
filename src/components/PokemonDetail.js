@@ -2,6 +2,7 @@
 import React, { useState, useEffect, useRef } from 'react'; // ¡Importa useRef!
 import { useParams, useNavigate } from 'react-router-dom';
 import '../App.css'; 
+import { getTypeInfo } from '../utils/pokemonTypes';
 
 // Importa las funciones de pokeapi.js
 import { fetchPokemon, getPokemonTypeEffectiveness, fetchEvolutionChain, fetchPokemonBasicInfo } from '../services/pokeapi';
