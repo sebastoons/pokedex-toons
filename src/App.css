@@ -463,15 +463,7 @@ header {
     margin: 30px auto;
     text-align: center;
 }
-
-.battle-selector-container h1 {
-    color: #005fc5;
-    margin-bottom: 20px;
-    font-size: 1.3em;
-    font-family: Verdana;
-    text-transform: uppercase;
-}
-
+   
 .pokemon-selection-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -609,20 +601,22 @@ header {
 /* Estilos para PokemonBattleArena.js */
 /* ========================================= */
 
+/* Contenedor principal de la arena de batalla */
 .battle-arena-container {
     display: flex;
     flex-direction: column;
     align-items: center;
-    width: 90%; /* Ajuste para que ocupe más espacio en pantallas grandes, pero deje algo de margen */
-    max-width: 850px; /* **AJUSTE CLAVE PC**: Mayor ancho máximo para PC, para que se vea "estirado" */
-    margin: 25px auto; /* Margen superior/inferior para separarlo de otros elementos, y auto para centrar */
-    padding: 30px; /* Más padding para una apariencia más grande en PC */
-    background-color: #e8f5e9;
-    border-radius: 15px; /* Bordes más redondeados para un look moderno */
-    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.18); /* Sombra más pronunciada para profundidad */
+    width: calc(100% - 16px); /* Ocupa casi todo el ancho, dejando un pequeño margen lateral */
+    max-width: 100%; /* Asegura que nunca desborde el padre */
+    margin: 8px auto; /* Margen superior/inferior pequeño, centrado horizontal */
+    padding: 10px; /* Padding reducido para móviles */
+    background: linear-gradient(to top, #c0392b 0%, #e74c3c 100%); /* Color de la consola */
+    border-radius: 8px; /* Menos redondeado */
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
     position: relative;
-    min-height: 600px; /* Altura mínima para PC */
-    font-size: 1em; /* **AJUSTE CLAVE PC**: Tamaño de fuente base para PC (1em = 16px por defecto) */
+    min-height: auto; /* Permitir que la altura se ajuste al contenido */
+    font-size: 0.9em; /* Tamaño de fuente base más pequeño para móvil */
+    box-sizing: border-box; /* Incluir padding y borde en el ancho/alto */
 }
 
 .battle-arena-container h1 {
@@ -749,6 +743,7 @@ header {
     background: linear-gradient(to top, #c8e6c9 0%, #e8f5e9 100%);
     border-radius: 12px;
     box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.08);
+    align-items: center;
 }
 
 .battle-pokemon {
@@ -773,13 +768,14 @@ header {
     font-family: monospace;
 }
 
+/* Estilos para las imágenes de los Pokémon */
 .active-pokemon-image {
-    width: 200px; /* Imágenes más grandes para PC */
-    height: 200px;
+    width: 100px; /* Tamaño de imagen para móvil */
+    height: 100px;
     object-fit: contain;
-    margin: 15px auto;
+    margin: 5px auto; /* Margen para la imagen */
     display: block;
-    filter: drop-shadow(4px 4px 8px rgba(0,0,0,0.2));
+    filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.2)); /* Sombra más suave */
 }
 
 .active-pokemon-image.player {
@@ -1084,6 +1080,7 @@ header {
     .battle-log {
         font-size: 0.7em;
         padding: 6px;
+        margin-top: 2px;
     }
 
     .battle-controls button {

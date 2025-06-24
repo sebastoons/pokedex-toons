@@ -1,119 +1,441 @@
-/* --- Estilos para PokemonBattleArena.js (Nuevos o Modificados) --- */
+/* --- Estilos base (Mobile First: para pantallas pequeñas, como celulares) --- */
 
+.battle-arena-container {
+    display: flex;
+    flex-direction: column;
+    padding: 8px; /* Menos padding en móvil */
+    background: linear-gradient(to top, #c0392b 0%, #e74c3c 100%); /* Color de la consola */
+    border-radius: 8px; /* Menos redondeado */
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+    min-height: calc(100vh - 20px); /* Ajustar altura mínima para ocupar casi todo el viewport */
+    box-sizing: border-box; /* Fundamental para que padding y border no sumen al width/height */
+    margin: 0 auto; /* Centrar y no tener márgenes fijos que desborden */
+    width: 100%; /* Ocupa el 100% del contenedor padre */
+    max-width: 500px; /* Un máximo para que no se estire demasiado en móviles grandes, pero puede ser más si el .pokedex-container lo permite */
+}
+
+/* Encabezado de la batalla */
+.battle-arena-container h1 {
+    color: white;
+    font-size: 1.2em; /* Tamaño de fuente para móvil */
+    margin-bottom: 10px;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+    text-align: center;
+}
+
+/* Indicador de turno */
 .turn-indicator {
-    margin: 15px 0;
-    padding: 10px 20px;
+    margin: 10px 0; /* Menos margen en móvil */
+    padding: 8px 15px;
     background-color: #e0e0e0;
-    border-radius: 8px;
-    font-size: 1.1em;
+    border-radius: 5px; /* Menos redondeado */
+    font-size: 0.9em; /* Tamaño de fuente para móvil */
     font-weight: bold;
     display: flex;
-    gap: 15px;
+    gap: 10px; /* Menos espacio entre elementos */
     align-items: center;
     justify-content: center;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1); /* Sombra más sutil */
+    text-align: center;
 }
 
 .turn-player {
-    padding: 5px 10px;
-    border-radius: 5px;
+    padding: 4px 8px;
+    border-radius: 4px;
     background-color: #bbb;
     color: #333;
     transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .turn-player.active {
-    background-color: #4CAF50; /* Verde brillante para el turno activo */
+    background-color: #4CAF50;
     color: white;
 }
 
+/* Display de los Pokémon en combate */
+.battle-display {
+    display: flex;
+    flex-direction: column; /* SIEMPRE apilado en móvil */
+    justify-content: space-around;
+    align-items: center; /* Centrar ítems apilados */
+    width: 100%; /* Ocupa el 100% del padre */
+    margin-top: 15px; /* Margen para móvil */
+    margin-bottom: 15px;
+    padding: 10px 0; /* Padding reducido */
+    background: linear-gradient(to top, #c8e6c9 0%, #e8f5e9 100%);
+    border-radius: 8px; /* Menos redondeado */
+    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.08); /* Sombra más sutil */
+    box-sizing: border-box; /* Crucial para los anchos */
+}
+
+.pokemon-battle-area {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 95%; /* Ocupar casi todo el ancho */
+    margin-bottom: 15px; /* Espacio entre el tuyo y el oponente */
+}
+
+.pokemon-info-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%; /* La barra de info ocupa todo el ancho */
+    padding: 5px;
+    background-color: rgba(255, 255, 255, 0.8);
+    border-radius: 5px;
+    margin-bottom: 5px;
+}
+
+.pokemon-name-hp {
+    display: flex;
+    flex-direction: column;
+    font-size: 0.8em; /* Tamaño de fuente para móvil */
+    color: #333;
+    margin-right: 5px;
+}
+
+.pokemon-name-hp h3 {
+    margin: 0;
+    font-size: 1em;
+    text-transform: capitalize;
+}
+
+.pokemon-name-hp p {
+    margin: 0;
+    font-size: 0.9em;
+}
+
+.hp-bar-container {
+    flex-grow: 1; /* Permite que la barra crezca */
+    height: 10px; /* Altura de la barra de HP para móvil */
+    background-color: #ccc;
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.hp-bar {
+    height: 100%;
+    background-color: #4CAF50; /* Verde inicial */
+    width: 100%; /* Se ajusta con JS */
+    transition: width 0.5s ease-in-out, background-color 0.5s ease-in-out;
+}
+
+/* Posicionamiento de los Pokémon */
+.battle-pokemon {
+    text-align: center;
+    padding: 10px; /* Reducir padding para móvil */
+    background-color: #ffffff;
+    border-radius: 8px; /* Menos redondeado */
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1); /* Sombra más sutil */
+    flex: 0 0 auto; /* No crecer, no encoger, ancho definido por su contenido o width */
+    margin: 5px auto; /* Margen entre slots y centrado */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: calc(100% - 10px); /* Ocupa casi todo el ancho disponible en móvil */
+    max-width: 250px; /* Limite máximo para que no sea muy grande en móviles con mucho espacio */
+    min-width: unset; /* ¡QUITAR MIN-WIDTH FIJO AQUI! */
+}
+
+/* Ajustes específicos para el jugador y el oponente */
+.player-pokemon-image {
+    margin-top: 5px; /* Ajuste sutil */
+}
+
+.opponent-pokemon-image {
+    margin-bottom: 5px; /* Ajuste sutil */
+}
+
+
+/* Contenedor del log de batalla */
+.battle-log-container {
+    background-color: #ffffff;
+    border-radius: 8px;
+    padding: 10px; /* Menos padding */
+    margin-top: 15px;
+    max-height: 100px; /* Altura máxima del log para móvil */
+    overflow-y: auto;
+    font-size: 0.8em; /* Tamaño de fuente para móvil */
+    color: #333;
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
+    line-height: 1.4;
+}
+
+/* Controles de batalla (botones de ataque/cambio) */
+.battle-controls {
+    position: relative; /* Mantener para el overlay */
+    padding: 10px; /* Menos padding */
+    margin-top: 15px;
+    background-color: #f0f0f0;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.actions-container {
+    display: flex;
+    flex-wrap: wrap; /* Permite que los botones se envuelvan en la siguiente línea */
+    justify-content: center; /* Centrar botones */
+    gap: 8px; /* Menos espacio entre botones */
+}
+
+.move-button, .switch-button {
+    flex: 1 1 calc(50% - 12px); /* Dos columnas, con espacio para el gap */
+    min-width: 120px; /* Mínimo para que el texto sea legible */
+    padding: 8px 10px; /* Menos padding */
+    font-size: 0.85em; /* Tamaño de fuente para móvil */
+    text-align: center;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+    text-transform: uppercase;
+    font-family: monospace;
+}
+
+.move-button {
+    background-color: #4CAF50; /* Verde */
+    color: white;
+}
+
+.move-button:hover:not(:disabled) {
+    background-color: #45a049;
+}
+
+.switch-button {
+    background-color: #007bff; /* Azul */
+    color: white;
+}
+
+.switch-button:hover:not(:disabled) {
+    background-color: #0056b3;
+}
+
+.move-button:disabled, .switch-button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+/* Estilos para el overlay de espera (ya los tenías, solo los integro) */
 .turn-wait-overlay {
-    position: absolute; /* O relative en un contenedor padre */
+    position: absolute;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: rgba(0, 0, 0, 0.6); /* Oscurece el fondo */
+    background-color: rgba(0, 0, 0, 0.6);
     color: white;
-    font-size: 1.5em;
+    font-size: 1.2em; /* Ajuste para móvil */
     display: flex;
     align-items: center;
     justify-content: center;
-    z-index: 10; /* Asegura que esté por encima de los controles */
-    border-radius: 10px;
+    z-index: 10;
+    border-radius: 8px; /* Ajuste del radio */
 }
 
-/* Modificar .battle-controls para que el overlay se posicione correctamente */
-.battle-controls {
-    position: relative; /* Importante para que el overlay se posicione con respecto a él */
-    /* ... el resto de tus estilos para battle-controls ... */
-}
-
-/* --- Media Query para Tablets (ej. min-width: 768px) --- */
-@media (min-width: 768px) {
+@media (min-width: 376px) {
     .battle-arena-container {
-        padding: 20px;
+        padding: 15px;
+        margin: 15px auto;
+        font-size: 1em;
+    }
+    .battle-arena-container h1 {
+        font-size: 1.4em;
+    }
+    .battle-display {
+        margin-top: 20px;
+        margin-bottom: 20px;
+        padding: 10px 0;
+        border-radius: 10px;
+    }
+    .battle-pokemon {
+        padding: 5px;
+        border-radius: 10px;
+        max-width: 280px;
+    }
+    .active-pokemon-image {
+        width: 120px;
+        height: 120px;
+    }
+    .pokemon-info-bar {
+        padding: 8px;
+    }
+    .pokemon-name-hp {
+        font-size: 0.85em;
+    }
+    .hp-bar-container {
+        height: 10px;
+    }
+    .battle-log-container {
+        max-height: 100px;
+        font-size: 0.8em;
+        padding: 10px;
+    }
+    .battle-controls {
+        padding: 15px;
+    }
+    .actions-container {
+        gap: 8px;
+    }
+    .move-button, .switch-button {
+        padding: 10px 8px;
+        font-size: 0.9em;
+        min-width: 110px;
+    }
+}
+
+
+/* --- Media Query para Tablets (min-width: 481px a 1024px) --- */
+@media (min-width: 481px) {
+    .battle-arena-container {
+        padding: 25px; /* Más padding para tablets */
+        margin: 20px auto;
+        border-radius: 12px;
+        max-width: 700px; /* Límite de ancho para tablets */
+        min-height: 500px; /* Altura mínima para tablets */
+        font-size: 1.05em;
+    }
+
+    .battle-arena-container h1 {
+        font-size: 1.8em;
     }
 
     .battle-display {
-        height: 400px; /* Aumenta la altura para tablets */
+        flex-direction: column; /* Apilado en tablets, como se ve en tu imagen */
+        margin-top: 25px;
+        margin-bottom: 25px;
+        padding: 15px 0;
+        border-radius: 12px;
     }
 
     .battle-pokemon {
-        width: 200px; /* Tamaño del Pokémon en tablet */
+        padding: 15px;
+        margin: 10px auto; /* Espacio entre los Pokémon apilados */
+        border-radius: 12px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12);
+        /* Aquí puedes controlar el ancho si quieres que no se estiren demasiado */
+        width: calc(100% - 20px); /* Un poco más de margen lateral */
+        max-width: 300px; /* Limitar el ancho de cada tarjeta de Pokémon */
+        min-width: unset; /* Asegura que no haya un min-width fijo indeseado */
     }
 
+    .active-pokemon-image {
+        width: 150px; /* Imágenes más grandes para tablet */
+        height: 150px;
+    }
+
+    .pokemon-info-bar {
+        font-size: 0.95em;
+        padding: 10px;
+    }
+    .pokemon-name-hp {
+        font-size: 0.95em;
+    }
     .hp-bar-container {
-        width: 100%; /* Puede ser más grande en tablet */
+        height: 15px;
+    }
+
+    .battle-log-container {
+        max-height: 150px;
+        font-size: 0.9em;
+        padding: 12px;
+    }
+
+    .battle-controls {
+        padding: 15px;
+        margin-top: 20px;
+    }
+
+    .actions-container {
+        gap: 10px; /* Espacio entre botones */
+    }
+
+    .move-button, .switch-button {
+        flex: 1 1 calc(50% - 15px); /* Dos columnas, con más gap */
+        min-width: 130px;
+        padding: 12px 10px;
+        font-size: 0.95em;
+    }
+}
+
+/* --- Media Query para Desktops (min-width: 1025px) --- */
+@media (min-width: 1025px) {
+    .battle-arena-container {
+        padding: 30px; /* Volver al padding original de PC */
+        max-width: 850px; /* Ancho máximo para PC */
+        margin: 25px auto;
+        border-radius: 15px;
+        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.18);
+        min-height: 600px;
+        font-size: 1em; /* Tamaño de fuente base de PC */
+    }
+
+    .battle-arena-container h1 {
+        font-size: 2em;
+    }
+
+    .battle-display {
+        /* Para escritorio, podemos considerar ponerlos lado a lado */
+        flex-direction: row; /* Poner los Pokémon uno al lado del otro */
+        justify-content: space-around; /* Distribuir uniformemente */
+        align-items: flex-end; /* Alinear abajo para un efecto de "suelo" */
+        margin-top: 30px;
+        margin-bottom: 30px;
+        padding: 20px 0;
+        border-radius: 12px;
+        box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.08);
+    }
+
+    .battle-pokemon {
+        padding: 20px;
+        margin: 0 15px; /* Margen entre ellos cuando están en fila */
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.12);
+        flex: 1; /* Permitir que crezcan para llenar el espacio */
+        min-width: 250px; /* Ancho mínimo para PC como lo tenías */
+        width: auto; /* Dejar que flex y min-width manejen el ancho */
+        max-width: 400px; /* Opcional: limitar el ancho de cada Pokémon individualmente */
+    }
+
+    .active-pokemon-image {
+        width: 200px; /* Imágenes más grandes para PC */
+        height: 200px;
+        margin: 15px auto;
+        filter: drop-shadow(4px 4px 8px rgba(0,0,0,0.2));
+    }
+
+    .pokemon-info-bar {
+        font-size: 1em;
+        padding: 12px;
+    }
+    .pokemon-name-hp {
+        font-size: 1em;
+    }
+    .hp-bar-container {
         height: 20px;
     }
 
     .battle-log-container {
-        max-height: 200px; /* Más espacio para el log */
-        font-size: 0.9rem;
+        max-height: 200px;
+        font-size: 0.95em;
+        padding: 15px;
+    }
+
+    .battle-controls {
+        padding: 20px;
+        margin-top: 25px;
     }
 
     .actions-container {
-        flex-direction: row; /* Los botones pueden ir en fila en tablet */
-        flex-wrap: wrap; /* Si hay muchos, que se envuelvan */
-        justify-content: center;
-    }
-
-    .move-button, .switch-button {
-        width: 48%; /* Para 2 columnas */
-    }
-}
-
-/* --- Media Query para Desktops (ej. min-width: 1025px) --- */
-@media (min-width: 1025px) {
-    .battle-arena-container {
-        padding: 30px;
-    }
-
-    .battle-display {
-        height: 500px; /* Altura para escritorio */
-    }
-
-    .battle-pokemon {
-        width: 250px; /* Tamaño del Pokémon en escritorio */
-    }
-
-    .hp-bar-container {
-        height: 25px;
-    }
-
-    .battle-log-container {
-        max-height: 250px;
-        font-size: 1rem;
-    }
-
-    .actions-container {
-        flex-direction: row;
+        gap: 20px;
         justify-content: space-around; /* Distribución más espaciada */
     }
 
     .move-button, .switch-button {
-        width: auto; /* O anchos fijos si lo prefieres para escritorio */
-        min-width: 120px;
+        flex: 0 0 auto; /* Volver a anchos automáticos o fijos para PC */
+        min-width: 150px;
+        padding: 15px 12px;
+        font-size: 1.1em;
     }
 }
