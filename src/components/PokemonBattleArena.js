@@ -198,15 +198,17 @@ function PokemonBattleArena({ pokemonList }) { // pokemonList ya no será la fue
     const battleMusicRef = useRef(null); // Para la música de fondo
     const lowHpSoundRef = useRef(null); // Nuevo: Sonido de HP bajo
     const victorySoundRef = useRef(null); // Nuevo: Sonido de victoria
-    const defeatSoundRef = useRef(null); // Nuevo: Sonido de derrota
 
-
-    // --- Carga inicial de Pokémon y sus estadísticas de batalla (MODIFICADA para música) ---
     useEffect(() => {
+
+        const currentBattleMusicRef = battleMusicRef.current;
+        const currentLowHpSoundRef = lowHpSoundRef.current;
+        const currentVictorySoundRef = victorySoundRef.current; 
+
         const loadBattlePokemon = async () => {
             // Si faltan IDs, redirigir a la selección de batalla
             if (!pokemonId1 || !pokemonId2) {
-                navigate('/battle'); 
+                navigate('/battle');
                 return;
             }
 
@@ -221,7 +223,7 @@ function PokemonBattleArena({ pokemonList }) { // pokemonList ya no será la fue
             const selectedIds = [pokemonId1, pokemonId2];
             const allAvailablePokemonIds = Array.from({length: 151}, (_, i) => i + 1); // Asumiendo que trabajas con los primeros 151
             const opponentId = allAvailablePokemonIds.filter(id => !selectedIds.includes(id))
-                                                    .sort(() => 0.5 - Math.random())[0];
+                                                 .sort(() => 0.5 - Math.random())[0];
             
             // Obtener detalles del Pokémon oponente
             const opponentDetails = await fetchPokemonDetails(opponentId);
@@ -241,52 +243,64 @@ function PokemonBattleArena({ pokemonList }) { // pokemonList ya no será la fue
             setBattleEnded(false); // Asegurarse de que la batalla no esté marcada como terminada
 
             // Iniciar música de batalla (al cargar la página)
-            // IMPORTANTE: Los navegadores modernos pueden bloquear la reproducción automática de audio
-            // si no hay una interacción del usuario primero. Puede que la música solo empiece
-            // después de que el usuario haga click en un botón de ataque o en la pantalla.
-            if (battleMusicRef.current) {
-                battleMusicRef.current.volume = 0.3; // Ajustar volumen si es muy alto
-                battleMusicRef.current.loop = true; // Que se repita
-                battleMusicRef.current.play().catch(e => console.error("Error al reproducir música:", e));
+            // Aquí usamos las variables locales capturadas al inicio del efecto
+            if (currentBattleMusicRef) {
+                currentBattleMusicRef.volume = 0.3; // Ajustar volumen si es muy alto
+                currentBattleMusicRef.loop = true; // Que se repita
+                currentBattleMusicRef.play().catch(e => console.error("Error al reproducir música:", e));
             }
-            // Asegurarse de que el sonido de HP bajo esté pausado al inicio
-            if (lowHpSoundRef.current) {
-                lowHpSoundRef.current.pause();
-                lowHpSoundRef.current.currentTime = 0;
+           // Asegurarse de que el sonido de HP bajo y victoria estén pausados al inicio
+            if (currentLowHpSoundRef) {
+                currentLowHpSoundRef.pause();
+                currentLowHpSoundRef.currentTime = 0;
+            }
+            if (currentVictorySoundRef) {
+                currentVictorySoundRef.pause();
+                currentVictorySoundRef.currentTime = 0;
             }
         };
 
         loadBattlePokemon();
 
-        // Detener música cuando el componente se desmonte o la batalla termine
+        // *** CAMBIO CLAVE AQUÍ: LA FUNCIÓN DE LIMPIEZA USA LAS REFERENCIAS CAPTURADAS ARRIBA ***
         return () => {
-            if (battleMusicRef.current) {
-                battleMusicRef.current.pause();
-                battleMusicRef.current.currentTime = 0; // Resetear la posición del audio
+            if (currentBattleMusicRef) {
+                currentBattleMusicRef.pause();
+                currentBattleMusicRef.currentTime = 0; // Resetear la posición del audio
             }
-            // Asegurarse de que el sonido de HP bajo esté pausado al inicio
-            if (lowHpSoundRef.current) { // Detener sonido de HP bajo también
-                lowHpSoundRef.current.pause();
-                lowHpSoundRef.current.currentTime = 0;
+            if (currentLowHpSoundRef) {
+                currentLowHpSoundRef.pause();
+                currentLowHpSoundRef.currentTime = 0;
+            }
+            if (currentVictorySoundRef) {
+                currentVictorySoundRef.pause();
+                currentVictorySoundRef.currentTime = 0;
             }
         };
     }, [pokemonId1, pokemonId2, navigate]); // Dependencias para re-ejecutar si los IDs cambian
 
 
-    // Comprobamos si la batalla ha terminado cada vez que el HP de los equipos cambia (MODIFICADA para detener música)
+    // Comprobamos si la batalla ha terminado cada vez que el HP de los equipos cambia
     useEffect(() => {
         if (playerTeam.length > 0 && opponentTeam.length > 0) {
             const allPlayerFainted = playerTeamHp.every(hp => hp <= 0);
             const allOpponentFainted = opponentTeamHp.every(hp => hp <= 0);
 
+            // Capturamos la referencia actual del audio para usarla de forma segura
+            const currentBattleMusicRef = battleMusicRef.current;
+
             if (allPlayerFainted && !battleEnded) {
                 setBattleLog(prev => [...prev, "¡Tu equipo ha sido debilitado! Has perdido la batalla."]);
                 setBattleEnded(true);
-                if (battleMusicRef.current) { battleMusicRef.current.pause(); } // Detener música al perder
+                // Usamos la variable local capturada
+                if (currentBattleMusicRef) { currentBattleMusicRef.pause(); } // Detener música al perder
             } else if (allOpponentFainted && !battleEnded) {
                 setBattleLog(prev => [...prev, "¡El equipo rival ha sido debilitado! ¡Has ganado la batalla!"]);
                 setBattleEnded(true);
-                if (battleMusicRef.current) { battleMusicRef.current.pause(); } // Detener música al ganar
+                // Usamos la variable local capturada
+                if (currentBattleMusicRef) { currentBattleMusicRef.pause(); } // Detener música al ganar
+                // Aquí también debería ir la reproducción del sonido de victoria si aún no está en otro lado
+                // if (victorySoundRef.current) { victorySoundRef.current.play(); }
             }
         }
     }, [playerTeamHp, opponentTeamHp, playerTeam.length, opponentTeam.length, battleEnded]);
@@ -301,10 +315,14 @@ function PokemonBattleArena({ pokemonList }) { // pokemonList ya no será la fue
         // No permitir atacar si la batalla ha terminado, si no hay Pokémon activos o no es el turno del jugador
         if (battleEnded || !playerActivePokemon || !opponentActivePokemon || !isPlayersTurn) return;
 
+        // Capturar las referencias actuales de los sonidos al inicio del callback
+        const currentAttackSoundRef = attackSoundRef.current;
+        const currentHitSoundRef = hitSoundRef.current;
+
         setPlayerAttacking(true); // Activar animación de ataque del jugador
-        if (attackSoundRef.current) { // Reproducir sonido de ataque
-            attackSoundRef.current.currentTime = 0; // Reiniciar por si se reproduce muy rápido
-            attackSoundRef.current.play().catch(e => console.error("Error al reproducir sonido de ataque:", e));
+        if (currentAttackSoundRef) { // Reproducir sonido de ataque (usando la referencia capturada)
+            currentAttackSoundRef.currentTime = 0; // Reiniciar por si se reproduce muy rápido
+            currentAttackSoundRef.play().catch(e => console.error("Error al reproducir sonido de ataque:", e));
         }
 
         // Añadir un pequeño retraso para que la animación de ataque se complete
@@ -340,9 +358,9 @@ function PokemonBattleArena({ pokemonList }) { // pokemonList ya no será la fue
             const newOpponentHp = opponentTeamHp[opponentActivePokemonIndex] - damage;
 
             setOpponentDamaged(true); // Activar animación de daño al oponente
-            if (hitSoundRef.current) { // Reproducir sonido de golpe
-                hitSoundRef.current.currentTime = 0;
-                hitSoundRef.current.play().catch(e => console.error("Error al reproducir sonido de golpe:", e));
+            if (currentHitSoundRef) { // Reproducir sonido de golpe (usando la referencia capturada)
+                currentHitSoundRef.currentTime = 0;
+                currentHitSoundRef.play().catch(e => console.error("Error al reproducir sonido de golpe:", e));
             }
 
             // Retraso para que la animación de daño se muestre
@@ -386,16 +404,21 @@ function PokemonBattleArena({ pokemonList }) { // pokemonList ya no será la fue
         }, 400); // Duración de la animación de ataque (0.4s)
     }, [battleEnded, playerActivePokemon, opponentActivePokemon, isPlayersTurn, opponentTeamHp, opponentActivePokemonIndex]);
 
-
-    // --- Lógica de la IA del oponente (MODIFICADA para sonidos) ---
+    // --- Lógica de la IA del oponente ---
     useEffect(() => {
         // Se ejecuta si no es el turno del jugador, la batalla no ha terminado y ambos Pokémon están activos
         if (!isPlayersTurn && !battleEnded && opponentActivePokemon && playerActivePokemon) {
+            // Capturar las referencias de los sonidos al inicio del efecto
+            // Esto asegura que el `current` que se usa dentro de `opponentTurn`
+            // sea el mismo que cuando el efecto se definió/ejecutó.
+            const currentAttackSoundRef = attackSoundRef.current;
+            const currentHitSoundRef = hitSoundRef.current;
+
             const opponentTurn = () => {
                 setOpponentAttacking(true); // Activar animación de ataque del oponente
-                if (attackSoundRef.current) { // Reproducir sonido de ataque
-                    attackSoundRef.current.currentTime = 0;
-                    attackSoundRef.current.play().catch(e => console.error("Error al reproducir sonido de ataque:", e));
+                if (currentAttackSoundRef) { // Reproducir sonido de ataque (usando la referencia capturada)
+                    currentAttackSoundRef.currentTime = 0;
+                    currentAttackSoundRef.play().catch(e => console.error("Error al reproducir sonido de ataque:", e));
                 }
 
                 // Retraso para la animación de ataque de la IA
@@ -407,7 +430,7 @@ function PokemonBattleArena({ pokemonList }) { // pokemonList ya no será la fue
                     const chosenMove = opponentActivePokemon.moves[Math.floor(Math.random() * opponentActivePokemon.moves.length)];
 
                     // Parámetros para la fórmula de daño de la IA
-                    const level = 50; 
+                    const level = 50;
                     const attackStat = opponentActivePokemon.attack;
                     const defenseStat = playerActivePokemon.defense;
 
@@ -420,7 +443,7 @@ function PokemonBattleArena({ pokemonList }) { // pokemonList ya no será la fue
 
                     let damage = Math.floor(
                         (((2 * level / 5 + 2) * chosenMove.power * attackStat / defenseStat) / 50 + 2)
-                        * stab 
+                        * stab
                         * typeEffectiveness
                     );
                     damage = Math.max(1, damage); // Asegurar un mínimo de 1 de daño
@@ -428,9 +451,9 @@ function PokemonBattleArena({ pokemonList }) { // pokemonList ya no será la fue
                     const newPlayerHp = playerTeamHp[playerActivePokemonIndex] - damage;
 
                     setPlayerDamaged(true); // Activar animación de daño al jugador
-                    if (hitSoundRef.current) { // Reproducir sonido de golpe
-                        hitSoundRef.current.currentTime = 0;
-                        hitSoundRef.current.play().catch(e => console.error("Error al reproducir sonido de golpe:", e));
+                    if (currentHitSoundRef) { // Reproducir sonido de golpe (usando la referencia capturada)
+                        currentHitSoundRef.currentTime = 0;
+                        currentHitSoundRef.play().catch(e => console.error("Error al reproducir sonido de golpe:", e));
                     }
 
                     // Retraso para que la animación de daño se muestre
@@ -439,7 +462,7 @@ function PokemonBattleArena({ pokemonList }) { // pokemonList ya no será la fue
 
                         // Añadir mensajes al log
                         logMessages.push(`${opponentActivePokemon.name.charAt(0).toUpperCase() + opponentActivePokemon.name.slice(1)} usó ${chosenMove.name} e hizo ${damage} de daño.`);
-                        
+
                         // Mensajes de efectividad de tipos
                         if (typeEffectiveness === 2) {
                             logMessages.push("¡Es súper efectivo!");
@@ -463,7 +486,7 @@ function PokemonBattleArena({ pokemonList }) { // pokemonList ya no será la fue
                         // Si el jugador ha sido debilitado, buscar el siguiente Pokémon disponible
                         if (newPlayerHp <= 0) {
                             logMessages.push(`${playerActivePokemon.name.charAt(0).toUpperCase() + playerActivePokemon.name.slice(1)} ha sido debilitado.`);
-                            
+
                             const nextPlayerPokemonIndex = playerTeamHp.findIndex((hp, idx) => hp > 0 && idx !== playerActivePokemonIndex);
                             if (nextPlayerPokemonIndex !== -1) {
                                 setBattleLog(prev => [...prev, ...logMessages, `¡${playerActivePokemon.name.charAt(0).toUpperCase() + playerActivePokemon.name.slice(1)} se retiró! ¡Envía al siguiente Pokémon!`]);
@@ -483,6 +506,7 @@ function PokemonBattleArena({ pokemonList }) { // pokemonList ya no será la fue
             return () => clearTimeout(mainTurnTimer); // Limpiar el temporizador si el componente se desmonta
         }
     }, [isPlayersTurn, battleEnded, opponentActivePokemon, playerActivePokemon, playerTeamHp, playerActivePokemonIndex]);
+    // Las dependencias están correctas.
 
 
     // --- Lógica de cambio de Pokémon del jugador ---
