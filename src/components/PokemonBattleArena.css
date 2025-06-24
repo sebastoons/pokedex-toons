@@ -1,0 +1,50 @@
+/* --- Estilos para PokemonBattleArena.js (Nuevos o Modificados) --- */
+
+.turn-indicator {
+    margin: 15px 0;
+    padding: 10px 20px;
+    background-color: #e0e0e0;
+    border-radius: 8px;
+    font-size: 1.1em;
+    font-weight: bold;
+    display: flex;
+    gap: 15px;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.turn-player {
+    padding: 5px 10px;
+    border-radius: 5px;
+    background-color: #bbb;
+    color: #333;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.turn-player.active {
+    background-color: #4CAF50; /* Verde brillante para el turno activo */
+    color: white;
+}
+
+.turn-wait-overlay {
+    position: absolute; /* O relative en un contenedor padre */
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.6); /* Oscurece el fondo */
+    color: white;
+    font-size: 1.5em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10; /* Asegura que esté por encima de los controles */
+    border-radius: 10px;
+}
+
+/* Modificar .battle-controls para que el overlay se posicione correctamente */
+.battle-controls {
+    position: relative; /* Importante para que el overlay se posicione con respecto a él */
+    /* ... el resto de tus estilos para battle-controls ... */
+}

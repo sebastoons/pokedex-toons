@@ -787,20 +787,74 @@ header {
 }
 
 .hp-bar-container {
-    width: 95%;
-    height: 16px; /* Barra HP para PC */
-    background-color: #ddd;
-    border-radius: 8px;
-    margin: 15px auto;
-    overflow: hidden;
-    border: 1px solid #aaa;
-    box-shadow: inset 0 1px 4px rgba(0,0,0,0.2);
+    width: 100%;
+    height: 15px; /* Ajusta según tu diseño */
+    background-color: #555;
+    border: 1px solid #333;
+    border-radius: 5px;
+    overflow: hidden; /* Asegura que la barra interna no se desborde */
+    margin-top: 5px;
 }
 
 .hp-bar {
     height: 100%;
-    border-radius: 8px;
-    transition: width 0.5s ease-in-out, background-color 0.5s ease-in-out;
+    /* Añade esta línea para la transición suave */
+    transition: width 0.5s ease-out, background-color 0.5s ease-out; /* Transición para width y color */
+    border-radius: 5px;
+}
+
+/* Colores ya deberías tenerlos, pero aquí un recordatorio: */
+.hp-bar[style*="background-color: lightgreen"] {
+    background-color: lightgreen;
+}
+
+.hp-bar[style*="background-color: orange"] {
+    background-color: orange;
+}
+
+.hp-bar[style*="background-color: red"] {
+    background-color: red;
+}
+
+/* Keyframes para la animación de ataque */
+@keyframes attack-animation {
+    0% { transform: translate(0, 0); }
+    50% { transform: translate(-20px, -20px); /* Ajusta según el Pokémon (jugador) */ }
+    100% { transform: translate(0, 0); }
+}
+
+@keyframes attack-animation-opponent {
+    0% { transform: translate(0, 0); }
+    50% { transform: translate(20px, 20px); /* Ajusta para el oponente */ }
+    100% { transform: translate(0, 0); }
+}
+
+/* Clases para aplicar la animación de ataque */
+.active-pokemon-image.player.attacking {
+    animation: attack-animation 0.4s ease-in-out forwards; /* forwards mantiene el estado final */
+}
+
+.active-pokemon-image.opponent.attacking {
+    animation: attack-animation-opponent 0.4s ease-in-out forwards;
+}
+
+/* Keyframes para la animación de daño (recibir golpe) */
+@keyframes damage-animation {
+    0%, 100% { opacity: 1; }
+    25%, 75% { opacity: 0.5; }
+    50% { opacity: 0.8; transform: translateX(5px); } /* Pequeño temblor */
+    70% { transform: translateX(-5px); }
+}
+
+/* Clase para aplicar la animación de daño */
+.active-pokemon-image.damaged {
+    animation: damage-animation 0.5s ease-out;
+}
+
+/* Asegúrate de que las imágenes tengan position: relative si quieres translateX/Y */
+.active-pokemon-image {
+    position: relative; /* Muy importante para que translate funcione correctamente */
+    /* ... otros estilos de imagen ... */
 }
 
 .battle-pokemon p {
