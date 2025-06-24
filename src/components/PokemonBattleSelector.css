@@ -195,3 +195,32 @@
 .back-to-pokedex:hover {
     background-color: #0056b3;
 }
+
+/* --- Media Query para Tablets (ej. min-width: 768px) --- */
+@media (min-width: 768px) {
+    .battle-selector-container {
+        flex-direction: row; /* Vuelve a ser fila en tablet */
+        justify-content: center;
+        gap: 40px;
+        padding: 40px;
+    }
+
+    .pokemon-selection-block {
+        width: 45%; /* Dos columnas */
+        max-width: none; /* Elimina la restricción de ancho máximo si no es necesaria */
+    }
+
+    .select-button {
+        width: auto; /* El botón puede ser de ancho automático o fijo */
+    }
+}
+
+/* --- Media Query para Desktops (ej. min-width: 1025px) --- */
+@media (min-width: 1025px) {
+    .battle-selector-container {
+        padding: 50px;
+    }
+    .pokemon-selection-block {
+        width: 30%; /* Si quieres que sean más pequeños o se adapten mejor */
+    }
+}

@@ -48,3 +48,72 @@
     position: relative; /* Importante para que el overlay se posicione con respecto a él */
     /* ... el resto de tus estilos para battle-controls ... */
 }
+
+/* --- Media Query para Tablets (ej. min-width: 768px) --- */
+@media (min-width: 768px) {
+    .battle-arena-container {
+        padding: 20px;
+    }
+
+    .battle-display {
+        height: 400px; /* Aumenta la altura para tablets */
+    }
+
+    .battle-pokemon {
+        width: 200px; /* Tamaño del Pokémon en tablet */
+    }
+
+    .hp-bar-container {
+        width: 100%; /* Puede ser más grande en tablet */
+        height: 20px;
+    }
+
+    .battle-log-container {
+        max-height: 200px; /* Más espacio para el log */
+        font-size: 0.9rem;
+    }
+
+    .actions-container {
+        flex-direction: row; /* Los botones pueden ir en fila en tablet */
+        flex-wrap: wrap; /* Si hay muchos, que se envuelvan */
+        justify-content: center;
+    }
+
+    .move-button, .switch-button {
+        width: 48%; /* Para 2 columnas */
+    }
+}
+
+/* --- Media Query para Desktops (ej. min-width: 1025px) --- */
+@media (min-width: 1025px) {
+    .battle-arena-container {
+        padding: 30px;
+    }
+
+    .battle-display {
+        height: 500px; /* Altura para escritorio */
+    }
+
+    .battle-pokemon {
+        width: 250px; /* Tamaño del Pokémon en escritorio */
+    }
+
+    .hp-bar-container {
+        height: 25px;
+    }
+
+    .battle-log-container {
+        max-height: 250px;
+        font-size: 1rem;
+    }
+
+    .actions-container {
+        flex-direction: row;
+        justify-content: space-around; /* Distribución más espaciada */
+    }
+
+    .move-button, .switch-button {
+        width: auto; /* O anchos fijos si lo prefieres para escritorio */
+        min-width: 120px;
+    }
+}
