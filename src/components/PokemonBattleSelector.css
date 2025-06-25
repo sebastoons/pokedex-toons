@@ -14,7 +14,7 @@
 .battle-selector-container h1 {
     color: #333;
     margin-bottom: 15px; /* Ajuste de margen */
-    font-size: 1.3em; /* Tamaño de fuente para móvil */
+    font-size: 1em; /* Tamaño de fuente para móvil */
     text-align: center;
      font-family: Verdana;
     text-transform: uppercase;

@@ -27,7 +27,7 @@
 .turn-indicator {
     margin: 10px 0; /* Menos margen en móvil */
     padding: 8px 15px;
-    background-color: #e0e0e0;
+    background-color: #575757;
     border-radius: 5px; /* Menos redondeado */
     font-size: 0.9em; /* Tamaño de fuente para móvil */
     font-weight: bold;
@@ -274,7 +274,7 @@
         padding: 10px;
     }
     .battle-controls {
-        padding: 15px;
+        padding: 10px;
     }
     .actions-container {
         gap: 8px;
