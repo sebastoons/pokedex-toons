@@ -217,13 +217,16 @@
 
 
 /* --- Media Query para Tablets (min-width: 768px) --- */
-@media (min-width: 768px) {
+@media (min-width: 481px) {
     .battle-selector-container {
-        padding: 20px;
+        padding: 15px;
+        border-radius: 20px;
+        margin:auto 0;
+        max-width:660px;
     }
 
     .battle-selector-container h1 {
-        font-size: 2.2em;
+        font-size: 1.6em;
     }
 
     .selection-slots-display {
@@ -231,6 +234,7 @@
         gap: 20px;
         width: 100%; /* Permite que el flexbox distribuya los ítems */
         max-width: 600px; /* Limita el ancho del contenedor de los slots */
+        margin-top: 15px;
     }
 
     .selected-pokemon-slot {

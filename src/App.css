@@ -54,7 +54,7 @@ body::before {
     z-index: 1;
     box-sizing: border-box;
     /* Añadido: asegurar que el contenedor pueda encogerse */
-    min-width: 280px; /* Un mínimo para que no se vea ridículamente pequeño en pantallas minúsculas */
+    min-width: 600px; /* Un mínimo para que no se vea ridículamente pequeño en pantallas minúsculas */
 }
 
 /* Detalle de diseño: una "bisagra" o elemento decorativo */
@@ -454,16 +454,8 @@ header {
 /* ========================================= */
 /* Estilos para PokemonBattleSelector.js */
 /* ========================================= */
-.battle-selector-container {
-    padding: 30px;
-    background-color: #e6f7ff; /* Un fondo más claro y azulado */
-    border-radius: 15px;
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
-    max-width: 1000px;
-    margin: 30px auto;
-    text-align: center;
-}
-   
+
+
 .pokemon-selection-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -943,112 +935,6 @@ header {
 /* MEDIA QUERIES PARA RESPONSIVIDAD          */
 /* ========================================================= */
 
-/* --- Estilos para Móviles Muy Pequeños (max-width: 375px) --- */
-@media (max-width: 375px) {
-    .pokedex-container {
-        padding: 8px; /* Padding interno más pequeño */
-        margin: 5px auto; /* Margen muy reducido */
-        border: 4px solid #e74c3c; /* Borde aún más delgado */
-        width: calc(100% - 10px); /* Ocupa casi todo el ancho */
-    }
-
-    .pokedex-logo {
-        max-width: 100px; /* Logo más pequeño aún */
-    }
-
-    .welcome-message {
-        padding: 10px;
-    }
-    .welcome-message h2 {
-        font-size: 1em;
-    }
-    .welcome-message p {
-        font-size: 0.65em;
-    }
-
-    .controls-container {
-        padding: 5px;
-        gap: 5px;
-    }
-    .controls-container input,
-    .controls-container select {
-        padding: 8px; /* Reduce padding de inputs/selects */
-        font-size: 0.7em;
-    }
-    .controls-container label {
-        font-size: 0.8em;
-    }
-    .generation-button {
-        font-size: 0.75em;
-        padding: 8px 10px;
-    }
-    .generation-dropdown-menu li {
-        font-size: 0.8em;
-        padding: 6px 10px;
-    }
-
-     .pokemon-list {
-        grid-template-columns: repeat(2, 1fr); /* Mantiene 2 columnas fijas */
-        gap: 5px;
-        padding: 2px;
-    }
-    .pokemon-card {
-        padding: 3px;
-        min-height: 120px; /* Ajustar alto mínimo */
-    }
-    .pokemon-card .pokemon-image,
-    .pokemon-image-placeholder {
-        width: 55px; /* Imágenes más pequeñas aún */
-        height: 55px;
-        max-width: 55px;
-        max-height: 55px;
-    }
-    .pokemon-name {
-        font-size: 0.8em;
-    }
-    .pokemon-types span {
-        font-size: 0.55em;
-        padding: 1px 4px;
-        border-width: 1px;
-    }
-    .battle-arena-container {
-        padding: 10px;
-        font-size: 0.7em;
-    }
-
-    .battle-arena-container h1 {
-        font-size: 1.6em;
-    }
-
-    .active-pokemon-image {
-        width: 100px;
-        height: 100px;
-    }
-
-    .pokeball-slot {
-        width: 30px;
-        height: 30px;
-    }
-
-    .pokemon-name-pokeball {
-        font-size: 0.55em;
-    }
-
-    .battle-log {
-        font-size: 0.7em;
-        max-height: 80px;
-    }
-
-    .battle-controls button {
-        padding: 8px 15px;
-        font-size: 0.8em;
-    }
-    .back-to-pokedex {
-        font-size: 0.9em;
-        padding: 5px 10px;
-    }
-}
-
 /* --- Estilos para Móviles PEQUEÑOS (max-width: 480px) --- */
 /* Este rango cubre móviles estándar y más pequeños */
 @media (max-width: 480px) {
@@ -1093,6 +979,8 @@ header {
         margin: 10px auto;
         border: 6px solid #e74c3c;
         width: calc(100% - 20px);
+        border-radius: 20px; /* Un poco más redondeado */
+        min-width: 0;
     }
 
     .pokedex-logo {
@@ -1156,12 +1044,13 @@ header {
 
 /* --- Estilos para Tabletas (min-width: 481px y max-width: 1024px) --- */
 /* Este rango cubre tablets en modo vertical y horizontal */
-@media (min-width: 481px) and (max-width: 1024px) {
+@media (min-width: 481px){
     .pokedex-container {
         padding: 25px; /* Un poco más de padding que en móviles */
         border-width: 9px;
         margin: 20px auto;
         width: calc(100% - 35px); /* Ajustado para margen lateral */
+        max-width: 768px; /* Opcional: Limitar el ancho máximo para tablets para que no se estire demasiado */
     }
 
     .pokedex-logo {
@@ -1389,9 +1278,13 @@ header {
 
     /* Ajustes para el contenedor principal y logo en desktop */
     .pokedex-container {
-        padding: 40px;
-        border-width: 12px;
-        max-width: 1200px; /* Aumenta el max-width si lo deseas */
+        padding: 30px; /* Vuelvo a tu padding original */
+        border-width: 10px; /* Borde original */
+        border-radius: 25px; /* Vuelvo a tu radio de borde original */
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5); /* Sombra original */
+        max-width: 1200px; /* Vuelvo a tu max-width original */
+        width: calc(100% - 40px); /* Y tu width original */
+        margin: 20px auto; /* Y tu margen original */
     }
     .pokedex-logo {
         max-width: 300px; /* Logo más grande en desktop */
