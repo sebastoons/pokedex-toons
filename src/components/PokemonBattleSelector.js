@@ -1,38 +1,57 @@
 // src/components/PokemonBattleSelector.js
-import React, { useState, useEffect } from 'react'; // Importamos useEffect
+import React, { useState, useEffect, useRef } from 'react'; // Importamos useRef
 import { Link, useNavigate } from 'react-router-dom';
 import { getTypeInfo } from '../utils/typeEffectiveness';
-import './PokemonBattleSelector.css'; 
+import './PokemonBattleSelector.css';
 
 // Función auxiliar para formatear el ID con ceros a la izquierda (ej. 1 -> 001)
 const formatPokemonId = (id) => {
     return String(id).padStart(3, '0');
 };
 
-// --- Nuevo: Función para obtener el artwork oficial para la miniatura si pokemonList no lo tiene ---
-// Si pokemonList ya tiene pokemon.sprites.other['official-artwork'].front_default, puedes eliminar esta función
-// y usar directamente esa propiedad en PokemonBattleSelector.
+// Función para obtener el artwork oficial para la miniatura
 const getPokemonOfficialArtworkUrl = (pokemonId) => {
     return `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${pokemonId}.png`;
 };
 
-function PokemonBattleSelector({ pokemonList }) { // pokemonList debería ser una lista simple de {id, name, types}
+function PokemonBattleSelector({ pokemonList }) {
     const [selectedPokemonTeam, setSelectedPokemonTeam] = useState([null, null]);
-    const [availablePokemon, setAvailablePokemon] = useState([]); // Nuevo estado para los Pokémon disponibles en la cuadrícula
+    const [availablePokemon, setAvailablePokemon] = useState([]);
     const navigate = useNavigate();
 
-    // Cuando pokemonList cambie (ej. al cargarse), actualizamos los disponibles
+    // 1. Crear una referencia para el div al que queremos hacer scroll
+    const selectionSlotsDisplayRef = useRef(null);
+
     useEffect(() => {
-        // Asumiendo que pokemonList ya viene con al menos id, name y types
-        // Si no, necesitarías cargar más detalles aquí o en App.js
         setAvailablePokemon(pokemonList);
     }, [pokemonList]);
 
-
-    const handleSelectPokemon = (pokemon, slotIndex) => { // Ahora recibimos el objeto pokemon completo
-        const newTeam = [...selectedPokemonTeam];
+    // 2. Usar useEffect para manejar el scroll y la habilitación del botón
+    useEffect(() => {
+        const areBothPokemonSelected = selectedPokemonTeam.every(p => p !== null);
         
-        // Evitar seleccionar el mismo Pokémon en dos slots
+        // Habilitar/Deshabilitar el botón "Comenzar Batalla"
+        // Asumo que tu botón tiene la clase 'start-battle-button' y no la id 'goToBattleButton'
+        // Si tu botón de comenzar batalla es el que está en el Link, no se puede deshabilitar directamente.
+        // Lo correcto sería un <button> y luego el navigate en el handler.
+        // Si tienes el <button> descomenta la siguiente línea:
+        // const startButton = document.querySelector('.start-battle-button');
+        // if (startButton) {
+        //     startButton.disabled = !areBothPokemonSelected;
+        // }
+
+        // Si ambos Pokémon están seleccionados y tenemos una referencia al div, hacemos scroll
+        if (areBothPokemonSelected && selectionSlotsDisplayRef.current) {
+            selectionSlotsDisplayRef.current.scrollIntoView({
+                behavior: 'smooth', // Desplazamiento suave
+                block: 'start'      // Alinea el inicio del elemento con el inicio del viewport
+            });
+        }
+    }, [selectedPokemonTeam]); // Este efecto se ejecuta cada vez que 'selectedPokemonTeam' cambia
+
+    const handleSelectPokemon = (pokemon, slotIndex) => {
+        const newTeam = [...selectedPokemonTeam];
+
         if (newTeam.some((p, idx) => p && p.id === pokemon.id && idx !== slotIndex)) {
             alert("¡Ya has seleccionado este Pokémon para otro slot!");
             return;
@@ -62,13 +81,12 @@ function PokemonBattleSelector({ pokemonList }) { // pokemonList debería ser un
         return selectedPokemonTeam.some(p => p && p.id === pokemonId);
     };
 
-
     return (
         <div className="battle-selector-container">
             <h1>Selecciona tus Pokémon</h1>
 
-            {/* Slots de Selección Visuales */}
-            <div className="selection-slots-display">
+            {/* Slots de Selección Visuales - Añadimos la referencia aquí */}
+            <div className="selection-slots-display" ref={selectionSlotsDisplayRef}> {/* AÑADIDO ref={selectionSlotsDisplayRef} */}
                 {selectedPokemonTeam.map((pokemon, index) => (
                     <div className="selected-pokemon-slot" key={index}>
                         <h2>Pokémon {index + 1}</h2>
@@ -110,10 +128,12 @@ function PokemonBattleSelector({ pokemonList }) { // pokemonList debería ser un
                 ))}
             </div>
 
+            {/* Botón ¡Comenzar Batalla! */}
+            {/* Si estás usando un Link, no puedes 'disabled'. La lógica de `handleStartBattle` ya valida */}
             <button
                 onClick={handleStartBattle}
-                className="start-battle-button"
-                disabled={!selectedPokemonTeam.every(p => p !== null)}
+                className="start-battle-button" // Cambié el className a 'start-battle-button'
+                disabled={!selectedPokemonTeam.every(p => p !== null)} // Habilita/Deshabilita directamente aquí
             >
                 ¡Comenzar Batalla!
             </button>
@@ -127,17 +147,19 @@ function PokemonBattleSelector({ pokemonList }) { // pokemonList debería ser un
                         onClick={() => {
                             // Encontrar el primer slot vacío o el slot del mismo Pokémon para reemplazarlo
                             const emptySlotIndex = selectedPokemonTeam.findIndex(p => p === null);
-                            const alreadySelectedSlotIndex = selectedPokemonTeam.findIndex(p => p && p.id === pokemon.id);
 
                             if (emptySlotIndex !== -1) {
                                 handleSelectPokemon(pokemon, emptySlotIndex);
-                            } else if (alreadySelectedSlotIndex !== -1) {
-                                // Si ya está seleccionado, pero no hay slots vacíos, no hacer nada
-                                // Opcional: permitir deseleccionar haciendo clic de nuevo
-                                alert("Todos los slots están ocupados. Quita un Pokémon para seleccionar uno nuevo.");
+                            } else if (isPokemonSelectedInAnySlot(pokemon.id)) {
+                                // Si ya está seleccionado, permitir deseleccionar haciendo clic de nuevo
+                                // Esto mejora la UX
+                                const slotIndexToRemove = selectedPokemonTeam.findIndex(p => p && p.id === pokemon.id);
+                                if (slotIndexToRemove !== -1) {
+                                    removePokemonFromSlot(slotIndexToRemove);
+                                }
                             } else {
                                 // Ambos slots ocupados y el Pokémon no está en ninguno de ellos
-                                alert("Selecciona un slot vacío o deselecciona un Pokémon primero.");
+                                alert("Todos los slots están ocupados. Quita un Pokémon para seleccionar uno nuevo.");
                             }
                         }}
                     >

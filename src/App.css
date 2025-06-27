@@ -127,6 +127,53 @@ header {
     font-family: monospace;
 }
 
+.battle-button {
+    /* Estilos base para móviles pequeños (Mobile-First: por defecto para < 376px) */
+    display: inline-block; /* Permite paddings y márgenes, y que el texto no se rompa */
+    padding: 12px 20px; /* Padding para un buen tamaño táctil en móvil */
+    margin-top: 20px; /* Espacio superior para separarlo del contenido de arriba */
+    font-size: 1em; /* Tamaño de fuente para móvil (ej. 16px por defecto) */
+    font-weight: bold;
+    color: white;
+    background-color: #e1ad27; /* Un verde vibrante (ej. del logotipo de 'GO') */
+    border: none;
+    border-radius: 6px; /* Bordes redondeados sutiles */
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2); /* Sombra para dar profundidad */
+    text-transform: uppercase; /* Texto en mayúsculas para impacto */
+    letter-spacing: 0.03em; /* Pequeño espaciado entre letras */
+    text-decoration: none; /* Importante si es un <a>, para quitar el subrayado */
+    -webkit-tap-highlight-color: transparent; /* Elimina el resaltado azul en móviles al tocar */
+    white-space: nowrap; /* Evita que el texto del botón se divida en varias líneas */
+    font-family: monospace;
+}
+
+/* Estado al pasar el ratón (hover) y al enfocar (focus) */
+.battle-button:hover,
+.battle-button:focus {
+    background-color: #c48c00; /* Verde más oscuro al pasar el ratón */
+    transform: translateY(-2px); /* Efecto sutil de "elevación" */
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3); /* Sombra más pronunciada */
+    outline: none; /* Eliminar el contorno de enfoque por defecto si no es necesario (asegura accesibilidad si se reemplaza visualmente) */
+}
+
+/* Estado al hacer clic (active) */
+.battle-button:active {
+    background-color: #9f7200; /* Verde aún más oscuro al presionar */
+    transform: translateY(0); /* Vuelve a su posición original */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Sombra más pequeña */
+}
+
+/* Estado deshabilitado (disabled) */
+.battle-button:disabled {
+    background-color: #cccccc; /* Gris para indicar que está deshabilitado */
+    color: #666666;
+    cursor: not-allowed; /* Cambiar cursor */
+    box-shadow: none; /* Quitar sombra */
+    transform: none; /* Quitar transformación */
+}
+
 /* --- Contenedor de Controles de Búsqueda y Filtrado --- */
 .controls-container {
     background-color: #ecf0f1;
@@ -887,6 +934,7 @@ header {
 .battle-log p:last-child {
     font-weight: bold;
     color: #000;
+    text-transform: uppercase;
 }
 
 /* Controles de la batalla */
@@ -964,9 +1012,10 @@ header {
     }
 
     .battle-log {
-        font-size: 0.7em;
+        font-size: 0.8em;
         padding: 6px;
         margin-top: 2px;
+        text-align: center;
     }
 
     .battle-controls button {
@@ -1040,6 +1089,12 @@ header {
         font-size: 0.9em;
         padding: 5px 10px;
     }
+    .battle-button {
+        padding: 8px 20px;
+        margin-top: 10px;
+        font-size: 0.9em;
+        border-radius: 7px;
+    }
 }
 
 /* --- Estilos para Tabletas (min-width: 481px y max-width: 1024px) --- */
@@ -1050,7 +1105,7 @@ header {
         border-width: 9px;
         margin: 20px auto;
         width: calc(100% - 35px); /* Ajustado para margen lateral */
-        max-width: 768px; /* Opcional: Limitar el ancho máximo para tablets para que no se estire demasiado */
+        max-width: 767px; /* Opcional: Limitar el ancho máximo para tablets para que no se estire demasiado */
     }
 
     .pokedex-logo {
@@ -1076,8 +1131,8 @@ header {
         /* Para tabletas, permite que los controles se muestren en línea */
         flex-direction: row; /* Label e input/select en la misma fila */
         align-items: center; /* Alinea verticalmente */
-        gap: 8px; /* Espacio entre label y input/select */
-        flex-basis: 30%; /* Intenta distribuir en 3 columnas flexibles */
+        gap: 5px; /* Espacio entre label y input/select */
+        flex-basis: 20%; /* Intenta distribuir en 3 columnas flexibles */
         max-width: 33%; /* Límite para que quepan 3 */
         flex-wrap: nowrap; /* Evita que se envuelvan si hay espacio */
     }
@@ -1092,11 +1147,12 @@ header {
     .controls-container input,
     .controls-container select {
         width: auto; /* Ancho automático, crecerá con flex-grow */
-        flex-grow: 1; /* Permite que ocupe el espacio restante */
+        flex-grow: 0.5; /* Permite que ocupe el espacio restante */
         max-width: none; /* Eliminar restricción de ancho */
         font-size: 0.8em;
         padding: 9px;
         text-align: left; /* Alinea el texto del input/select a la izquierda */
+        margin:auto;
     }
     
     .generation-button {
@@ -1175,7 +1231,7 @@ header {
     .pokeball-slot {
         width: 35px; /* Pokebola más pequeña para móvil */
         height: 35px;
-        padding-bottom: 15px;
+        padding-bottom: 0px;
     }
 
     .pokemon-name-pokeball {
@@ -1249,6 +1305,13 @@ header {
     .back-to-pokedex {
         font-size: 0.9em;
         padding: 5px 10px;
+    }
+    .battle-button {
+        padding: 10px 30px;
+        margin-top: 10px;
+        font-size: 1em;
+        border-radius: 8px;
+        box-shadow: 0 5px 10px rgba(0, 0, 0, 0.25);
     }
 }
 
@@ -1379,7 +1442,7 @@ header {
         padding: 10px;
         margin-top: 5px;
         max-height: 140px;
-        font-size: 0.85em;
+        font-size: 1em;
         text-align: center;
     }
 
@@ -1389,8 +1452,8 @@ header {
     }
 
     .battle-controls button {
-        padding: 8px 15px;
-        font-size: 0.75em;
+        padding: 10px 15px;
+        font-size: 0.85em;
         margin-bottom: 15px;
     }
     .back-to-pokedex {
@@ -1400,6 +1463,13 @@ header {
     .restart-button {
         padding: 10px 20px;
         font-size: 1em;
+    }
+    .battle-button {
+        padding: 12px 40px; /* Más padding para escritorio */
+        margin-top: 10px; /* Más espacio superior */
+        font-size: 1.1em; /* Tamaño de fuente más grande para escritorio */
+        border-radius: 10px; /* Bordes más redondeados */
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3); /* Sombra más pronunciada */
     }
 }
 

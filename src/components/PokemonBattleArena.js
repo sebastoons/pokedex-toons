@@ -198,6 +198,7 @@ function PokemonBattleArena({ pokemonList }) { // pokemonList ya no será la fue
     const battleMusicRef = useRef(null); // Para la música de fondo
     const lowHpSoundRef = useRef(null); // Nuevo: Sonido de HP bajo
     const victorySoundRef = useRef(null); // Nuevo: Sonido de victoria
+    
 
     useEffect(() => {
 
