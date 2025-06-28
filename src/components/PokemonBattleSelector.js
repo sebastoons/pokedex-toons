@@ -1,6 +1,7 @@
 // src/components/PokemonBattleSelector.js
-import React, { useState, useEffect, useRef } from 'react'; // Importamos useRef
+import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import ReactGA from 'react-ga4'; // <--- Importa ReactGA
 import { getTypeInfo } from '../utils/typeEffectiveness';
 import './PokemonBattleSelector.css';
 
@@ -31,23 +32,17 @@ function PokemonBattleSelector({ pokemonList }) {
         const areBothPokemonSelected = selectedPokemonTeam.every(p => p !== null);
         
         // Habilitar/Deshabilitar el botón "Comenzar Batalla"
-        // Asumo que tu botón tiene la clase 'start-battle-button' y no la id 'goToBattleButton'
-        // Si tu botón de comenzar batalla es el que está en el Link, no se puede deshabilitar directamente.
-        // Lo correcto sería un <button> y luego el navigate en el handler.
-        // Si tienes el <button> descomenta la siguiente línea:
-        // const startButton = document.querySelector('.start-battle-button');
-        // if (startButton) {
-        //     startButton.disabled = !areBothPokemonSelected;
-        // }
+        // Tu botón ya tiene `disabled={!selectedPokemonTeam.every(p => p !== null)}` directamente en el JSX,
+        // así que no necesitas manipular el DOM con document.querySelector aquí.
 
         // Si ambos Pokémon están seleccionados y tenemos una referencia al div, hacemos scroll
         if (areBothPokemonSelected && selectionSlotsDisplayRef.current) {
             selectionSlotsDisplayRef.current.scrollIntoView({
-                behavior: 'smooth', // Desplazamiento suave
-                block: 'start'      // Alinea el inicio del elemento con el inicio del viewport
+                behavior: 'smooth',
+                block: 'start'
             });
         }
-    }, [selectedPokemonTeam]); // Este efecto se ejecuta cada vez que 'selectedPokemonTeam' cambia
+    }, [selectedPokemonTeam]);
 
     const handleSelectPokemon = (pokemon, slotIndex) => {
         const newTeam = [...selectedPokemonTeam];
@@ -65,6 +60,17 @@ function PokemonBattleSelector({ pokemonList }) {
         if (selectedPokemonTeam.every(p => p !== null)) {
             const p1Id = selectedPokemonTeam[0].id;
             const p2Id = selectedPokemonTeam[1].id;
+
+            // *** Aquí agregamos el evento de Google Analytics 4 ***
+            console.log("GA4 Event: 'Comenzar Batalla' button clicked.");
+            ReactGA.event({
+                category: 'Batalla Pokemon',
+                action: 'Comenzar Batalla',
+                label: `P1: ${selectedPokemonTeam[0].name} vs P2: ${selectedPokemonTeam[1].name}`, // Opcional: información detallada
+                value: 1 // Opcional: puedes asignar un valor si es relevante (ej. 1 para indicar que se inició una batalla)
+            });
+            // Fin del evento de Google Analytics
+
             navigate(`/battle/arena?p1=${p1Id}&p2=${p2Id}`);
         } else {
             alert('Por favor, selecciona 2 Pokémon para la batalla.');
@@ -86,7 +92,7 @@ function PokemonBattleSelector({ pokemonList }) {
             <h1>Selecciona tus Pokémon</h1>
 
             {/* Slots de Selección Visuales - Añadimos la referencia aquí */}
-            <div className="selection-slots-display" ref={selectionSlotsDisplayRef}> {/* AÑADIDO ref={selectionSlotsDisplayRef} */}
+            <div className="selection-slots-display" ref={selectionSlotsDisplayRef}>
                 {selectedPokemonTeam.map((pokemon, index) => (
                     <div className="selected-pokemon-slot" key={index}>
                         <h2>Pokémon {index + 1}</h2>
@@ -129,11 +135,10 @@ function PokemonBattleSelector({ pokemonList }) {
             </div>
 
             {/* Botón ¡Comenzar Batalla! */}
-            {/* Si estás usando un Link, no puedes 'disabled'. La lógica de `handleStartBattle` ya valida */}
             <button
                 onClick={handleStartBattle}
-                className="start-battle-button" // Cambié el className a 'start-battle-button'
-                disabled={!selectedPokemonTeam.every(p => p !== null)} // Habilita/Deshabilita directamente aquí
+                className="start-battle-button"
+                disabled={!selectedPokemonTeam.every(p => p !== null)}
             >
                 ¡Comenzar Batalla!
             </button>
@@ -145,20 +150,16 @@ function PokemonBattleSelector({ pokemonList }) {
                         key={pokemon.id}
                         className={`pokemon-grid-item ${isPokemonSelectedInAnySlot(pokemon.id) ? 'selected-in-slot' : ''}`}
                         onClick={() => {
-                            // Encontrar el primer slot vacío o el slot del mismo Pokémon para reemplazarlo
                             const emptySlotIndex = selectedPokemonTeam.findIndex(p => p === null);
 
                             if (emptySlotIndex !== -1) {
                                 handleSelectPokemon(pokemon, emptySlotIndex);
                             } else if (isPokemonSelectedInAnySlot(pokemon.id)) {
-                                // Si ya está seleccionado, permitir deseleccionar haciendo clic de nuevo
-                                // Esto mejora la UX
                                 const slotIndexToRemove = selectedPokemonTeam.findIndex(p => p && p.id === pokemon.id);
                                 if (slotIndexToRemove !== -1) {
                                     removePokemonFromSlot(slotIndexToRemove);
                                 }
                             } else {
-                                // Ambos slots ocupados y el Pokémon no está en ninguno de ellos
                                 alert("Todos los slots están ocupados. Quita un Pokémon para seleccionar uno nuevo.");
                             }
                         }}
