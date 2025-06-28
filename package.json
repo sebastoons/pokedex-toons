@@ -9,6 +9,7 @@
     "@testing-library/user-event": "^13.5.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
+    "react-ga4": "^2.1.0",
     "react-router-dom": "^7.6.0",
     "react-scripts": "5.0.1",
     "web-vitals": "^2.1.4"
@@ -24,16 +25,18 @@
       "react-app",
       "react-app/jest"
     ],
-    "env": {                 
+    "env": {
       "browser": true,
       "es2021": true,
       "jest": true,
       "node": true,
-      "worker": true        
+      "worker": true
     },
     "overrides": [
       {
-        "files": ["src/service-worker.js"],
+        "files": [
+          "src/service-worker.js"
+        ],
         "rules": {
           "no-restricted-globals": "off"
         }
