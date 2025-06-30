@@ -1,0 +1,110 @@
+/* src/components/MovesList.css */
+
+.actions-container {
+    display: flex;
+    flex-wrap: wrap; /* Permite que los botones se envuelvan en la siguiente línea */
+    justify-content: center; /* Centrar botones */
+    gap: 8px; /* Menos espacio entre botones */
+}
+
+.move-button, .switch-button {
+    flex: 1 1 calc(50% - 12px); /* Dos columnas, con espacio para el gap */
+    min-width: 120px; /* Mínimo para que el texto sea legible */
+    padding: 8px 10px; /* Menos padding */
+    font-size: 0.85em; /* Tamaño de fuente para móvil */
+    text-align: center;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+    text-transform: uppercase;
+    font-family: monospace;
+}
+
+.move-button {
+    background-color: #4CAF50; /* Verde */
+    color: white;
+}
+
+.move-button:hover:not(:disabled) {
+    background-color: #45a049;
+}
+
+.switch-button {
+    background-color: #007bff; /* Azul */
+    color: white;
+}
+
+.switch-button:hover:not(:disabled) {
+    background-color: #0056b3;
+}
+
+.move-button:disabled, .switch-button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+/* Estilos para los tipos de movimiento (ej. .type-normal) */
+/* Asegúrate de que tu componente `MovesList` añada la clase `type-${move.type}` al botón */
+.move-button.type-normal { background-color: #A8A878; }
+.move-button.type-fire { background-color: #F08030; }
+.move-button.type-water { background-color: #6890F0; }
+.move-button.type-grass { background-color: #78C850; }
+.move-button.type-electric { background-color: #F8D030; }
+.move-button.type-ice { background-color: #98D8D8; }
+.move-button.type-fighting { background-color: #C03028; }
+.move-button.type-poison { background-color: #A040A0; }
+.move-button.type-ground { background-color: #E0C068; }
+.move-button.type-flying { background-color: #A890F0; }
+.move-button.type-psychic { background-color: #F85888; }
+.move-button.type-bug { background-color: #A8B820; }
+.move-button.type-rock { background-color: #B8A038; }
+.move-button.type-ghost { background-color: #705898; }
+.move-button.type-dragon { background-color: #7038F8; }
+.move-button.type-steel { background-color: #B8B8D0; }
+.move-button.type-dark { background-color: #705848; }
+.move-button.type-fairy { background-color: #EE99AC; }
+.move-button.type-unknown { background-color: #68A090; }
+.move-button.type-shadow { background-color: #614660; }
+
+@media (min-width: 376px) {
+    .actions-container {
+        gap: 8px;
+    }
+    .move-button, .switch-button {
+        padding: 10px 8px;
+        font-size: 0.9em;
+        min-width: 110px;
+    }
+}
+
+/* --- Media Query para Tablets (min-width: 481px a 1024px) --- */
+@media (min-width: 481px) {
+    .actions-container {
+        gap: 10px; /* Espacio entre botones */
+    }
+
+    .move-button, .switch-button {
+        flex: 1 1 calc(50% - 15px); /* Dos columnas, con más gap */
+        min-width: 130px;
+        padding: 12px 10px;
+        font-size: 0.95em;
+    }
+}
+
+/* --- Media Query para Desktops (min-width: 1025px) --- */
+@media (min-width: 1025px) {
+    .actions-container {
+        gap: 20px;
+        justify-content: space-around; /* Distribución más espaciada */
+    }
+
+    .move-button, .switch-button {
+        flex: 0 0 auto; /* Volver a anchos automáticos o fijos para PC */
+        min-width: 150px;
+        padding: 10px 10px;
+        font-size: 1em;
+    }
+}

@@ -1,0 +1,150 @@
+/* src/components/PokemonDisplay.css */
+
+.pokemon-display {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0;
+    background-color: rgba(255, 255, 255, 0.95);
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    margin: 10px auto;
+    width: 100%;
+    max-width: 280px;
+    transition: all 0.3s ease;
+    border: 3px solid #f0f0f0;
+}
+
+.pokemon-display.player {
+    border-color: #4fc3f7;
+    background: linear-gradient(135deg, rgba(79, 195, 247, 0.1) 0%, rgba(255, 255, 255, 0.9) 50%);
+    transform: translateX(-10px);
+}
+
+.pokemon-display.opponent {
+    border-color: #ff7043;
+    background: linear-gradient(135deg, rgba(255, 112, 67, 0.1) 0%, rgba(255, 255, 255, 0.9) 50%);
+    transform: translateX(10px);
+}
+
+.pokemon-name {
+    margin: 0 0 10px 0;
+    font-size: 0.8em;
+    text-transform: uppercase;
+    color: #535353;
+    font-weight: bold;
+    letter-spacing: 0.5px;
+    font-family: verdana;
+    margin-top: 10px;
+}
+
+.pokemon-image-container {
+    width: 180px;
+    height: 180px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 10px 0;
+}
+
+.pokemon-image {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    transition: all 0.3s ease;
+}
+
+.hp-display {
+    width: 100%;
+    margin-top: 10px;
+    margin-bottom:10px
+}
+
+.hp-bar-container {
+    width: 100%;
+    height: 16px;
+    background-color: #f0f0f0;
+    border-radius: 8px;
+    overflow: hidden;
+    position: relative;
+}
+
+.hp-bar {
+    height: 100%;
+    transition: width 0.5s ease, background-color 0.5s ease;
+}
+
+.hp-text {
+    display: block;
+    text-align: center;
+    margin-top: 5px;
+    font-size: 1em;
+    color: #636262;
+    font-weight: bold;
+    font-family: monospace;
+}
+
+/* Animations */
+.pokemon-display.attacking {
+    animation: attackAnimation 0.5s;
+}
+
+.pokemon-display.damaged {
+    animation: damageAnimation 0.5s;
+}
+
+/* Animación de ataque */
+@keyframes playerAttack {
+    0% { transform: translateX(-10px); }
+    50% { transform: translateX(20px); }
+    100% { transform: translateX(-10px); }
+}
+
+@keyframes opponentAttack {
+    0% { transform: translateX(10px); }
+    50% { transform: translateX(-20px); }
+    100% { transform: translateX(10px); }
+}
+
+@keyframes attackAnimation {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}
+
+@keyframes damageAnimation {
+    0%, 100% { background-color: rgba(255, 255, 255, 0.95); }
+    50% { background-color: rgba(255, 0, 0, 0.2); }
+}
+
+.pokemon-display.player.attacking {
+    animation: playerAttack 0.5s;
+}
+
+.pokemon-display.opponent.attacking {
+    animation: opponentAttack 0.5s;
+}
+
+/* Responsive */
+@media (min-width: 768px) {
+    .pokemon-display {
+        max-width: 320px;
+    }
+    
+    .pokemon-image-container {
+        width: 200px;
+        height: 200px;
+    }
+}
+
+@media (min-width: 1024px) {
+    .pokemon-display {
+        max-width: 300px;
+        padding:0;
+    }
+    
+    .pokemon-image-container {
+        width: 220px;
+        height: 220px;
+    }
+}

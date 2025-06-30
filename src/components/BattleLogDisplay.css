@@ -1,0 +1,52 @@
+/* src/components/BattleLogDisplay.css */
+
+/* Contenedor del log de batalla */
+.battle-log {
+    background-color: #ffffff; /* O el color que tengas */
+    border-radius: 8px; /* O el borde-radio que tengas */
+    padding: 10px; /* O el padding que tengas */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* O la sombra que tengas */
+    height: 150px; /* <--- CAMBIAR DE max-height A height: Define una altura fija */
+    overflow-y: auto; /* <--- AÑADIR: Habilita el scroll vertical automático */
+    overflow-x: hidden; /* <--- AÑADIR: Oculta el scroll horizontal si no es necesario */
+
+    /* Si quieres que los mensajes nuevos aparezcan al final y el scroll baje automáticamente */
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end; /* Asegura que el contenido se alinee al final */
+}
+
+.battle-log > p { /* Asumiendo que los mensajes son párrafos directamente dentro de .battle-log */
+    /* Puedes ajustar el estilo de los párrafos aquí si es necesario */
+    font-size: 0.8em;
+    margin-bottom: 5px;
+    color: #333;
+}
+
+
+@media (min-width: 376px) {
+    .battle-log {
+        height: 100px; /* <--- CAMBIAR de max-height a height */
+        font-size: 0.8em;
+        padding: 10px;
+    }
+}
+
+
+/* --- Media Query para Tablets (min-width: 481px a 1024px) --- */
+@media (min-width: 481px) {
+    .battle-log {
+        height: 150px; /* <--- CAMBIAR de max-height a height */
+        font-size: 0.9em;
+        padding: 12px;
+    }
+}
+
+/* --- Media Query para Desktops (min-width: 1025px) --- */
+@media (min-width: 1025px) {
+    .battle-log {
+        height: 100px; /* <--- CAMBIAR de max-height a height */
+        font-size: 0.95em;
+        padding: 15px;
+    }
+}
