@@ -4,7 +4,7 @@
 .battle-arena {
     display: flex;
     flex-direction: column;
-    padding: 8px;
+    padding: 20px;
     background: linear-gradient(to top, #c0392b 0%, #e74c3c 100%);
     border-radius: 8px;
     box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
@@ -119,6 +119,41 @@
 
 .new-battle-button:hover {
     background-color: #45a049;
+}
+
+/* --- Media Query para celualres (min-width: 376px) --- */
+@media (min-width: 376px) {
+    .battle-arena {
+        padding: 25px;
+        max-width: 480px;
+    }
+
+    .pokemon-main-container {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        gap: 5pxpx;
+    }
+
+    .player-pokemon-wrapper,
+    .opponent-pokemon-wrapper {
+        align-self: center;
+        width: 100%;
+    }
+
+    .opponent-pokemon-wrapper {
+        align-items:end;
+        order: 2;
+    }
+
+    .player-pokemon-wrapper {
+        align-items:start;
+        order: 1;
+    }
+
+    .moves-container {
+        grid-template-columns: repeat(3, 1fr);
+    }
 }
 
 /* --- Media Query para Tablets (min-width: 768px) --- */

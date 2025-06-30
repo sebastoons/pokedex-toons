@@ -480,7 +480,8 @@ export const useBattleLogic = (pokemonId1, pokemonId2) => {
             }
         }
     }, [isPlayersTurn, battleEnded, animationBlocking, awaitingPlayerSwitch, awaitingOpponentSwitch,
-        playerActivePokemon, opponentActivePokemon, playerTeam, opponentTeam, handleOpponentTurn, handleOpponentSwitch]);
+        playerActivePokemon, opponentActivePokemon, playerTeam, opponentTeam, handleOpponentTurn, handleOpponentSwitch,handleOpponentSwitch,
+        handleSwitchPokemon, setAwaitingPlayerSwitch, setAwaitingOpponentSwitch, setBattleLog, setIsPlayersTurn]);
 
     return {
         playerTeam,
