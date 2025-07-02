@@ -488,30 +488,29 @@ export const useBattleLogic = (pokemonId1, pokemonId2) => {
         playerActivePokemonIndex, opponentActivePokemonIndex // <-- ADDED
     ]);
 
-
     return {
-        playerTeam,
-        opponentTeam,
-        playerActivePokemonIndex,
-        opponentActivePokemonIndex,
-        playerActivePokemon,
-        R_opponentActivePokemon: opponentActivePokemon, // Renombrado para evitar conflicto con el import de React
-        battleLog,
-        isPlayersTurn,
-        battleEnded,
-        turnCount,
-        playerAttacking,
-        opponentAttacking,
-        playerDamaged,
-        opponentDamaged,
-        awaitingPlayerSwitch,
-        awaitingOpponentSwitch,
-        attackSoundRef,
-        hitSoundRef,
-        battleMusicRef,
-        lowHpSoundRef,
-        victorySoundRef,
-        handleAttack,
-        handleSwitchPokemon,
-    };
+        playerTeam,
+        opponentTeam,
+        playerActivePokemonIndex,
+        opponentActivePokemonIndex,
+        playerActivePokemon,
+        opponentActivePokemon, // <--- CAMBIO AQUÍ: Ahora se exporta con su nombre original
+        battleLog,
+        isPlayersTurn,
+        battleEnded,
+        turnCount,
+        playerAttacking,
+        opponentAttacking,
+        playerDamaged,
+        opponentDamaged,
+        awaitingPlayerSwitch,
+        awaitingOpponentSwitch,
+        attackSoundRef,
+        hitSoundRef,
+        battleMusicRef,
+        lowHpSoundRef,
+        victorySoundRef,
+        handleAttack,
+        handleSwitchPokemon,
+    };
 };

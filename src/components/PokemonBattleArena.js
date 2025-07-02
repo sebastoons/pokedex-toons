@@ -15,6 +15,8 @@ function PokemonBattleArena() {
     const pokemonId2 = parseInt(searchParams.get('p2'));
 
     const {
+        playerTeam, // Necesario para el componente SwitchPokemonButton
+        opponentTeam, // Agregado para la verificación inicial de carga
         playerActivePokemonIndex,
         battleLog,
         isPlayersTurn,
@@ -32,16 +34,20 @@ function PokemonBattleArena() {
         playerActivePokemon,
         opponentActivePokemon,
         handleAttack,
-        playerTeam,
         handleSwitchPokemon,
         awaitingPlayerSwitch,
         awaitingOpponentSwitch,
     } = useBattleLogic(pokemonId1, pokemonId2);
 
-    if (!playerActivePokemon || !opponentActivePokemon) {
+    // Estado de carga más robusto
+    // Verificamos no solo que los Pokémon activos existan, sino que también los equipos no estén vacíos.
+    // Esto asegura que `playerActivePokemon` y `opponentActivePokemon` no sean null o undefined
+    // y que los equipos (playerTeam, opponentTeam) hayan sido inicializados en useBattleLogic.
+    if (!playerActivePokemon || !opponentActivePokemon || playerTeam.length === 0 || opponentTeam.length === 0) {
         return (
             <div className="battle-loading-screen">
                 <p>Cargando Pokémon para la batalla...</p>
+                {/* Puedes añadir un spinner o una imagen de carga aquí */}
             </div>
         );
     }
@@ -96,8 +102,9 @@ function PokemonBattleArena() {
             <div className="actions-panel">
                 {/* Movimientos */}
                 <div className="moves-container">
+                    {/* Añadir verificación de `playerActivePokemon.moves` antes de pasarlo */}
                     <MovesList
-                        moves={playerActivePokemon.moves}
+                        moves={playerActivePokemon.moves || []} // Asegurarse de que 'moves' sea siempre un array
                         handleAttack={handleAttack}
                         isPlayersTurn={isPlayersTurn && !battleEnded && !awaitingOpponentSwitch && !awaitingPlayerSwitch}
                         battleEnded={battleEnded}
