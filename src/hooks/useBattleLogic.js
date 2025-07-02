@@ -1,11 +1,9 @@
-// src/hooks/useBattleLogic.js
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { fetchPokemonDetails } from '../services/pokemonService';
 import { calculateTypeEffectiveness } from '../utils/typeEffectiveness';
 import { calculateDamage } from '../utils/battleUtils';
 
-// Funciones auxiliares para sonidos
 const playSound = (ref, volume = 0.5, loop = false) => {
     if (ref.current) {
         ref.current.currentTime = 0;
@@ -25,13 +23,11 @@ const stopSound = (ref) => {
 export const useBattleLogic = (pokemonId1, pokemonId2) => {
     const navigate = useNavigate();
 
-    // Estados para los equipos y HP
+    // Estados
     const [playerTeam, setPlayerTeam] = useState([]);
     const [opponentTeam, setOpponentTeam] = useState([]);
     const [playerActivePokemonIndex, setPlayerActivePokemonIndex] = useState(0);
     const [opponentActivePokemonIndex, setOpponentActivePokemonIndex] = useState(0);
-
-    // Estados de la batalla
     const [battleLog, setBattleLog] = useState([]);
     const [isPlayersTurn, setIsPlayersTurn] = useState(true);
     const [battleEnded, setBattleEnded] = useState(false);
@@ -39,25 +35,23 @@ export const useBattleLogic = (pokemonId1, pokemonId2) => {
     const [awaitingPlayerSwitch, setAwaitingPlayerSwitch] = useState(false);
     const [awaitingOpponentSwitch, setAwaitingOpponentSwitch] = useState(false);
     const [animationBlocking, setAnimationBlocking] = useState(false);
-
-    // Estados para animaciones
     const [playerAttacking, setPlayerAttacking] = useState(false);
     const [opponentAttacking, setOpponentAttacking] = useState(false);
     const [playerDamaged, setPlayerDamaged] = useState(false);
     const [opponentDamaged, setOpponentDamaged] = useState(false);
 
-    // Referencias para audio
+    // Referencias de audio
     const attackSoundRef = useRef(null);
     const hitSoundRef = useRef(null);
     const battleMusicRef = useRef(null);
     const lowHpSoundRef = useRef(null);
     const victorySoundRef = useRef(null);
 
-    // Obtener los Pokémon activos
+    // Pokémon activos
     const playerActivePokemon = playerTeam[playerActivePokemonIndex] || null;
     const opponentActivePokemon = opponentTeam[opponentActivePokemonIndex] || null;
 
-    // Función auxiliar para obtener un ID de Pokémon aleatorio
+    // Funciones auxiliares
     const getRandomPokemonId = useCallback((excludeIds, totalPokemon = 1017) => {
         let randomId;
         do {
@@ -66,166 +60,100 @@ export const useBattleLogic = (pokemonId1, pokemonId2) => {
         return randomId;
     }, []);
 
-    // --- EFECTO DE CARGA INICIAL DE LA BATALLA ---
-    useEffect(() => {
-        const loadBattlePokemon = async () => {
-            if (!pokemonId1 || !pokemonId2) {
-                navigate('/battle');
-                return;
-            }
+    // Definición de funciones principales (useCallback)
+    const handleOpponentSwitch = useCallback(async () => {
+        if (battleEnded || animationBlocking) return;
 
-            try {
-                setBattleLog(["Iniciando Batalla..."]);
-                const p1Details = await fetchPokemonDetails(pokemonId1);
-                const p2Details = await fetchPokemonDetails(pokemonId2);
+        const availableOpponentPokemon = opponentTeam.filter((p, idx) =>
+            p.hp > 0 && idx !== opponentActivePokemonIndex
+        );
 
-                if (!p1Details || !p2Details) {
-                    throw new Error("No se pudieron cargar los Pokémon del jugador.");
-                }
+        if (availableOpponentPokemon.length > 0) {
+            setAnimationBlocking(true);
+            const nextPokemonToSwitch = availableOpponentPokemon[0];
+            const nextPokemonIndex = opponentTeam.findIndex(p => p.id === nextPokemonToSwitch.id);
 
-                const selectedPlayerTeam = [
-                    { ...p1Details, maxHp: p1Details.hp },
-                    { ...p2Details, maxHp: p2Details.hp }
-                ];
-                setPlayerTeam(selectedPlayerTeam);
-                setPlayerActivePokemonIndex(0);
+            const prevOpponentPokemonName = opponentActivePokemon?.name?.toUpperCase();
+            const newOpponentPokemonName = nextPokemonToSwitch?.name?.toUpperCase();
 
-                const usedIds = [pokemonId1, pokemonId2];
-                const opponentId1 = getRandomPokemonId(usedIds);
-                usedIds.push(opponentId1);
-                const opponentId2 = getRandomPokemonId(usedIds);
+            setBattleLog(prev => [...prev, `${prevOpponentPokemonName || 'El Pokémon oponente'} ha regresado!`]);
+            await new Promise(resolve => setTimeout(resolve, 500));
 
-                const opp1Details = await fetchPokemonDetails(opponentId1);
-                const opp2Details = await fetchPokemonDetails(opponentId2);
+            setOpponentActivePokemonIndex(nextPokemonIndex);
+            setAwaitingOpponentSwitch(false);
 
-                if (!opp1Details || !opp2Details) {
-                    throw new Error("No se pudieron cargar los Pokémon del oponente.");
-                }
+            setBattleLog(prev => [...prev, `¡${newOpponentPokemonName || 'Un nuevo Pokémon oponente'} sale a luchar!`]);
+            await new Promise(resolve => setTimeout(resolve, 500));
 
-                const initialOpponentTeam = [
-                    { ...opp1Details, maxHp: opp1Details.hp },
-                    { ...opp2Details, maxHp: opp2Details.hp }
-                ];
-                setOpponentTeam(initialOpponentTeam);
-                setOpponentActivePokemonIndex(0);
+            setAnimationBlocking(false);
 
-                setBattleLog(prev => [...prev, `¡La batalla ha comenzado! ${p1Details.name?.toUpperCase()} vs ${opp1Details.name?.toUpperCase()}. ¡A luchar!`]);
-                setTurnCount(1);
+            if (!battleEnded) {
                 setIsPlayersTurn(true);
-                setBattleEnded(false);
-                setAwaitingPlayerSwitch(false);
-                setAwaitingOpponentSwitch(false);
-                setAnimationBlocking(false);
-
-                playSound(battleMusicRef, 0.3, true);
-
-            } catch (error) {
-                console.error("Error loading Pokémon data:", error);
-                setBattleLog(prev => [...prev, `Error cargando Pokémon: ${error.message}. Intenta de nuevo.`]);
-                setBattleEnded(true);
+                setTurnCount(prev => prev + 1);
             }
-        };
-
-        loadBattlePokemon();
-
-        return () => {
+        } else {
+            setBattleLog(prev => [...prev, "El oponente no tiene más Pokémon disponibles para cambiar."]);
+            setBattleEnded(true);
+            setAnimationBlocking(false);
             stopSound(battleMusicRef);
             stopSound(lowHpSoundRef);
-            stopSound(victorySoundRef);
-        };
-    }, [pokemonId1, pokemonId2, navigate, getRandomPokemonId]);
+            playSound(victorySoundRef, 0.7);
+        }
+    }, [
+        battleEnded, animationBlocking, opponentTeam, opponentActivePokemonIndex, opponentActivePokemon,
+        setBattleLog, setOpponentActivePokemonIndex, setAwaitingOpponentSwitch,
+        setIsPlayersTurn, setTurnCount, setAnimationBlocking,
+        battleMusicRef, lowHpSoundRef, victorySoundRef // Incluir refs de sonido si se usan en el useCallback
+    ]);
 
-    // --- EFECTO PARA MONITOREAR EL HP DE LOS POKÉMON ---
-    useEffect(() => {
-        if (playerTeam.length === 0 || opponentTeam.length === 0) return;
+    const handleSwitchPokemon = useCallback(async (newPokemonIndex, isForced = false) => {
+        if (battleEnded || (!isForced && animationBlocking)) return;
 
-        const checkFaintedPokemons = () => {
-            const currentAlivePlayerPokemons = playerTeam.filter(p => p.hp > 0);
-            const currentAliveOpponentPokemons = opponentTeam.filter(p => p.hp > 0);
-
-            // Verificar si el equipo del jugador fue debilitado
-             if (currentAlivePlayerPokemons.length === 0 && !battleEnded) {
-                setBattleLog(prev => [...prev, "¡Tu equipo ha sido debilitado! Has perdido la batalla."]);
-                setBattleEnded(true);
-                setAwaitingPlayerSwitch(false);
-                setAwaitingOpponentSwitch(false);
-                stopSound(battleMusicRef);
-                stopSound(lowHpSoundRef);
-                return;
+        if (newPokemonIndex === playerActivePokemonIndex ||
+            newPokemonIndex < 0 ||
+            newPokemonIndex >= playerTeam.length) {
+            if (!isForced) {
+                setBattleLog(prev => [...prev, "No puedes cambiar a ese Pokémon o el índice es inválido."]);
             }
+            return;
+        }
 
-            // Verificar si el equipo del oponente fue debilitado
-            if (currentAliveOpponentPokemons.length === 0 && !battleEnded) {
-                setBattleLog(prev => [...prev, "¡El equipo rival ha sido debilitado! ¡Has ganado la batalla!"]);
-                setBattleEnded(true);
-                setAwaitingPlayerSwitch(false);
-                setAwaitingOpponentSwitch(false);
-                stopSound(battleMusicRef);
-                stopSound(lowHpSoundRef);
-                playSound(victorySoundRef, 0.7);
-                return;
+        if (playerTeam[newPokemonIndex]?.hp <= 0) {
+            if (!isForced) {
+                setBattleLog(prev => [...prev, `${playerTeam[newPokemonIndex]?.name?.toUpperCase()} está debilitado y no puede luchar.`]);
             }
+            return;
+        }
 
-            // Comprobar si el Pokémon activo del jugador se debilitó
-           if (playerActivePokemon && playerActivePokemon.hp <= 0 && !awaitingPlayerSwitch && !battleEnded) {
-                stopSound(lowHpSoundRef);
+        setAnimationBlocking(true);
 
-                if (currentAlivePlayerPokemons.length > 0) {
-                    setBattleLog(prev => [...prev, `${playerActivePokemon.name?.toUpperCase()} ha sido debilitado. ¡Cambiando automáticamente!`]);
-                    setAwaitingPlayerSwitch(true);
-                    setIsPlayersTurn(true);
+        const prevPokemonName = playerActivePokemon?.name?.toUpperCase();
+        const newPokemonName = playerTeam[newPokemonIndex]?.name?.toUpperCase();
 
-                    // Cambio automático al siguiente Pokémon vivo
-                    const nextAliveIndex = playerTeam.findIndex((p, idx) => p.hp > 0 && idx !== playerActivePokemonIndex);
-                    if (nextAliveIndex >= 0) {
-                        setTimeout(() => {
-                            handleSwitchPokemon(nextAliveIndex, true);
-                        }, 1000);
-                    }
-                }
-                return;
-            }
+        if (prevPokemonName) {
+            setBattleLog(prev => [...prev, `${prevPokemonName} ha regresado!`]);
+            await new Promise(resolve => setTimeout(resolve, 500));
+        }
 
-            // Comprobar si el Pokémon activo del oponente se debilitó
-            if (opponentActivePokemon && opponentActivePokemon.hp <= 0 && !awaitingOpponentSwitch && !battleEnded) {
-                if (currentAliveOpponentPokemons.length > 0) {
-                    setBattleLog(prev => [...prev, `${opponentActivePokemon.name?.toUpperCase()} ha sido debilitado. ¡El oponente está cambiando!`]);
-                    setAwaitingOpponentSwitch(true);
-                    setIsPlayersTurn(false);
+        setPlayerActivePokemonIndex(newPokemonIndex);
+        setAwaitingPlayerSwitch(false);
+        stopSound(lowHpSoundRef);
 
-                    // Cambio automático al siguiente Pokémon vivo del oponente
-                    const nextAliveIndex = opponentTeam.findIndex((p, idx) => p.hp > 0 && idx !== opponentActivePokemonIndex);
-                    if (nextAliveIndex >= 0) {
-                        setTimeout(() => {
-                            handleOpponentSwitch(nextAliveIndex, true);
-                        }, 1000);
-                    }
-                }
-                return;
-            }
+        setBattleLog(prev => [...prev, `¡Adelante, ${newPokemonName || 'un nuevo Pokémon'}!`]);
+        await new Promise(resolve => setTimeout(resolve, 500));
 
-            // Control del sonido de baja HP
-            if (playerActivePokemon && playerActivePokemon.maxHp && !battleEnded && playerActivePokemon.hp > 0) {
-                if (playerActivePokemon.hp / playerActivePokemon.maxHp <= 0.2) {
-                    playSound(lowHpSoundRef, 0.7, true);
-                } else {
-                    stopSound(lowHpSoundRef);
-                }
-            } else {
-                stopSound(lowHpSoundRef);
-            }
-        };
+        setAnimationBlocking(false);
 
-        const timeoutId = setTimeout(() => {
-            checkFaintedPokemons();
-        }, 600);
+        if (!battleEnded) {
+            setIsPlayersTurn(false);
+            setTurnCount(prev => prev + 1);
+        }
+    }, [
+        battleEnded, animationBlocking, playerActivePokemonIndex, playerTeam, playerActivePokemon, lowHpSoundRef,
+        setBattleLog, setPlayerActivePokemonIndex, setAwaitingPlayerSwitch, setAnimationBlocking,
+        setIsPlayersTurn, setTurnCount
+    ]);
 
-        return () => clearTimeout(timeoutId);
-    }, [playerTeam, opponentTeam, battleEnded, awaitingPlayerSwitch, awaitingOpponentSwitch, 
-        playerActivePokemon, opponentActivePokemon, victorySoundRef, lowHpSoundRef, battleMusicRef, playerActivePokemonIndex,
-        opponentActivePokemonIndex]);
-
-    // --- LÓGICA PARA EL ATAQUE DEL JUGADOR ---
     const handleAttack = useCallback(async (moveIndex) => {
         if (battleEnded || !isPlayersTurn || awaitingPlayerSwitch || awaitingOpponentSwitch || animationBlocking) return;
 
@@ -282,10 +210,13 @@ export const useBattleLogic = (pokemonId1, pokemonId2) => {
             setIsPlayersTurn(false);
             setTurnCount(prev => prev + 1);
         }
-    }, [battleEnded, isPlayersTurn, awaitingPlayerSwitch, awaitingOpponentSwitch, animationBlocking,
-        playerActivePokemon, opponentActivePokemon, opponentActivePokemonIndex]);
+    }, [
+        battleEnded, isPlayersTurn, awaitingPlayerSwitch, awaitingOpponentSwitch, animationBlocking,
+        playerActivePokemon, opponentActivePokemon, opponentActivePokemonIndex,
+        setBattleLog, setPlayerAttacking, attackSoundRef, setOpponentTeam,
+        setOpponentDamaged, hitSoundRef, setAnimationBlocking, setIsPlayersTurn, setTurnCount
+    ]);
 
-    // --- LÓGICA PARA EL TURNO DEL OPONENTE ---
     const handleOpponentTurn = useCallback(async () => {
         if (battleEnded || isPlayersTurn || awaitingPlayerSwitch || animationBlocking) return;
 
@@ -351,137 +282,212 @@ export const useBattleLogic = (pokemonId1, pokemonId2) => {
             setIsPlayersTurn(true);
             setTurnCount(prev => prev + 1);
         }
-    }, [battleEnded, isPlayersTurn, awaitingPlayerSwitch, animationBlocking,
-        playerActivePokemon, opponentActivePokemon, playerActivePokemonIndex]);
+    }, [
+        battleEnded, isPlayersTurn, awaitingPlayerSwitch, animationBlocking,
+        playerActivePokemon, opponentActivePokemon, playerActivePokemonIndex,
+        setBattleLog, setOpponentAttacking, attackSoundRef, setPlayerTeam,
+        setPlayerDamaged, hitSoundRef, setAnimationBlocking, setIsPlayersTurn, setTurnCount
+    ]);
 
-    // --- LÓGICA PARA EL CAMBIO DE POKÉMON DEL JUGADOR ---
-    const handleSwitchPokemon = useCallback(async (newPokemonIndex, isForced = false) => {
-        if (battleEnded || (!isForced && animationBlocking)) return;
-
-        if (newPokemonIndex === playerActivePokemonIndex || newPokemonIndex < 0 || newPokemonIndex >= playerTeam.length) {
-            if (!isForced) {
-                setBattleLog(prev => [...prev, "No puedes cambiar a ese Pokémon o el índice es inválido."]);
+    // Efectos
+    useEffect(() => {
+        const loadBattlePokemon = async () => {
+            if (!pokemonId1 || !pokemonId2) {
+                navigate('/battle'); // Redirige a la página principal si no hay IDs válidos
+                return;
             }
-            return;
-        }
 
-        if (playerTeam[newPokemonIndex]?.hp <= 0) {
-            if (!isForced) {
-                setBattleLog(prev => [...prev, `${playerTeam[newPokemonIndex]?.name?.toUpperCase()} está debilitado y no puede luchar.`]);
-            }
-            return;
-        }
+            try {
+                setBattleLog(["Cargando Pokémon..."]);
+                const p1Details = await fetchPokemonDetails(pokemonId1);
+                const p2Details = await fetchPokemonDetails(pokemonId2);
 
-        setAnimationBlocking(true);
+                if (!p1Details || !p2Details) {
+                    throw new Error("No se pudieron cargar los Pokémon del jugador.");
+                }
 
-        const prevPokemonName = playerActivePokemon?.name?.toUpperCase();
-        const newPokemonName = playerTeam[newPokemonIndex]?.name?.toUpperCase();
+                const selectedPlayerTeam = [
+                    { ...p1Details, maxHp: p1Details.hp },
+                    { ...p2Details, maxHp: p2Details.hp }
+                ];
+                setPlayerTeam(selectedPlayerTeam);
+                setPlayerActivePokemonIndex(0);
 
-        if (prevPokemonName) {
-            setBattleLog(prevLog => [...prevLog, `${prevPokemonName} ha regresado!`]);
-            await new Promise(resolve => setTimeout(resolve, 500));
-        }
-        
-        setPlayerActivePokemonIndex(newPokemonIndex);
-        setAwaitingPlayerSwitch(false);
-        stopSound(lowHpSoundRef);
+                const usedIds = [pokemonId1, pokemonId2];
+                const opponentId1 = getRandomPokemonId(usedIds);
+                usedIds.push(opponentId1);
+                const opponentId2 = getRandomPokemonId(usedIds);
 
-        setBattleLog(prevLog => [...prevLog, `¡Adelante, ${newPokemonName || 'un nuevo Pokémon'}!`]);
-        await new Promise(resolve => setTimeout(resolve, 500));
+                const opp1Details = await fetchPokemonDetails(opponentId1);
+                const opp2Details = await fetchPokemonDetails(opponentId2);
 
-        setAnimationBlocking(false);
+                if (!opp1Details || !opp2Details) {
+                    throw new Error("No se pudieron cargar los Pokémon del oponente.");
+                }
 
-        if (!battleEnded) {
-            setIsPlayersTurn(false);
-            setTurnCount(prev => prev + 1);
-        }
-    }, [battleEnded, animationBlocking, playerActivePokemonIndex, playerTeam, playerActivePokemon]);
+                const initialOpponentTeam = [
+                    { ...opp1Details, maxHp: opp1Details.hp },
+                    { ...opp2Details, maxHp: opp2Details.hp }
+                ];
+                setOpponentTeam(initialOpponentTeam);
+                setOpponentActivePokemonIndex(0);
 
-    // --- LÓGICA PARA EL CAMBIO DE POKÉMON DE LA IA ---
-    // --- NUEVA FUNCIÓN PARA CAMBIO AUTOMÁTICO DEL OPONENTE ---
-    const handleOpponentSwitch = useCallback(async (nextPokemonIndex = null, isForced = false) => {
-        if (battleEnded || (!isForced && animationBlocking)) return;
-
-        const availableOpponentPokemon = opponentTeam.filter((p, idx) => p.hp > 0 && idx !== opponentActivePokemonIndex);
-
-        if (availableOpponentPokemon.length > 0) {
-            setAnimationBlocking(true);
-            
-            // Si no se especifica un índice, elegir el primero disponible
-            const nextPokemonToSwitch = nextPokemonIndex !== null ? 
-                opponentTeam[nextPokemonIndex] : availableOpponentPokemon[0];
-            
-            const actualNextIndex = nextPokemonIndex !== null ? 
-                nextPokemonIndex : opponentTeam.findIndex(p => p.id === nextPokemonToSwitch.id);
-
-            const prevOpponentPokemonName = opponentActivePokemon?.name?.toUpperCase();
-            const newOpponentPokemonName = nextPokemonToSwitch?.name?.toUpperCase();
-
-            setBattleLog(prevLog => [...prevLog, `${prevOpponentPokemonName || 'El Pokémon oponente'} ha regresado!`]);
-            await new Promise(resolve => setTimeout(resolve, 500));
-            
-            setOpponentActivePokemonIndex(actualNextIndex);
-            setAwaitingOpponentSwitch(false);
-
-            setBattleLog(prevLog => [...prevLog, `¡${newOpponentPokemonName || 'Un nuevo Pokémon oponente'} sale a luchar!`]);
-            await new Promise(resolve => setTimeout(resolve, 500));
-
-            setAnimationBlocking(false);
-
-            if (!battleEnded) {
+                setBattleLog(prev => [...prev, `¡La batalla ha comenzado! ${p1Details.name?.toUpperCase()} vs ${opp1Details.name?.toUpperCase()}. ¡A luchar!`]);
+                setTurnCount(1);
                 setIsPlayersTurn(true);
-                setTurnCount(prev => prev + 1);
+                setBattleEnded(false);
+                setAwaitingPlayerSwitch(false);
+                setAwaitingOpponentSwitch(false);
+                setAnimationBlocking(false);
+
+                playSound(battleMusicRef, 0.3, true);
+
+            } catch (error) {
+                console.error("Error loading Pokémon data:", error);
+                setBattleLog(prev => [...prev, `Error cargando Pokémon: ${error.message}. Intenta de nuevo.`]);
+                setBattleEnded(true);
             }
-        } else {
-            setBattleLog(prevLog => [...prevLog, "El oponente no tiene más Pokémon disponibles para cambiar."]);
-            setBattleEnded(true);
-            setAnimationBlocking(false);
+        };
+
+        loadBattlePokemon();
+
+        return () => {
             stopSound(battleMusicRef);
             stopSound(lowHpSoundRef);
-            playSound(victorySoundRef, 0.7);
-        }
-    }, [battleEnded, animationBlocking, opponentTeam, opponentActivePokemonIndex, opponentActivePokemon]);
+            stopSound(victorySoundRef);
+        };
+    }, [
+        pokemonId1, pokemonId2, navigate, getRandomPokemonId,
+        setPlayerTeam, setPlayerActivePokemonIndex, setOpponentTeam, setOpponentActivePokemonIndex,
+        setBattleLog, setTurnCount, setIsPlayersTurn, setBattleEnded,
+        setAwaitingPlayerSwitch, setAwaitingOpponentSwitch, setAnimationBlocking, battleMusicRef
+    ]);
 
-    // --- EFECTO PARA GESTIONAR EL FLUJO DE TURNOS ---
+    useEffect(() => {
+        if (playerTeam.length === 0 || opponentTeam.length === 0 || battleEnded) return;
+
+        const checkFaintedPokemons = () => {
+            const currentAlivePlayerPokemons = playerTeam.filter(p => p.hp > 0);
+            const currentAliveOpponentPokemons = opponentTeam.filter(p => p.hp > 0);
+
+            // 1. CONDICIONES DE FIN DE BATALLA
+            if (currentAlivePlayerPokemons.length === 0) {
+                if (!battleEnded) { // Asegurarse de que no se ejecute múltiples veces
+                    setBattleLog(prev => [...prev, "¡Tu equipo ha sido debilitado! Has perdido la batalla."]);
+                    setBattleEnded(true);
+                    setAwaitingPlayerSwitch(false);
+                    setAwaitingOpponentSwitch(false);
+                    stopSound(battleMusicRef);
+                    stopSound(lowHpSoundRef);
+                }
+                return;
+            }
+
+            if (currentAliveOpponentPokemons.length === 0) {
+                if (!battleEnded) { // Asegurarse de que no se ejecute múltiples veces
+                    setBattleLog(prev => [...prev, "¡El equipo rival ha sido debilitado! ¡Has ganado la batalla!"]);
+                    setBattleEnded(true);
+                    setAwaitingPlayerSwitch(false);
+                    setAwaitingOpponentSwitch(false);
+                    stopSound(battleMusicRef);
+                    stopSound(lowHpSoundRef);
+                    playSound(victorySoundRef, 0.7);
+                }
+                return;
+            }
+
+            // Si la batalla ya terminó por la lógica anterior, no continuar
+            if (battleEnded) return;
+
+            // 2. CAMBIO FORZADO DEL JUGADOR
+            if (playerActivePokemon && playerActivePokemon.hp <= 0 && !awaitingPlayerSwitch) {
+                stopSound(lowHpSoundRef);
+                if (currentAlivePlayerPokemons.length > 0) {
+                    setBattleLog(prev => [...prev, `${playerActivePokemon.name?.toUpperCase()} ha sido debilitado. ¡Cambiando automáticamente!`]);
+                    setAwaitingPlayerSwitch(true);
+                    setIsPlayersTurn(true); // Se fuerza el turno del jugador para el cambio
+                    const nextAliveIndex = playerTeam.findIndex((p, idx) => p.hp > 0 && idx !== playerActivePokemonIndex);
+                    if (nextAliveIndex >= 0) {
+                        setTimeout(() => {
+                            handleSwitchPokemon(nextAliveIndex, true); // Pasar true para indicar que es un cambio forzado
+                        }, 1000);
+                    }
+                }
+                return;
+            }
+
+            // 3. CAMBIO FORZADO DEL OPONENTE
+            if (opponentActivePokemon && opponentActivePokemon.hp <= 0 && !awaitingOpponentSwitch) {
+                if (currentAliveOpponentPokemons.length > 0) {
+                    setBattleLog(prev => [...prev, `${opponentActivePokemon.name?.toUpperCase()} ha sido debilitado. ¡El oponente está cambiando!`]);
+                    setAwaitingOpponentSwitch(true);
+                    setIsPlayersTurn(false); // Mantener el turno del oponente hasta que cambie
+                    // No necesitas encontrar el índice aquí, handleOpponentSwitch ya lo hace.
+                    setTimeout(() => {
+                        handleOpponentSwitch();
+                    }, 1000);
+                }
+                return;
+            }
+
+            // 4. CONTROL DEL SONIDO DE BAJA HP
+            if (playerActivePokemon && playerActivePokemon.maxHp && playerActivePokemon.hp > 0) {
+                if (playerActivePokemon.hp / playerActivePokemon.maxHp <= 0.2) {
+                    // Solo reproducir si no está sonando o está pausado
+                    if (lowHpSoundRef.current?.paused || lowHpSoundRef.current?.ended) {
+                        playSound(lowHpSoundRef, 0.7, true);
+                    }
+                } else {
+                    stopSound(lowHpSoundRef);
+                }
+            } else {
+                stopSound(lowHpSoundRef);
+            }
+        };
+
+        const timeoutId = setTimeout(() => {
+            checkFaintedPokemons();
+        }, 600); // Pequeño retardo para permitir que los estados se actualicen
+
+        return () => clearTimeout(timeoutId);
+    }, [
+        playerTeam, opponentTeam, battleEnded, awaitingPlayerSwitch, awaitingOpponentSwitch,
+        playerActivePokemon, opponentActivePokemon, playerActivePokemonIndex, opponentActivePokemonIndex, // <-- ADDED
+        handleOpponentSwitch, handleSwitchPokemon, // Estas funciones son estables por useCallback
+        setBattleLog, setBattleEnded, setAwaitingPlayerSwitch, setAwaitingOpponentSwitch, setIsPlayersTurn, // Setters
+        battleMusicRef, lowHpSoundRef, victorySoundRef // Refs de sonido
+    ]);
+
+
     useEffect(() => {
         if (battleEnded || animationBlocking) return;
 
-        if (isPlayersTurn) {
-            if (playerActivePokemon?.hp <= 0) {
-                if (!awaitingPlayerSwitch && playerTeam.filter(p => p.hp > 0).length > 0) {
-                    setAwaitingPlayerSwitch(true);
-                    setIsPlayersTurn(true);
-                }
-                return;
-            }
+        // Si el jugador está esperando un cambio forzado, no ejecutar lógica de turnos
+        if (awaitingPlayerSwitch && playerActivePokemon?.hp <= 0) {
             return;
         }
 
-        if (!isPlayersTurn) {
-            if (opponentActivePokemon?.hp <= 0) {
-                if (!awaitingOpponentSwitch && opponentTeam.filter(p => p.hp > 0).length > 0) {
-                    setBattleLog(prev => [...prev, `${opponentActivePokemon.name?.toUpperCase()} se ha debilitado. ¡El oponente debe cambiar!`]);
-                    setAwaitingOpponentSwitch(true);
-                    setIsPlayersTurn(false);
-                }
-                return;
-            }
-
-            if (awaitingOpponentSwitch) {
-                const timeoutId = setTimeout(() => {
-                    handleOpponentSwitch();
-                }, 1500);
-                return () => clearTimeout(timeoutId);
-            } else {
-                const timeoutId = setTimeout(() => {
-                    handleOpponentTurn();
-                }, 1500);
-                return () => clearTimeout(timeoutId);
-            }
+        // Si el oponente está esperando un cambio forzado, no ejecutar lógica de turnos
+        if (awaitingOpponentSwitch && opponentActivePokemon?.hp <= 0) {
+            return;
         }
-    }, [isPlayersTurn, battleEnded, animationBlocking, awaitingPlayerSwitch, awaitingOpponentSwitch,
-        playerActivePokemon, opponentActivePokemon, playerTeam, opponentTeam, handleOpponentTurn, handleOpponentSwitch,handleOpponentSwitch,
-        handleSwitchPokemon, setAwaitingPlayerSwitch, setAwaitingOpponentSwitch, setBattleLog, setIsPlayersTurn]);
+
+
+        if (!isPlayersTurn) {
+            // Retraso para que el usuario pueda ver el log y la animación de ataque
+            const timeoutId = setTimeout(() => {
+                handleOpponentTurn();
+            }, 1500);
+            return () => clearTimeout(timeoutId);
+        }
+    }, [
+        isPlayersTurn, battleEnded, animationBlocking, awaitingPlayerSwitch, awaitingOpponentSwitch,
+        playerActivePokemon, opponentActivePokemon, // Son referencias a objetos, si cambian, se re-ejecuta.
+        handleOpponentTurn, // Esta función es estable por useCallback
+        handleOpponentSwitch, // Si esta función cambia, el efecto se re-ejecuta.
+        playerActivePokemonIndex, opponentActivePokemonIndex // <-- ADDED
+    ]);
+
 
     return {
         playerTeam,
@@ -489,7 +495,7 @@ export const useBattleLogic = (pokemonId1, pokemonId2) => {
         playerActivePokemonIndex,
         opponentActivePokemonIndex,
         playerActivePokemon,
-        opponentActivePokemon,
+        R_opponentActivePokemon: opponentActivePokemon, // Renombrado para evitar conflicto con el import de React
         battleLog,
         isPlayersTurn,
         battleEnded,
