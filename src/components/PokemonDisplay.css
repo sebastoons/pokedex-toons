@@ -8,9 +8,9 @@
     background-color: rgba(255, 255, 255, 0.95);
     border-radius: 12px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    margin: 10px auto;
+    margin: 10px auto; /* Esto centra la tarjeta Pokemon dentro de su contenedor */
     width: 100%;
-    max-width: 280px;
+    max-width: 280px; /* Esto da un ancho máximo para que el margin auto funcione */
     transition: all 0.3s ease;
     border: 3px solid #f0f0f0;
 }
@@ -19,12 +19,14 @@
     border-color: #4fc3f7;
     background: linear-gradient(135deg, rgba(79, 195, 247, 0.1) 0%, rgba(255, 255, 255, 0.9) 50%);
     transform: translateX(-10px);
+    margin-left: 20px;
 }
 
 .pokemon-display.opponent {
     border-color: #ff7043;
     background: linear-gradient(135deg, rgba(255, 112, 67, 0.1) 0%, rgba(255, 255, 255, 0.9) 50%);
     transform: translateX(10px);
+    margin-right: 30px;
 }
 
 .pokemon-name {

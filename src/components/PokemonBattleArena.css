@@ -4,7 +4,7 @@
 .battle-arena {
     display: flex;
     flex-direction: column;
-    padding: 20px;
+    padding: 10px;
     background: linear-gradient(to top, #c0392b 0%, #e74c3c 100%);
     border-radius: 8px;
     box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
@@ -19,18 +19,19 @@
 .turn-counter {
     color: white;
     font-size: 1.2em;
-    margin-bottom: 10px;
+    margin-bottom: 5px;
     text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
     text-align: center;
     order: 0;
 }
 
+
 /* Contenedor principal de Pokémon */
 .pokemon-main-container {
     display: flex;
-    flex-direction: row; /* Horizontal por defecto */
+    flex-direction: column; /* CAMBIO AQUÍ: Vertical por defecto para móvil */
     justify-content: space-between;
-    align-items: flex-end; /* Alinea los Pokémon al fondo */
+    align-items: center; /* Centra los elementos horizontalmente en el contenedor principal */
     width: 100%;
     margin: 20px 0;
 }
@@ -40,19 +41,17 @@
 .opponent-pokemon-wrapper {
     display: flex;
     flex-direction: column;
-    align-items: center;
+    align-items: center; /* Centra el contenido dentro de cada display de Pokémon */
     width: 100%;
 }
 
 .opponent-pokemon-wrapper {
-    order: 2; /* Oponente segundo (derecha) */
-    align-self: flex-end; /* Alinea abajo */
+    order: 1; /* Oponente segundo (derecha) */
 }
 
 /* Contenedores individuales */
 .player-pokemon-wrapper {
-    order: 1; /* Jugador primero (izquierda) */
-    align-self: flex-start; /* Alinea arriba */
+    order: 2; /* Jugador primero (izquierda) */
 }
 
 /* Log de batalla */
@@ -75,6 +74,7 @@
 }
 
 .moves-container {
+    display: grid; /* Asegúrate de que MovesList usa display grid */
     grid-template-columns: repeat(2, 1fr);
     gap: 10px;
 }
@@ -121,7 +121,8 @@
     background-color: #45a049;
 }
 
-/* --- Media Query para celualres (min-width: 376px) --- */
+/* --- Media Query para celulares (min-width: 376px) --- */
+/* --- Media Query para celulares (min-width: 376px) --- */
 @media (min-width: 376px) {
     .battle-arena {
         padding: 25px;
@@ -129,10 +130,10 @@
     }
 
     .pokemon-main-container {
-        flex-direction: row;
+        flex-direction: column; /* Mantiene vertical */
         justify-content: space-between;
-        align-items: center;
-        gap: 5pxpx;
+        align-items: center; /* Centra horizontalmente */
+        gap: 5px;
     }
 
     .player-pokemon-wrapper,
@@ -142,17 +143,17 @@
     }
 
     .opponent-pokemon-wrapper {
-        align-items:end;
-        order: 2;
+        order: 1; /* Oponente arriba */
+        align-items: center; /* Centra el contenido del oponente */
     }
 
     .player-pokemon-wrapper {
-        align-items:start;
-        order: 1;
+        order: 2; /* Jugador abajo */
+        align-items: center; /* Centra el contenido del jugador */
     }
 
     .moves-container {
-        grid-template-columns: repeat(3, 1fr);
+        grid-template-columns: repeat(2, 1fr);
     }
 }
 
@@ -165,26 +166,27 @@
     }
 
     .pokemon-main-container {
-        flex-direction: row;
+        flex-direction: row; /* CAMBIO: Vuelve a horizontal para tablets y desktop */
         justify-content: space-between;
-        align-items: center;
-        gap: 5pxpx;
+        align-items: flex-end; /* Alinea los Pokémon al fondo del contenedor principal */
+        gap: 5px;
     }
 
     .player-pokemon-wrapper,
     .opponent-pokemon-wrapper {
-        align-self: center;
+        align-self: flex-end; /* Alinea ambos Pokémon wrappers al fondo de su fila */
         width: 100%;
+        padding: 0 20px;
     }
 
     .opponent-pokemon-wrapper {
-        align-items: flex-start;
-        order: 2;
+        align-items: flex-start; /* Oponente a la izquierda dentro de su wrapper */
+        order: 2; /* Oponente a la derecha en modo horizontal */
     }
 
     .player-pokemon-wrapper {
-        align-items: flex-end;
-        order: 1;
+        align-items: flex-end; /* Jugador a la derecha dentro de su wrapper */
+        order: 1; /* Jugador a la izquierda en modo horizontal */
     }
 
     .moves-container {
