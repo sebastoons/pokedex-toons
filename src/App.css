@@ -1786,7 +1786,7 @@ header {
     margin: 2px;
 }
 
-/* Estilos para la sección de Entrada de Pokedex */
+/* ---SECCION DE ENTRADA DE POKEDEX----------- */
 .pokedex-entry-text {
     background-color: #f8f8f8; /* Un fondo gris claro para el cuadro de texto */
     padding: 15px; /* Espacio interno para que el texto no esté pegado a los bordes */
@@ -1801,62 +1801,89 @@ header {
     font-size: 0.95em;
 }
 
-/* Estilos para el contenedor de la línea evolutiva */
+/* ----LINEA EVOLUTIVA--------*/
 .evolution-line-container {
-    display: flex; /* Para que los Pokémon y las flechas se alineen horizontalmente */
-    flex-wrap: wrap; /* Para que los elementos pasen a la siguiente línea si no caben */
-    justify-content: center; /* Centrar los elementos horizontalmente */
-    align-items: center; /* Alinear los elementos verticalmente */
-    gap: 15px; /* Espacio entre los elementos y las flechas */
+    display: flex;
+    flex-wrap: wrap; /* Permite que los elementos se envuelvan en pantallas pequeñas */
+    justify-content: center; /* Centra los elementos horizontalmente */
+    align-items: center;
+    gap: 15px; /* Espacio entre etapas y flechas/requisitos */
     margin-top: 20px;
-    margin-bottom: 30px;
-    padding: 15px;
-    background-color: #f8f8f8;
+    padding: 10px;
+    background-color: #f7f7f7;
     border-radius: 8px;
-    max-width: 700px; /* Limita el ancho del contenedor */
-    margin-left: auto;
-    margin-right: auto;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* Sombra suave */
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
 
-/* Estilos para cada etapa de la evolución (imagen + nombre) */
+/* ----ESTILOS PARA CADA ETAPA DE LA EVOLUCION---------- */
 .evolution-stage {
     display: flex;
-    flex-direction: column; /* Imagen arriba, nombre abajo */
+    flex-direction: column;
     align-items: center;
-    cursor: pointer; /* Indica que es clickeable */
-    transition: transform 0.2s ease-in-out; /* Animación al pasar el ratón */
+    cursor: pointer;
+    padding: 10px;
+    border-radius: 8px;
+    background-color: #fff;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    transition: transform 0.2s ease-in-out;
+    text-align: center;
+    flex-shrink: 0; /* Evita que el elemento se encoja excesivamente */
 }
 
 .evolution-stage:hover {
-    transform: translateY(-5px); /* Pequeño efecto de elevación al pasar el ratón */
+    transform: translateY(-5px);
 }
 
-/* Estilos para la imagen del Pokémon evolutivo */
+/* ----ESTILOS PARA LA IMAGEN DEL POKEMON EVOLUTIVO----- */
 .evolution-sprite {
-    width: 80px; /* Tamaño de la imagen, ajusta si es necesario */
-    height: 80px;
-    object-fit: contain; /* Asegura que la imagen se vea completa */
-    background-color: #e0e0e0; /* Fondo claro para los sprites */
-    border-radius: 50%; /* Hacerlos redondos */
-    padding: 5px;
-    border: 1px solid #ccc;
+    width: 90px; /* Ajusta el tamaño de la imagen según sea necesario */
+    height: 90px;
+    object-fit: contain;
+    margin-bottom: 5px;
 }
 
-/* Estilos para el nombre del Pokémon evolutivo */
+/* ----ESTILOS PARA EL NOMBRE DEL POKEMON EVOLUTIVO-----*/
 .evolution-name {
-    margin-top: 5px;
-    font-size: 0.9em;
     font-weight: bold;
     color: #333;
-    text-align: center;
+    font-size: 0.95em;
+    text-transform: capitalize;
 }
 
-/* Estilos para la flecha entre evoluciones */
+.evolution-path-details {
+    display: flex;
+    flex-direction: column; /* Apila el requisito y la flecha verticalmente */
+    align-items: center;
+    gap: 2px;
+    text-align: center;
+    min-width: 60px; /* Da un poco de espacio para el texto y la flecha */
+}
+
+/* -----FLECHA ENTRE EVOLUCIONES--------------------- */
 .evolution-arrow {
-    font-size: 2em; /* Tamaño de la flecha */
-    color: #888;
-    margin: 0 5px; /* Espacio alrededor de la flecha */
+    font-size: 1.8em;
+    color: #666;
+    font-weight: bold;
+}
+
+.evolution-requirement {
+    font-size: 0.75em;
+    color: #555;
+    background-color: #e0e0e0;
+    padding: 2px 6px;
+    border-radius: 4px;
+    white-space: nowrap; /* Mantiene el requisito en una sola línea si es posible */
+    margin-bottom: 3px;
+}
+
+/* Media Query para dispositivos muy pequeños si necesitas ajustar */
+@media (max-width: 480px) {
+    .evolution-line-container {
+        flex-direction: column; /* Apila completamente las etapas en pantallas muy pequeñas */
+    }
+    .evolution-path-details {
+        margin: 10px 0; /* Espacio entre los elementos apilados */
+    }
 }
 
 /* Contenedor general para las relaciones de tipo */

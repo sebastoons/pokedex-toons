@@ -1,5 +1,5 @@
 // src/components/PokemonDetail.js
-import React, { useState, useEffect, useRef } from 'react'; // ¡Importa useRef!
+import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import '../App.css'; 
 
@@ -19,7 +19,7 @@ function PokemonDetail() {
   const [typeEffectiveness, setTypeEffectiveness] = useState(null);
   const [evolutionLine, setEvolutionLine] = useState([]);
 
-  // NUEVOS ESTADOS PARA SONIDO Y SPRITES CLÁSICOS
+  // ESTADOS PARA SONIDO Y SPRITES CLÁSICOS
   const [pokemonSoundUrl, setPokemonSoundUrl] = useState(null);
   const [classicSprites, setClassicSprites] = useState([]);
   const audioRef = useRef(null); // Referencia al elemento de audio
@@ -59,6 +59,166 @@ function PokemonDetail() {
     }
   };
 
+  // --- NUEVA FUNCIÓN: Procesa la cadena de evolución para obtener requisitos ---
+  const processEvolutionChain = async (chain) => {
+    const evolutions = [];
+    const seenIds = new Set(); // Para evitar duplicados en ramificaciones
+
+    const traverseChain = async (currentEvoStage, detailsToReachThisStage = null) => {
+        const speciesUrlParts = currentEvoStage.species.url.split('/');
+        const id = speciesUrlParts[speciesUrlParts.length - 2];
+        
+        if (seenIds.has(id)) {
+            return; // Ya procesado, evitar bucles o duplicados
+        }
+        seenIds.add(id);
+
+        try {
+            const basicInfo = await fetchPokemonBasicInfo(id);
+            evolutions.push({
+                id: basicInfo.id,
+                name: basicInfo.name,
+                sprite: basicInfo.sprite,
+                details: detailsToReachThisStage // Requisitos para alcanzar ESTE Pokémon
+            });
+        } catch (error) {
+            console.error(`Error al obtener info básica para ${currentEvoStage.species.name}:`, error);
+            // Fallback si la info básica no se puede obtener
+            evolutions.push({
+                id: id,
+                name: currentEvoStage.species.name,
+                sprite: 'https://placehold.co/90x90/e0e0e0/333?text=No+Img',
+                details: detailsToReachThisStage
+            });
+        }
+
+        if (currentEvoStage.evolves_to && currentEvoStage.evolves_to.length > 0) {
+            for (const nextEvoStage of currentEvoStage.evolves_to) {
+                // Los detalles se encuentran en 'evolution_details' del *siguiente* stage
+                const details = nextEvoStage.evolution_details && nextEvoStage.evolution_details.length > 0
+                                ? nextEvoStage.evolution_details[0] // Tomamos el primer detalle para simplificar
+                                : null;
+                await traverseChain(nextEvoStage, details);
+            }
+        }
+    };
+
+    await traverseChain(chain);
+
+    // Ordenar por ID para asegurar el orden cronológico de la evolución
+    evolutions.sort((a, b) => parseInt(a.id) - parseInt(b.id));
+
+    return evolutions;
+  };
+
+  // --- FUNCIÓN CORREGIDA: Formatea el requisito de evolución con traducciones de piedras ---
+  const formatEvolutionRequirement = (details) => {
+      if (!details) return ''; // Para la forma base (e.g., Bulbasaur), no hay requisito
+
+      const trigger = details.trigger?.name;
+      let requirement = '';
+
+      switch (trigger) {
+          case 'level-up':
+              if (details.min_level) {
+                  requirement = `Nv. ${details.min_level}`;
+              } else if (details.min_happiness) {
+                  requirement = `Felicidad`;
+              } else if (details.min_affection) {
+                  requirement = `Afecto`;
+              } else if (details.min_beauty) {
+                  requirement = `Belleza`;
+              } else {
+                  requirement = 'Por nivel'; // Fallback general
+              }
+              // Condiciones adicionales para evolución por nivel
+              if (details.time_of_day && details.time_of_day !== '') {
+                  requirement += ` (${details.time_of_day === 'day' ? 'Día' : 'Noche'})`;
+              }
+              if (details.known_move) {
+                  const moveName = details.known_move.name.replace(/-/g, ' ').split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+                  requirement += ` (con ${moveName})`;
+              }
+              if (details.held_item) {
+                  const itemName = details.held_item.name.replace(/-/g, ' ').split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+                  requirement += ` (equipando ${itemName})`;
+              }
+              if (details.party_species) {
+                  const speciesName = details.party_species.name.replace(/-/g, ' ').split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+                  requirement += ` (con ${speciesName} en equipo)`;
+              }
+              break;
+          case 'trade':
+              requirement = 'Intercambio';
+              if (details.held_item) {
+                  const itemName = details.held_item.name.replace(/-/g, ' ').split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+                  requirement += ` (equipando ${itemName})`;
+              }
+              if (details.trade_species) {
+                  const speciesName = details.trade_species.name.replace(/-/g, ' ').split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+                  requirement += ` (por ${speciesName})`;
+              }
+              break;
+          case 'use-item':
+              if (details.item) {
+                  let itemName = details.item.name;
+                  // Traducciones de piedras evolutivas comunes
+                  switch (itemName) {
+                      case 'thunder-stone':
+                          itemName = 'Piedra Trueno';
+                          break;
+                      case 'leaf-stone':
+                          itemName = 'Piedra Hoja';
+                          break;
+                      case 'moon-stone':
+                          itemName = 'Piedra Lunar';
+                          break;
+                      case 'sun-stone':
+                          itemName = 'Piedra Solar';
+                          break;
+                      case 'water-stone':
+                          itemName = 'Piedra Agua';
+                          break;
+                      case 'fire-stone':
+                          itemName = 'Piedra Fuego';
+                          break;
+                      case 'oval-stone':
+                          itemName = 'Piedra Oval';
+                          break;
+                      case 'shiny-stone':
+                          itemName = 'Piedra Alba';
+                          break;
+                      case 'dusk-stone':
+                          itemName = 'Piedra Noche';
+                          break;
+                      case 'dawn-stone':
+                          itemName = 'Piedra Día';
+                          break;
+                      case 'ice-stone':
+                          itemName = 'Piedra Hielo';
+                          break;
+                      // Agrega más piedras si encuentras que aparecen en inglés y necesitas traducirlas
+                      default:
+                          // Si no es una de las piedras específicas, formatea el nombre normal
+                          itemName = itemName.replace(/-/g, ' ').split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+                          break;
+                  }
+                  requirement = `Usar ${itemName}`;
+              } else {
+                  requirement = 'Usar objeto';
+              }
+              break;
+          case 'shed': // Para Nincada a Shedinja/Ninjask
+              requirement = 'Vacío en equipo';
+              break;
+          // Puedes añadir más casos específicos si lo deseas para otros triggers
+          default:
+              requirement = `Condición especial (${trigger?.replace(/-/g, ' ') || 'desconocida'})`;
+      }
+
+      return requirement.trim();
+  };
+
   useEffect(() => {
     const fetchAllPokemonDetails = async () => {
       setLoading(true);
@@ -69,82 +229,82 @@ function PokemonDetail() {
       setPokemonMoves([]);
       setTypeEffectiveness(null);
       setEvolutionLine([]);
-      setPokemonSoundUrl(null); // Reiniciar al cargar nuevo Pokémon
-      setClassicSprites([]); // Reiniciar al cargar nuevo Pokémon
+      setPokemonSoundUrl(null);
+      setClassicSprites([]);
 
       try {
-    const pokemonJson = await fetchPokemon(pokemonId);
-    setPokemonData(pokemonJson);
+        const pokemonJson = await fetchPokemon(pokemonId);
+        setPokemonData(pokemonJson);
 
-    // OBTENER SONIDO (PRIORIDAD: VOCALIZADO -> CLÁSICO)
-    if (pokemonJson.cries?.latest) { // Preferir el vocalizado/más reciente
-        setPokemonSoundUrl(pokemonJson.cries.latest);
-    } else if (pokemonJson.cries?.legacy) { // Fallback al legado/clásico de juego
-        setPokemonSoundUrl(pokemonJson.cries.legacy);
-    } else {
-        setPokemonSoundUrl(''); // Si no hay ningún sonido disponible
-        console.warn(`No cry URL found for ${pokemonJson.name}`);
-    }
+        // OBTENER SONIDO (PRIORIDAD: VOCALIZADO -> CLÁSICO)
+        if (pokemonJson.cries?.latest) {
+            setPokemonSoundUrl(pokemonJson.cries.latest);
+        } else if (pokemonJson.cries?.legacy) {
+            setPokemonSoundUrl(pokemonJson.cries.legacy);
+        } else {
+            setPokemonSoundUrl('');
+            console.warn(`No cry URL found for ${pokemonJson.name}`);
+        }
 
-    // OBTENER SPRITES CLÁSICOS
-    const fetchedSprites = [];
-    const versions = pokemonJson.sprites.versions;
+        // OBTENER SPRITES CLÁSICOS
+        const fetchedSprites = [];
+        const versions = pokemonJson.sprites.versions;
 
-    // Game Boy
-    if (versions?.["generation-i"]?.["red-blue"]?.front_default) {
-        fetchedSprites.push({
-            name: "GB (Rojo/Azul)",
-            url: versions["generation-i"]["red-blue"].front_default
-        });
-    } else if (versions?.["generation-i"]?.yellow?.front_default) {
-        fetchedSprites.push({
-            name: "GB (Amarillo)",
-            url: versions["generation-i"].yellow.front_default
-        });
-    }
+        // Game Boy
+        if (versions?.["generation-i"]?.["red-blue"]?.front_default) {
+            fetchedSprites.push({
+                name: "GB (Rojo/Azul)",
+                url: versions["generation-i"]["red-blue"].front_default
+            });
+        } else if (versions?.["generation-i"]?.yellow?.front_default) {
+            fetchedSprites.push({
+                name: "GB (Amarillo)",
+                url: versions["generation-i"].yellow.front_default
+            });
+        }
 
-    // Game Boy Advance
-    if (versions?.["generation-iii"]?.ruby_sapphire?.front_default) {
-        fetchedSprites.push({
-            name: "GBA (Rubí/Zafiro)",
-            url: versions["generation-iii"].ruby_sapphire.front_default
-        });
-    } else if (versions?.["generation-iii"]?.emerald?.front_default) {
-        fetchedSprites.push({
-            name: "GBA (Esmeralda)",
-            url: versions["generation-iii"].emerald.front_default
-        });
-    }
+        // Game Boy Advance
+        if (versions?.["generation-iii"]?.ruby_sapphire?.front_default) {
+            fetchedSprites.push({
+                name: "GBA (Rubí/Zafiro)",
+                url: versions["generation-iii"].ruby_sapphire.front_default
+            });
+        } else if (versions?.["generation-iii"]?.emerald?.front_default) {
+            fetchedSprites.push({
+                name: "GBA (Esmeralda)",
+                url: versions["generation-iii"].emerald.front_default
+            });
+        }
 
-    // Nintendo DS (Gen IV)
-    if (versions?.["generation-iv"]?.["diamond-pearl"]?.front_default) {
-        fetchedSprites.push({
-            name: "DS (Diamante/Perla)",
-            url: versions["generation-iv"]["diamond-pearl"].front_default
-        });
-    } else if (versions?.["generation-iv"]?.["heartgold-soulsilver"]?.front_default) {
-        fetchedSprites.push({
-            name: "DS (HG/SS)",
-            url: versions["generation-iv"]["heartgold-soulsilver"].front_default
-        });
-    }
-    
-    setClassicSprites(fetchedSprites);
+        // Nintendo DS (Gen IV)
+        if (versions?.["generation-iv"]?.["diamond-pearl"]?.front_default) {
+            fetchedSprites.push({
+                name: "DS (Diamante/Perla)",
+                url: versions["generation-iv"]["diamond-pearl"].front_default
+            });
+        } else if (versions?.["generation-iv"]?.["heartgold-soulsilver"]?.front_default) {
+            fetchedSprites.push({
+                name: "DS (HG/SS)",
+                url: versions["generation-iv"]["heartgold-soulsilver"].front_default
+            });
+        }
+        
+        setClassicSprites(fetchedSprites);
 
 
-    let currentSpeciesData = null;
-    if (pokemonJson.species?.url) {
-      const speciesResponse = await fetch(pokemonJson.species.url);
-      if (!speciesResponse.ok) {
-        throw new Error(`HTTP error! status: ${speciesResponse.status} fetching species`);
-      }
-      currentSpeciesData = await speciesResponse.json();
-      setSpeciesData(currentSpeciesData);
-    } else {
-        console.warn("Species URL not found for this Pokémon.");
-        setSpeciesData({ flavor_text_entries: [] });
-        currentSpeciesData = { evolution_chain: { url: null } };
-    }
+        let currentSpeciesData = null;
+        if (pokemonJson.species?.url) {
+            const speciesResponse = await fetch(pokemonJson.species.url);
+            if (!speciesResponse.ok) {
+                throw new Error(`HTTP error! status: ${speciesResponse.status} fetching species`);
+            }
+            currentSpeciesData = await speciesResponse.json();
+            setSpeciesData(currentSpeciesData);
+        } else {
+            console.warn("Species URL not found for this Pokémon.");
+            setSpeciesData({ flavor_text_entries: [] });
+            currentSpeciesData = { evolution_chain: { url: null } };
+        }
 
         // Lógica de Habilidades (sin cambios)
         if (pokemonJson.abilities && pokemonJson.abilities.length > 0) {
@@ -207,90 +367,63 @@ function PokemonDetail() {
         
         // Lógica de Movimientos (sin cambios)
         if (pokemonJson.moves && pokemonJson.moves.length > 0) {
-          const selectedMovesData = pokemonJson.moves.slice(1, 26);
+            const selectedMovesData = pokemonJson.moves.slice(1, 26);
 
-          const movesPromises = selectedMovesData.map(async (moveEntry) => {
-            try {
-              const moveResponse = await fetch(moveEntry.move.url);
-              if (!moveResponse.ok) {
-                console.warn(`No se pudieron obtener detalles para el movimiento: ${moveEntry.move.name}. Estado: ${moveResponse.status}`);
-                const fallbackName = moveEntry.move.name.replace(/-/g, ' ').split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
-                return {
-                  id: moveEntry.move.name,
-                  name: fallbackName,
-                  type: 'unknown',
-                };
-              }
-              const moveJson = await moveResponse.json();
-              const spanishNameEntry = moveJson.names.find(nameEntry => nameEntry.language.name === 'es');
-              
-              const translatedName = spanishNameEntry
-                ? spanishNameEntry.name
-                : moveEntry.move.name.replace(/-/g, ' ').split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+            const movesPromises = selectedMovesData.map(async (moveEntry) => {
+                try {
+                    const moveResponse = await fetch(moveEntry.move.url);
+                    if (!moveResponse.ok) {
+                        console.warn(`No se pudieron obtener detalles para el movimiento: ${moveEntry.move.name}. Estado: ${moveResponse.status}`);
+                        const fallbackName = moveEntry.move.name.replace(/-/g, ' ').split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+                        return {
+                            id: moveEntry.move.name,
+                            name: fallbackName,
+                            type: 'unknown',
+                        };
+                    }
+                    const moveJson = await moveResponse.json();
+                    const spanishNameEntry = moveJson.names.find(nameEntry => nameEntry.language.name === 'es');
+                    
+                    const translatedName = spanishNameEntry
+                        ? spanishNameEntry.name
+                        : moveEntry.move.name.replace(/-/g, ' ').split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
 
-              return {
-                id: moveJson.id,
-                name: translatedName,
-                type: moveJson.type.name.toLowerCase(),
-              };
-            } catch (moveFetchError) {
-                console.error(`Error al obtener detalle de movimiento para ${moveEntry.move.name}:`, moveFetchError);
-                const fallbackName = moveEntry.move.name.replace(/-/g, ' ').split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
-                return {
-                  id: moveEntry.move.name,
-                  name: fallbackName,
-                  type: 'unknown',
-                };
-            }
-          });
-          const resolvedMoves = await Promise.all(movesPromises);
-          setPokemonMoves(resolvedMoves);
+                    return {
+                        id: moveJson.id,
+                        name: translatedName,
+                        type: moveJson.type.name.toLowerCase(),
+                    };
+                } catch (moveFetchError) {
+                    console.error(`Error al obtener detalle de movimiento para ${moveEntry.move.name}:`, moveFetchError);
+                    const fallbackName = moveEntry.move.name.replace(/-/g, ' ').split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+                    return {
+                        id: moveEntry.move.name,
+                        name: fallbackName,
+                        type: 'unknown',
+                    };
+                }
+            });
+            const resolvedMoves = await Promise.all(movesPromises);
+            setPokemonMoves(resolvedMoves);
         } else {
-          setPokemonMoves([]);
+            setPokemonMoves([]);
         }
         
         // Lógica de Fortalezas y Debilidades (sin cambios)
         if (pokemonJson.types && pokemonJson.types.length > 0) {
-          const effectivenessData = await getPokemonTypeEffectiveness(pokemonJson.types);
-          setTypeEffectiveness(effectivenessData);
+            const effectivenessData = await getPokemonTypeEffectiveness(pokemonJson.types);
+            setTypeEffectiveness(effectivenessData);
         } else {
-          setTypeEffectiveness(null);
+            setTypeEffectiveness(null);
         }
         
-        // LÓGICA: Obtener la línea evolutiva (sin cambios)
+        // LÓGICA: Obtener y procesar la línea evolutiva (¡CAMBIO AQUÍ!)
         if (currentSpeciesData?.evolution_chain?.url) {
             try {
                 const evolutionChainData = await fetchEvolutionChain(currentSpeciesData.evolution_chain.url);
-                
-                const getEvolutionLineFlat = (chain) => {
-                    const line = [];
-                    const idParts = chain.species.url.split('/');
-                    const id = idParts[idParts.length - 2];
-                    line.push({ name: chain.species.name, id: id });
-
-                    if (chain.evolves_to && chain.evolves_to.length > 0) {
-                        chain.evolves_to.forEach(evo => {
-                            line.push(...getEvolutionLineFlat(evo));
-                        });
-                    }
-                    return line;
-                };
-
-                const flatEvolutionsRaw = getEvolutionLineFlat(evolutionChainData.chain);
-                
-                const finalEvolutionLinePromises = [];
-                const addedIds = new Set();
-                
-                for(const evo of flatEvolutionsRaw) {
-                    if (!addedIds.has(evo.id)) {
-                        finalEvolutionLinePromises.push(fetchPokemonBasicInfo(evo.id));
-                        addedIds.add(evo.id);
-                    }
-                }
-                
-                const finalEvolutionLine = await Promise.all(finalEvolutionLinePromises);
-                setEvolutionLine(finalEvolutionLine);
-
+                // Usamos la nueva función para procesar la cadena
+                const processedEvolutionLine = await processEvolutionChain(evolutionChainData.chain);
+                setEvolutionLine(processedEvolutionLine);
             } catch (evolutionError) {
                 console.error("Error al obtener la cadena de evolución:", evolutionError);
                 setEvolutionLine([]);
@@ -330,29 +463,22 @@ function PokemonDetail() {
   };
 
   const getSpanishDescription = (flavorTextEntries) => {
-    // console.log("Entradas de texto de sabor recibidas:", flavorTextEntries); // Comentados para un output más limpio
     if (!flavorTextEntries || flavorTextEntries.length === 0) {
-        // console.log("No hay entradas de texto de sabor o están vacías.");
-        return "Descripción no disponible.";
+      return "Descripción no disponible.";
     }
 
     const spanishEntry = flavorTextEntries.find(entry => entry.language.name === 'es');
-    // console.log("Entrada en español encontrada:", spanishEntry);
 
     if (spanishEntry) {
-        const cleanedText = spanishEntry.flavor_text.replace(/[\n\r\f]/g, ' ');
-        // console.log("Texto en español limpiado:", cleanedText);
-        return cleanedText;
+      const cleanedText = spanishEntry.flavor_text.replace(/[\n\r\f]/g, ' ');
+      return cleanedText;
     } else {
-        // console.log("No se encontró entrada en español, buscando en inglés...");
-        const englishEntry = flavorTextEntries.find(entry => entry.language.name === 'en');
-        if (englishEntry) {
-            const cleanedText = englishEntry.flavor_text.replace(/[\n\r\f]/g, ' ');
-            // console.log("Texto en inglés limpiado (fallback):", cleanedText);
-            return cleanedText;
-        }
-        // console.log("No se encontró ninguna entrada de texto de sabor utilizable.");
-        return "Descripción en español no disponible.";
+      const englishEntry = flavorTextEntries.find(entry => entry.language.name === 'en');
+      if (englishEntry) {
+        const cleanedText = englishEntry.flavor_text.replace(/[\n\r\f]/g, ' ');
+        return cleanedText;
+      }
+      return "Descripción en español no disponible.";
     }
   };
 
@@ -492,11 +618,25 @@ function PokemonDetail() {
           <p className="pokedex-entry-text">Cargando descripción o no disponible.</p>
       )}
 
+      {/* --- LÍNEA EVOLUTIVA MEJORADA (¡CAMBIOS AQUÍ!) --- */}
       <h3>Línea Evolutiva</h3>
       {evolutionLine.length > 0 ? (
         <div className="evolution-line-container">
           {evolutionLine.map((evoPokemon, index) => (
             <React.Fragment key={evoPokemon.id}>
+              {/* Flecha y requisito si no es el primero */}
+              {index > 0 && (
+                <div className="evolution-path-details">
+                  <span className="evolution-requirement">
+                    {evoPokemon.details
+                      ? formatEvolutionRequirement(evoPokemon.details)
+                      : 'Evolución'}
+                  </span>
+                  <span className="evolution-arrow">→</span>
+                </div>
+              )}
+
+              {/* Etapa evolutiva */}
               <div 
                 className="evolution-stage"
                 onClick={() => navigate(`/pokemon/${evoPokemon.id}`)}
@@ -504,15 +644,14 @@ function PokemonDetail() {
                 <img src={evoPokemon.sprite} alt={evoPokemon.name} className="evolution-sprite" />
                 <span className="evolution-name">{evoPokemon.name}</span>
               </div>
-              {index < evolutionLine.length - 1 && (
-                <span className="evolution-arrow">→</span>
-              )}
             </React.Fragment>
           ))}
         </div>
       ) : (
         <p>Cargando línea evolutiva o no disponible.</p>
       )}
+
+      {/* --- FIN LÍNEA EVOLUTIVA MEJORADA --- */}
 
       {/* >>>>> NUEVA SECCIÓN: Medios y Sprites Clásicos <<<<< */}
       <h3>Sonido y Sprites Clásicos</h3>
@@ -522,7 +661,7 @@ function PokemonDetail() {
             <h4>Sonido del Pokémon:</h4>
             <audio ref={audioRef} src={pokemonSoundUrl} preload="auto"></audio>
             <button onClick={playPokemonCry} className="play-cry-button">
-              ▶ {/* ¡CAMBIO AQUÍ! Usamos el carácter Unicode para el icono de play */}
+              ▶
             </button>
           </div>
         )}
@@ -560,7 +699,7 @@ function PokemonDetail() {
            typeEffectiveness.half_damage_from.length === 0 &&
            typeEffectiveness.no_damage_from.length === 0 && (
             <p>No se encontraron relaciones de daño específicas.</p>
-          )}
+           )}
         </div>
       ) : (
         <p>Cargando información de tipos efectivos...</p>
