@@ -2,6 +2,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import '../App.css'; 
+import SizeComparison from './SizeComparison';
 
 // Importa las funciones de pokeapi.js
 import { fetchPokemon, getPokemonTypeEffectiveness, fetchEvolutionChain, fetchPokemonBasicInfo } from '../services/pokeapi';
@@ -576,6 +577,13 @@ function PokemonDetail() {
         <span className="characteristic-label">Peso:</span>
         <span className="characteristic-value">{(pokemonData.weight / 10).toFixed(1)} kg</span>
       </div>
+
+      {pokemonData && (
+        <SizeComparison 
+          pokemonHeight={pokemonData.height}
+          pokemonSprite={pokemonData.sprites.other?.['official-artwork']?.front_default || pokemonData.sprites.front_default}
+        />
+      )}
 
       <h4>Habilidad:</h4>
       {detailedAbility ? (

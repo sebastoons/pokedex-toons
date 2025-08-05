@@ -438,7 +438,7 @@ header {
 }
 
 .pokemon-types span {
-    padding: 3px 8px;
+    padding: 2px 6px;
     border-radius: 15px;
     font-size: 0.7em;
     color: white;
@@ -446,6 +446,8 @@ header {
     font-weight: bold;
     border: 2px solid rgba(0,0,0,0.2);
     white-space: nowrap;
+    font-family: monospace;
+    text-transform: uppercase;
 }
 
 /* --- Estilos para Carga y Error --- */
@@ -2088,4 +2090,59 @@ header {
     color: #555;
     font-weight: bold;
     text-align: center;
+}
+
+/* --- ESTILOS PARA LA COMPARACIÓN DE TAMAÑO --- */
+
+/* Contenedor que envuelve toda la sección de comparación */
+.size-comparison-container {
+    margin-top: 20px;
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    text-align: center;
+    background-color: #f9f9f9; /* Un fondo sutil para diferenciar la sección */
+}
+
+/* El área donde las siluetas se alinean */
+.size-comparison {
+    display: flex;
+    justify-content: center; /* Centra las imágenes horizontalmente */
+    align-items: flex-end; /* ¡La magia está aquí! Alinea las imágenes en su base */
+    height: 200px; /* Altura fija para el contenedor de comparación */
+    margin-bottom: 10px;
+}
+
+/* Estilo para la silueta humana de referencia */
+.human-silhouette {
+    height: 100%; /* Ocupa toda la altura del contenedor (200px) */
+    width: auto;
+    margin: 0 10px;
+}
+
+/* Estilo para la imagen del Pokémon */
+.pokemon-comparison-image {
+    /* La altura se establece dinámicamente con JavaScript/React */
+    width: auto;
+    max-width: 180px; /* Evita que pokémon anchos se vean demasiado grandes */
+    margin: 0 10px;
+    /* Efecto de filtro para crear la silueta negra */
+    filter: brightness(0); 
+}
+
+/* Texto de nota al pie de la comparación */
+.comparison-note {
+    font-size: 0.8em;
+    color: #666;
+    margin: 0;
+    font-family: monospace;
+}
+
+@media (max-width: 480px) {
+    .size-comparison {
+        display: inline-block;
+        align-items: flex-end; /* ¡La magia está aquí! Alinea las imágenes en su base */
+        height: 200px; /* Altura fija para el contenedor de comparación */
+        margin-bottom: 10px;
+    }
 }
