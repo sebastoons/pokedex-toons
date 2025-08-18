@@ -1,14 +1,14 @@
 // src/App.js
 import React, { useState, useEffect, useMemo } from 'react';
-import { Routes, Route, Link, useLocation } from 'react-router-dom'; // <--- Importa useLocation
-import ReactGA from 'react-ga4'; // <--- Importa react-ga4
+import { Routes, Route, Link, useLocation } from 'react-router-dom';
+import ReactGA from 'react-ga4';
 
 // Importa tus componentes existentes
 import PokemonCard from './components/PokemonCard';
 import PokemonDetail from './components/PokemonDetail';
-// Importa los nuevos componentes para el simulador de batalla
 import PokemonBattleSelector from './components/PokemonBattleSelector';
 import PokemonBattleArena from './components/PokemonBattleArena';
+import MachineList from './components/MachineList';
 
 // Mueve la definición de 'generations' FUERA del componente App
 const ALL_POKEMON_GENERATIONS = [
@@ -44,18 +44,12 @@ const ALL_POKEMON_TYPES = [
     { value: 'fairy', display: 'Hada', color: '#D685AD' },
 ];
 
-// TU ID DE MEDICIÓN DE GA4 (Copiado de Google Analytics, empieza con "G-")
-// REEMPLAZA "G-XXXXXXXXXX" CON TU ID REAL DE GA4
-const GA_MEASUREMENT_ID = "G-KPGB8SXW4B"; // <--- ¡Asegúrate que este ID es el correcto!
+const GA_MEASUREMENT_ID = "G-KPGB8SXW4B"; 
 
-// Inicializa GA4 una sola vez al cargar la aplicación
-// Esta línea se ejecuta cuando el módulo App.js es importado por index.js
-console.log("1. App.js: Intentando inicializar ReactGA con ID:", GA_MEASUREMENT_ID); // <--- LOG DE DEPURACIÓN
 ReactGA.initialize(GA_MEASUREMENT_ID);
-console.log("2. App.js: ReactGA inicializado."); // <--- LOG DE DEPURACIÓN
 
 function App() {
-    const location = useLocation(); // Hook de react-router-dom para obtener la ubicación actual
+    const location = useLocation();
 
     const [pokemonList, setPokemonList] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -66,19 +60,9 @@ function App() {
     const [selectedGeneration, setSelectedGeneration] = useState('1');
     const [isGenMenuOpen, setIsGenMenuOpen] = useState(false);
 
-    // LOG DE DEPURACIÓN: Se ejecuta cada vez que el componente App se renderiza
-    console.log("3. App componente renderizado. Ruta actual:", location.pathname);
-
-    // Efecto para enviar pageview a GA4 cada vez que la ruta cambia
     useEffect(() => {
-        // Esto es crucial para SPAs (Single Page Applications) como React
-        console.log("4. useEffect de GA disparado. Enviando pageview para:", location.pathname + location.search); // <--- LOG DE DEPURACIÓN
         ReactGA.send({ hitType: "pageview", page: location.pathname + location.search });
-        console.log("5. Pageview enviado a GA4."); // <--- LOG DE DEPURACIÓN
-
-        // Opcional: Para depuración en la consola del navegador
-        // console.log("PageView enviada a GA4:", location.pathname + location.search);
-    }, [location]); // La dependencia `location` asegura que el efecto se ejecute cuando la URL cambie.
+    }, [location]);
 
 
     useEffect(() => {
@@ -203,8 +187,6 @@ function App() {
     }
 
     return (
-        // <Router> // <--- NO ENVUELVAS AQUÍ EL COMPONENTE APP EN UN <Router>
-        // Router debe estar en el nivel más alto de tu aplicación (ej., en index.js)
         <div className="pokedex-container">
             <header>
                 <Link to="/" style={{ textDecoration: 'none', color: 'inherit' }}>
@@ -216,7 +198,6 @@ function App() {
                 </Link>
             </header>
 
-            {/* UN SOLO BLOQUE <Routes> PARA TODA LA APLICACIÓN */}
             <Routes>
                 {/* Ruta principal (Home) */}
                 <Route path="/" element={
@@ -266,9 +247,14 @@ function App() {
                                     </ul>
                                 )}
                             </div>
-                            {/* NUEVO BOTÓN PARA EL SIMULADOR DE BATALLA */}
+                            {/* BOTÓN PARA EL SIMULADOR DE BATALLA */}
                             <Link to="/battle" className="battle-button">
                                 Ir a Batalla
+                            </Link>
+                            
+                            {/* <<<--- CAMBIO 1: AÑADIDO EL BOTÓN DE MT/MO ---<<< */}
+                            <Link to="/moves" className="battle-button">
+                                MT/MO
                             </Link>
                         </div>
 
@@ -297,11 +283,13 @@ function App() {
                     element={<PokemonBattleArena pokemonList={pokemonList} />}
                 />
 
+                {/* <<<--- CAMBIO 2: AÑADIDA LA NUEVA RUTA ---<<< */}
+                <Route path="/moves" element={<MachineList />} />
+
                 {/* Ruta comodín para cualquier otra URL (manejo de 404) */}
                 <Route path="*" element={<div className="error">Página no encontrada</div>} />
             </Routes>
         </div>
-        // </Router> // <--- CIERRE DEL COMENTARIO
     );
 }
 

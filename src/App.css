@@ -2146,3 +2146,117 @@ header {
         margin-bottom: 10px;
     }
 }
+
+/* --- ESTRUCTURA GENERAL Y TÍTULO PRINCIPAL --- */
+
+.move-list-view {
+  max-width: 900px;
+  margin: 20px auto;
+  padding: 20px;
+  text-align: center;
+}
+
+.move-list-view h2 {
+  font-family: monospace;
+  font-size: 2em;
+  color: #ffffff;
+  margin-bottom: 25px;
+  text-transform: uppercase;
+}
+
+
+/* --- FILTROS DE BÚSQUEDA --- */
+
+.filters-container {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin-bottom: 25px;
+  flex-wrap: wrap;
+}
+
+.search-input, .type-select {
+  padding: 4px 8px;
+  border-radius: 7px;
+  border: 1px solid #ccc;
+  font-size: 0.95em;
+  font-family: monospace;
+}
+
+.search-input {
+  width: 250px;
+}
+
+
+/* --- DISEÑO GENERAL DE LA TABLA --- */
+
+.table-container {
+  overflow-x: auto;
+  width: 100%;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.move-table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: #fff;
+}
+
+
+/* --- ESTILOS PARA SUBTÍTULOS (Encabezados <th>) --- */
+
+.move-table th {
+  padding: 12px 15px;
+  text-align: left;
+  border-bottom: 3px solid #ddd;
+  background-color: #ececec;
+  font-family: 'press start 2p';
+  font-weight: bolder;
+  color: #333;
+  font-size: 0.6em;
+}
+
+/* Alineación específica para los SUBTÍTULOS de las columnas de números */
+.move-table th:nth-child(4),
+.move-table th:nth-child(5),
+.move-table th:nth-child(6) {
+  text-align: center;
+}
+
+
+/* --- ESTILOS PARA CONTENIDO (Celdas <td>) --- */
+
+.move-table td {
+  padding: 8px 12px;
+  text-align: left;
+  border-bottom: 1px solid #f0f0f0;
+  color: #000000;
+  font-size: 1em;
+  font-family: monospace;
+}
+
+/* Estilo para las filas pares (efecto cebra) */
+.move-table tbody tr:nth-child(even) {
+  background-color: #fafafa;
+}
+
+/* Efecto al pasar el mouse sobre una fila */
+.move-table tbody tr:hover {
+  background-color: #f1f1f1;
+}
+
+/* Estilo específico para el CONTENIDO de la columna de descripción */
+.move-table td.description-col {
+  font-size: 0.9em;
+  color: #555;
+  min-width: 250px;
+}
+
+/* Alineación específica para el CONTENIDO de las columnas de números */
+.move-table td:nth-child(4),
+.move-table td:nth-child(5),
+.move-table td:nth-child(6) {
+  text-align: center;
+  font-family: monospace;
+}
