@@ -2260,3 +2260,29 @@ header {
   text-align: center;
   font-family: monospace;
 }
+
+/* --- Estilo para el Botón Cargar Más --- */
+
+.load-more-button {
+    display: block;
+    margin: 20px auto;
+    padding: 10px 25px;
+    font-size: 1em;
+    font-weight: bold;
+    color: white;
+    background-color: #ef5350; /* Rojo Pokémon */
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    transition: background-color 0.2s ease;
+}
+
+.load-more-button:hover {
+    background-color: #e53935;
+}
+
+.load-more-button:disabled {
+    background-color: #aaa;
+    cursor: not-allowed;
+}
