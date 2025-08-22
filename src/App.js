@@ -68,7 +68,7 @@ function App() {
     useEffect(() => {
         const fetchPokemonWithDetails = async () => {
             try {
-                const listResponse = await fetch('https://pokeapi.co/api/v2/pokemon?limit=984&offset=0');
+                const listResponse = await fetch('https://pokeapi.co/api/v2/pokemon?limit=1025&offset=0');
                 if (!listResponse.ok) {
                     throw new Error(`HTTP error! status: ${listResponse.status}`);
                 }
@@ -76,7 +76,7 @@ function App() {
                 const results = listData.results;
 
                 const pokemonWithDetails = [];
-                const chunkSize = 20;
+                const chunkSize = 30;
                 const delayMs = 100;
 
                 for (let i = 0; i < results.length; i += chunkSize) {

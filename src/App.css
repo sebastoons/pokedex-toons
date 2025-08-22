@@ -130,15 +130,15 @@ header {
 .battle-button {
     /* Estilos base para móviles pequeños (Mobile-First: por defecto para < 376px) */
     display: inline-block; /* Permite paddings y márgenes, y que el texto no se rompa */
-    padding: 12px 20px; /* Padding para un buen tamaño táctil en móvil */
+    padding: 9px 18px; /* Padding para un buen tamaño táctil en móvil */
     margin-top: 20px; /* Espacio superior para separarlo del contenido de arriba */
-    font-size: 1em; /* Tamaño de fuente para móvil (ej. 16px por defecto) */
-    font-weight: bold;
-    color: white;
-    background-color: #e1ad27; /* Un verde vibrante (ej. del logotipo de 'GO') */
+    font-size: 0.9em; /* Tamaño de fuente para móvil (ej. 16px por defecto) */
+    color: #ffffff;
+    background-color: #e32f2f; /* Un verde vibrante (ej. del logotipo de 'GO') */
     border: none;
     border-radius: 6px; /* Bordes redondeados sutiles */
     cursor: pointer;
+    border: 2px solid #34495e;
     transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease;
     box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2); /* Sombra para dar profundidad */
     text-transform: uppercase; /* Texto en mayúsculas para impacto */
@@ -152,7 +152,7 @@ header {
 /* Estado al pasar el ratón (hover) y al enfocar (focus) */
 .battle-button:hover,
 .battle-button:focus {
-    background-color: #c48c00; /* Verde más oscuro al pasar el ratón */
+    background-color: #920000; /* Verde más oscuro al pasar el ratón */
     transform: translateY(-2px); /* Efecto sutil de "elevación" */
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3); /* Sombra más pronunciada */
     outline: none; /* Eliminar el contorno de enfoque por defecto si no es necesario (asegura accesibilidad si se reemplaza visualmente) */
@@ -1114,7 +1114,6 @@ header {
     .pokedex-logo {
         max-width: 200px; /* Logo más grande */
     }
-
     .welcome-message h2 {
         font-size: 1.3em;
     }
@@ -1176,7 +1175,6 @@ header {
     }
     .pokemon-card {
         min-height: 180px;
-        padding: 8px;
     }
     .pokemon-card .pokemon-image {
         max-width: 100px;
@@ -1310,9 +1308,7 @@ header {
         padding: 5px 10px;
     }
     .battle-button {
-        padding: 10px 30px;
         margin-top: 10px;
-        font-size: 1em;
         border-radius: 8px;
         box-shadow: 0 5px 10px rgba(0, 0, 0, 0.25);
     }
@@ -1468,9 +1464,7 @@ header {
         font-size: 1em;
     }
     .battle-button {
-        padding: 12px 40px; /* Más padding para escritorio */
         margin-top: 10px; /* Más espacio superior */
-        font-size: 1.1em; /* Tamaño de fuente más grande para escritorio */
         border-radius: 10px; /* Bordes más redondeados */
         box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3); /* Sombra más pronunciada */
     }
