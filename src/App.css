@@ -411,9 +411,10 @@ header {
 
 .pokemon-number {
     font-size: 1em;
-    color: #34495e;
+    color: #7f7f7f;
     margin-bottom: 5px;
     font-weight: bold;
+    font-family: monospace;
 }
 
 .pokemon-name {
@@ -1093,9 +1094,9 @@ header {
         padding: 5px 10px;
     }
     .battle-button {
-        padding: 8px 20px;
-        margin-top: 10px;
-        font-size: 0.9em;
+        padding: 5px 14px;
+        margin-top: 5px;
+        font-size: 0.75em;
         border-radius: 7px;
     }
 }
@@ -1599,12 +1600,12 @@ header {
     background-color: #3498db;
     border: 3px solid #2980b9;
     border-radius: 8px;
-    padding: 6px 25px;
-    font-size: 0.7em;
+    padding: 8px 20px;
+    font-size: 0.6em;
     cursor: pointer;
     transition: background-color 0.2s ease, transform 0.1s ease;
     display: inline-block;
-    margin-bottom: 20px;
+    margin-bottom: 15px;
     font-family: 'Press Start 2P', cursive;
     text-shadow: 1px 1px 0px rgba(0,0,0,0.3);
     color: white;
@@ -2152,10 +2153,11 @@ header {
 
 .move-list-view h2 {
   font-family: monospace;
-  font-size: 2em;
+  font-size: 1.7em;
   color: #ffffff;
   margin-bottom: 25px;
   text-transform: uppercase;
+  text-shadow: 1px 1px 2px rgb(0 0 0 / 50%);
 }
 
 
@@ -2173,7 +2175,7 @@ header {
   padding: 4px 8px;
   border-radius: 7px;
   border: 1px solid #ccc;
-  font-size: 0.95em;
+  font-size: 0.9em;
   font-family: monospace;
 }
 

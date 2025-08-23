@@ -31,13 +31,12 @@
 
 .pokemon-name {
     margin: 0 0 10px 0;
-    font-size: 0.75em;
+    font-size: 0.9em;
     text-transform: uppercase;
     color: #535353;
     font-weight: bold;
-    letter-spacing: 0.5px;
-    font-family: verdana;
-    margin-top: 10px;
+    font-family: monospace;
+    margin-top: 5px;
 }
 
 .pokemon-image-container {

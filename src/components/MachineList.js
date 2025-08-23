@@ -57,7 +57,7 @@ function MachineList() {
                 ← Volver a la Pokedex
             </button>
             
-            <h2>LISTA DE MT / MO</h2>
+            <h2>Lista de MT / MO</h2>
 
             {/* 3. AÑADIMOS LOS CONTROLES DE FILTRO */}
             <div className="filters-container">
