@@ -1,16 +1,17 @@
 // src/App.js
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { Routes, Route, Link, useLocation } from 'react-router-dom';
 import ReactGA from 'react-ga4';
 
-// Importa tus componentes existentes
+// Componentes
 import PokemonCard from './components/PokemonCard';
 import PokemonDetail from './components/PokemonDetail';
 import PokemonBattleSelector from './components/PokemonBattleSelector';
 import PokemonBattleArena from './components/PokemonBattleArena';
 import MachineList from './components/MachineList';
+import WelcomeModal from './components/WelcomeModal';
 
-// Mueve la definición de 'generations' FUERA del componente App
+// Constantes
 const ALL_POKEMON_GENERATIONS = [
     { id: 1, limit: 151, offset: 0, name: 'Generación 1' },
     { id: 2, limit: 100, offset: 151, name: 'Generación 2' },
@@ -22,7 +23,6 @@ const ALL_POKEMON_GENERATIONS = [
     { id: 8, limit: 96, offset: 809, name: 'Generación 8' },
     { id: 9, limit: 120, offset: 905, name: 'Generación 9' },
 ];
-
 const ALL_POKEMON_TYPES = [
     { value: 'normal', display: 'Normal', color: '#A8A77A' },
     { value: 'fire', display: 'Fuego', color: '#EE8130' },
@@ -45,49 +45,64 @@ const ALL_POKEMON_TYPES = [
 ];
 
 const GA_MEASUREMENT_ID = "G-KPGB8SXW4B"; 
-
 ReactGA.initialize(GA_MEASUREMENT_ID);
 
 function App() {
     const location = useLocation();
-
     const [pokemonList, setPokemonList] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-
+    const [showWelcome, setShowWelcome] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedType, setSelectedType] = useState('');
     const [selectedGeneration, setSelectedGeneration] = useState('1');
     const [isGenMenuOpen, setIsGenMenuOpen] = useState(false);
 
+    // --- LÓGICA DE AUDIO (CORREGIDA) ---
+    const [isMuted, setIsMuted] = useState(false);
+    const audioRef = useRef(null);
+
+    const toggleMute = () => {
+        const newMutedState = !isMuted;
+        setIsMuted(newMutedState);
+        if (audioRef.current) {
+            audioRef.current.muted = newMutedState;
+        }
+    };
+
+    const handleWelcomeClose = () => {
+        setShowWelcome(false);
+        // --- AQUÍ ESTÁ EL CAMBIO CLAVE ---
+        // La música intenta sonar DESPUÉS del clic del usuario.
+        if (audioRef.current) {
+            audioRef.current.loop = true;
+            audioRef.current.play().catch(error => {
+                console.log("La reproducción de audio fue bloqueada, pero debería funcionar en el próximo clic.");
+            });
+        }
+    };
+    // --- FIN LÓGICA DE AUDIO ---
+
     useEffect(() => {
         ReactGA.send({ hitType: "pageview", page: location.pathname + location.search });
     }, [location]);
-
 
     useEffect(() => {
         const fetchPokemonWithDetails = async () => {
             try {
                 const listResponse = await fetch('https://pokeapi.co/api/v2/pokemon?limit=1025&offset=0');
-                if (!listResponse.ok) {
-                    throw new Error(`HTTP error! status: ${listResponse.status}`);
-                }
+                if (!listResponse.ok) throw new Error(`HTTP error! status: ${listResponse.status}`);
                 const listData = await listResponse.json();
                 const results = listData.results;
-
                 const pokemonWithDetails = [];
                 const chunkSize = 30;
                 const delayMs = 100;
-
                 for (let i = 0; i < results.length; i += chunkSize) {
                     const chunk = results.slice(i, i + chunkSize);
                     const chunkPromises = chunk.map(async (pokemon) => {
                         try {
                             const detailResponse = await fetch(pokemon.url);
-                            if (!detailResponse.ok) {
-                                console.warn(`Could not fetch details for ${pokemon.name}: ${detailResponse.status}`);
-                                return { name: pokemon.name, url: pokemon.url, id: null, types: [] };
-                            }
+                            if (!detailResponse.ok) return null;
                             const detailData = await detailResponse.json();
                             return {
                                 name: detailData.name,
@@ -95,112 +110,71 @@ function App() {
                                 id: detailData.id,
                                 types: detailData.types.map(typeInfo => typeInfo.type.name)
                             };
-                        } catch (detailErr) {
-                            console.warn(`Error processing details for ${pokemon.name}: `, detailErr);
-                            return { name: pokemon.name, url: pokemon.url, id: null, types: [] };
-                        }
+                        } catch (detailErr) { return null; }
                     });
-
                     const resolvedChunk = await Promise.all(chunkPromises);
-                    pokemonWithDetails.push(...resolvedChunk.filter(pokemon => pokemon.id !== null));
-
+                    pokemonWithDetails.push(...resolvedChunk.filter(Boolean));
                     if (i + chunkSize < results.length) {
                         await new Promise(resolve => setTimeout(resolve, delayMs));
                     }
                 }
-
                 setPokemonList(pokemonWithDetails);
-
             } catch (err) {
                 setError(err);
-                console.error("Error fetching initial list or details: ", err);
             } finally {
                 setLoading(false);
             }
         };
-
         fetchPokemonWithDetails();
-
     }, []);
-
+    
     const filteredPokemon = useMemo(() => {
         let currentList = [...pokemonList];
-
         if (selectedGeneration) {
             const gen = ALL_POKEMON_GENERATIONS.find(g => g.id.toString() === selectedGeneration);
             if (gen) {
-                currentList = currentList.filter(pokemon =>
-                    pokemon.id > gen.offset && pokemon.id <= gen.offset + gen.limit
-                );
+                currentList = currentList.filter(pokemon => pokemon.id > gen.offset && pokemon.id <= gen.offset + gen.limit);
             }
         }
-
         if (searchTerm) {
             const lowerCaseSearchTerm = searchTerm.toLowerCase();
-            currentList = currentList.filter(pokemon => {
-                const pokemonIdString = pokemon.id ? pokemon.id.toString() : '';
-                return pokemon.name.toLowerCase().includes(lowerCaseSearchTerm) ||
-                    pokemonIdString.includes(lowerCaseSearchTerm);
-            });
+            currentList = currentList.filter(pokemon => pokemon.name.toLowerCase().includes(lowerCaseSearchTerm) || (pokemon.id && pokemon.id.toString().includes(lowerCaseSearchTerm)));
         }
-
         if (selectedType) {
-            currentList = currentList.filter(pokemon => {
-                return pokemon.types && pokemon.types.includes(selectedType);
-            });
+            currentList = currentList.filter(pokemon => pokemon.types.includes(selectedType));
         }
-
         return currentList;
     }, [pokemonList, searchTerm, selectedType, selectedGeneration]);
 
-    const handleSearchChange = (event) => {
-        setSearchTerm(event.target.value);
-    };
-
-    const handleTypeChange = (event) => {
-        setSelectedType(event.target.value);
-    };
-
+    const handleSearchChange = (event) => setSearchTerm(event.target.value);
+    const handleTypeChange = (event) => setSelectedType(event.target.value);
     const handleGenerationSelect = (genId) => {
         setSelectedGeneration(genId.toString());
         setIsGenMenuOpen(false);
     };
+    const toggleGenMenu = () => setIsGenMenuOpen(!isGenMenuOpen);
 
-    const toggleGenMenu = () => {
-        setIsGenMenuOpen(!isGenMenuOpen);
-    };
 
-    if (loading) {
-        return (
-            <div className="pokedex-container">
-                <div className="loading">Cargando Pokedex Pokémon...</div>
-            </div>
-        );
-    }
-
-    if (error) {
-        return (
-            <div className="pokedex-container">
-                <div className="error">Error al cargar la lista de la Pokedex: {error.message}</div>
-            </div>
-        );
-    }
+    if (loading) return <div className="pokedex-container"><div className="loading">Cargando Pokedex Pokémon...</div></div>;
+    if (error) return <div className="pokedex-container"><div className="error">Error: {error.message}</div></div>;
 
     return (
         <div className="pokedex-container">
+            <audio ref={audioRef} src="/sounds/app_load.mp3" preload="auto" />
+            <button onClick={toggleMute} className="mute-button-main">
+                {isMuted ? '🔊' : '🔇'}
+            </button>
+
+            {showWelcome && <WelcomeModal onClose={handleWelcomeClose} />}
+            
             <header>
                 <Link to="/" style={{ textDecoration: 'none', color: 'inherit' }}>
-                    <img
-                        src="/logo.png"
-                        alt="Mi Pokedex Logo"
-                        className="pokedex-logo"
-                    />
+                    <img src="/logo.png" alt="Mi Pokedex Logo" className="pokedex-logo" />
                     <span style={{ textAlign: 'right', display: 'block', marginLeft: '150px', marginTop: '5px',fontWeight: 'bold',fontSize: '0.9em',fontFamily: 'monospace', color: '#ebebebff' }}>By Toons ♥ </span>
                 </Link>
             </header>
 
             <Routes>
-                {/* Ruta principal (Home) */}
                 <Route path="/" element={
                     <>
                         <div className="welcome-message">
@@ -208,28 +182,17 @@ function App() {
                             <p>¡Encuentra a tu Pokémon favorito por nombre, ID o tipo!</p>
                         </div>
                         <div className="controls-container">
-                            {/* Búsqueda */}
                             <div>
                                 <label htmlFor="search-input">Nombre o ID:</label>
-                                <input
-                                    id="search-input"
-                                    type="text"
-                                    placeholder="Buscar..."
-                                    value={searchTerm}
-                                    onChange={handleSearchChange}
-                                />
+                                <input id="search-input" type="text" placeholder="Buscar..." value={searchTerm} onChange={handleSearchChange} />
                             </div>
-                            {/* Filtro por Tipo */}
                             <div>
                                 <label htmlFor="type-filter">Tipo:</label>
                                 <select id="type-filter" value={selectedType} onChange={handleTypeChange}>
                                     <option value="">Todos</option>
-                                    {ALL_POKEMON_TYPES.map(type => (
-                                        <option key={type.value} value={type.value}>{type.display}</option>
-                                    ))}
+                                    {ALL_POKEMON_TYPES.map(type => <option key={type.value} value={type.value}>{type.display}</option>)}
                                 </select>
                             </div>
-                            {/* Filtro por Generación */}
                             <div className="generation-filter-container">
                                 <button onClick={toggleGenMenu} className="generation-button">
                                     Generación: {ALL_POKEMON_GENERATIONS.find(gen => gen.id.toString() === selectedGeneration)?.name || 'Seleccionar'}
@@ -237,57 +200,29 @@ function App() {
                                 {isGenMenuOpen && (
                                     <ul className="generation-dropdown-menu">
                                         {ALL_POKEMON_GENERATIONS.map(gen => (
-                                            <li
-                                                key={gen.id}
-                                                onClick={() => handleGenerationSelect(gen.id)}
-                                                className={selectedGeneration === gen.id.toString() ? 'active' : ''}
-                                            >
+                                            <li key={gen.id} onClick={() => handleGenerationSelect(gen.id)} className={selectedGeneration === gen.id.toString() ? 'active' : ''}>
                                                 {gen.name}
                                             </li>
                                         ))}
                                     </ul>
                                 )}
                             </div>
-                            {/* BOTÓN PARA EL SIMULADOR DE BATALLA */}
-                            <Link to="/battle" className="battle-button">
-                                Ir a Batalla
-                            </Link>
-                            
-                            {/* <<<--- CAMBIO 1: AÑADIDO EL BOTÓN DE MT/MO ---<<< */}
-                            <Link to="/moves" className="battle-button">
-                                MT/MO
-                            </Link>
+                            <Link to="/battle" className="battle-button">Ir a Batalla</Link>
+                            <Link to="/moves" className="battle-button">MT/MO</Link>
                         </div>
-
                         <div className="pokemon-list">
                             {filteredPokemon.length > 0 ? (
-                                filteredPokemon.map(pokemon => (
-                                    <PokemonCard key={pokemon.name} pokemon={pokemon} />
-                                ))
+                                filteredPokemon.map(pokemon => <PokemonCard key={pokemon.name} pokemon={pokemon} />)
                             ) : (
-                                <div className="no-results">No se encontraron Pokémon con los filtros aplicados.</div>
+                                <div className="no-results">No se encontraron Pokémon.</div>
                             )}
                         </div>
                     </>
                 } />
-
-                {/* Ruta para el detalle del Pokémon */}
                 <Route path="/pokemon/:pokemonId" element={<PokemonDetail />} />
-
-                {/* RUTAS PARA EL SIMULADOR DE BATALLA */}
-                <Route
-                    path="/battle"
-                    element={<PokemonBattleSelector pokemonList={pokemonList} />}
-                />
-                <Route
-                    path="/battle/arena"
-                    element={<PokemonBattleArena pokemonList={pokemonList} />}
-                />
-
-                {/* <<<--- CAMBIO 2: AÑADIDA LA NUEVA RUTA ---<<< */}
+                <Route path="/battle" element={<PokemonBattleSelector pokemonList={pokemonList} />} />
+                <Route path="/battle/arena" element={<PokemonBattleArena pokemonList={pokemonList} />} />
                 <Route path="/moves" element={<MachineList />} />
-
-                {/* Ruta comodín para cualquier otra URL (manejo de 404) */}
                 <Route path="*" element={<div className="error">Página no encontrada</div>} />
             </Routes>
         </div>
