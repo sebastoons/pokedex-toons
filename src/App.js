@@ -195,6 +195,7 @@ function App() {
                         alt="Mi Pokedex Logo"
                         className="pokedex-logo"
                     />
+                    <span style={{ textAlign: 'right', display: 'block', marginLeft: '150px', marginTop: '5px',fontWeight: 'bold',fontSize: '0.9em',fontFamily: 'monospace', color: '#ebebebff' }}>By Toons ♥ </span>
                 </Link>
             </header>
 

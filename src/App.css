@@ -1497,7 +1497,7 @@ header {
     text-transform: uppercase;
     font-size: 1.1em;
     font-family: 'Press Start 2P';
-    text-shadow: 2px 2px 0px #bdc3c7;
+    text-shadow: 2px 2px 0px rgb(212, 212, 212);
 }
 
 .pokemon-detail-image {

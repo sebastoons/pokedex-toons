@@ -294,8 +294,8 @@
     }
 
     .back-to-pokedex {
-        padding: 10px 20px;
-        font-size: 1em;
+        padding: 8px 16px;
+        font-size: 0.7em;
     }
 }
 
@@ -320,3 +320,19 @@
         width: 85%;
     }
 }
+/* src/components/PokemonBattleSelector.css */
+
+/* --- CÓDIGO A AGREGAR --- */
+.battle-selector-top-bar {
+  width: 100%;
+  display: flex;
+  justify-content:center; /* Alinea el botón a la izquierda */
+  padding: 5px 5px; /* Añade un poco de espacio */
+  box-sizing: border-box; /* Asegura que el padding no afecte el ancho total */
+}
+
+/* Ajustamos el margen del botón original para que no tenga tanto espacio arriba */
+.back-to-pokedex {
+  margin-top: 10px;
+}
+/* --- FIN DEL CÓDIGO A AGREGAR --- */

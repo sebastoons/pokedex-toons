@@ -31,11 +31,6 @@ function PokemonBattleSelector({ pokemonList }) {
     useEffect(() => {
         const areBothPokemonSelected = selectedPokemonTeam.every(p => p !== null);
         
-        // Habilitar/Deshabilitar el botón "Comenzar Batalla"
-        // Tu botón ya tiene `disabled={!selectedPokemonTeam.every(p => p !== null)}` directamente en el JSX,
-        // así que no necesitas manipular el DOM con document.querySelector aquí.
-
-        // Si ambos Pokémon están seleccionados y tenemos una referencia al div, hacemos scroll
         if (areBothPokemonSelected && selectionSlotsDisplayRef.current) {
             selectionSlotsDisplayRef.current.scrollIntoView({
                 behavior: 'smooth',
@@ -61,15 +56,13 @@ function PokemonBattleSelector({ pokemonList }) {
             const p1Id = selectedPokemonTeam[0].id;
             const p2Id = selectedPokemonTeam[1].id;
 
-            // *** Aquí agregamos el evento de Google Analytics 4 ***
             console.log("GA4 Event: 'Comenzar Batalla' button clicked.");
             ReactGA.event({
                 category: 'Batalla Pokemon',
                 action: 'Comenzar Batalla',
-                label: `P1: ${selectedPokemonTeam[0].name} vs P2: ${selectedPokemonTeam[1].name}`, // Opcional: información detallada
-                value: 1 // Opcional: puedes asignar un valor si es relevante (ej. 1 para indicar que se inició una batalla)
+                label: `P1: ${selectedPokemonTeam[0].name} vs P2: ${selectedPokemonTeam[1].name}`,
+                value: 1
             });
-            // Fin del evento de Google Analytics
 
             navigate(`/battle/arena?p1=${p1Id}&p2=${p2Id}`);
         } else {
@@ -89,6 +82,14 @@ function PokemonBattleSelector({ pokemonList }) {
 
     return (
         <div className="battle-selector-container">
+            {/* --- CÓDIGO AÑADIDO --- */}
+            <div className="battle-selector-top-bar">
+                <Link to="/" className="pokemon-link-button back-to-pokedex">
+                    &lt; Volver a la Pokédex
+                </Link>
+            </div>
+            {/* --- FIN DEL CÓDIGO AÑADIDO --- */}
+
             <h1>Selecciona tus Pokémon</h1>
 
             {/* Slots de Selección Visuales - Añadimos la referencia aquí */}
