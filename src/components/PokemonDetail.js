@@ -15,7 +15,10 @@ function PokemonDetail() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [speciesData, setSpeciesData] = useState(null);
-  const [detailedAbility, setDetailedAbility] = useState(null);
+  
+  // --- MODIFICACIÓN 1: Cambiamos el estado para que sea un array de habilidades ---
+  const [translatedAbilities, setTranslatedAbilities] = useState([]);
+  
   const [pokemonMoves, setPokemonMoves] = useState([]);
   const [typeEffectiveness, setTypeEffectiveness] = useState(null);
   const [evolutionLine, setEvolutionLine] = useState([]);
@@ -219,14 +222,13 @@ function PokemonDetail() {
 
       return requirement.trim();
   };
-
-  useEffect(() => {
+useEffect(() => {
     const fetchAllPokemonDetails = async () => {
       setLoading(true);
       setError(null);
       setPokemonData(null);
       setSpeciesData(null);
-      setDetailedAbility(null);
+      setTranslatedAbilities([]); // Reseteamos el nuevo estado
       setPokemonMoves([]);
       setTypeEffectiveness(null);
       setEvolutionLine([]);
@@ -307,64 +309,62 @@ function PokemonDetail() {
             currentSpeciesData = { evolution_chain: { url: null } };
         }
 
-        // Lógica de Habilidades (sin cambios)
+        // --- MODIFICACIÓN 2: Lógica para traducir TODAS las habilidades ---
         if (pokemonJson.abilities && pokemonJson.abilities.length > 0) {
-            let chosenAbilityInfo = pokemonJson.abilities.find(ab => !ab.is_hidden);
-            if (!chosenAbilityInfo) {
-                chosenAbilityInfo = pokemonJson.abilities[0];
-            }
-
-            if (chosenAbilityInfo) {
+            const abilitiesPromises = pokemonJson.abilities.map(async (abilityInfo) => {
                 try {
-                    const abilityResponse = await fetch(chosenAbilityInfo.ability.url);
+                    const abilityResponse = await fetch(abilityInfo.ability.url);
                     if (!abilityResponse.ok) {
-                        console.warn(`No se pudieron obtener detalles para la habilidad: ${chosenAbilityInfo.ability.name}. Estado: ${abilityResponse.status}`);
-                        const fallbackName = chosenAbilityInfo.ability.name.replace(/-/g, ' ').split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
-                        setDetailedAbility({
-                            id: chosenAbilityInfo.ability.name,
-                            name: fallbackName,
-                            isHidden: chosenAbilityInfo.is_hidden,
-                            description: 'Descripción no disponible.'
-                        });
-                    } else {
-                        const abilityJson = await abilityResponse.json();
-                        const spanishNameEntry = abilityJson.names.find(nameEntry => nameEntry.language.name === 'es');
-                        const translatedName = spanishNameEntry ? spanishNameEntry.name : chosenAbilityInfo.ability.name.replace(/-/g, ' ').split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
-                        
-                        let description = 'Descripción no disponible.';
-                        const spanishEffectEntry = abilityJson.effect_entries.find(entry => entry.language.name === 'es');
-                        if (spanishEffectEntry) {
-                            description = spanishEffectEntry.effect.replace(/[\n\r\f]/g, ' ');
-                        } else {
-                            const englishEffectEntry = abilityJson.effect_entries.find(entry => entry.language.name === 'en');
-                            if (englishEffectEntry) {
-                                description = englishEffectEntry.effect.replace(/[\n\r\f]/g, ' ');
-                            }
-                        }
-
-                        setDetailedAbility({
-                            id: abilityJson.id,
-                            name: translatedName,
-                            isHidden: chosenAbilityInfo.is_hidden,
-                            description: description
-                        });
+                        // Si falla la petición, devolvemos un objeto con datos básicos en inglés
+                        return {
+                            name: abilityInfo.ability.name.replace(/-/g, ' '),
+                            description: 'Descripción no disponible.',
+                            isHidden: abilityInfo.is_hidden,
+                            id: abilityInfo.ability.name 
+                        };
                     }
+                    const abilityJson = await abilityResponse.json();
+
+                    // Buscamos el nombre en español
+                    const spanishNameEntry = abilityJson.names.find(name => name.language.name === 'es');
+                    const translatedName = spanishNameEntry ? spanishNameEntry.name : abilityInfo.ability.name.replace(/-/g, ' ');
+
+                    // Buscamos la descripción en español, si no, en inglés
+                    let description = 'Descripción no disponible.';
+                    const spanishEffectEntry = abilityJson.effect_entries.find(entry => entry.language.name === 'es');
+                    if (spanishEffectEntry) {
+                        description = spanishEffectEntry.effect.replace(/[\n\r\f]/g, ' ');
+                    } else {
+                        const englishEffectEntry = abilityJson.effect_entries.find(entry => entry.language.name === 'en');
+                        if (englishEffectEntry) {
+                            description = englishEffectEntry.effect.replace(/[\n\r\f]/g, ' ');
+                        }
+                    }
+
+                    return {
+                        name: translatedName,
+                        description: description,
+                        isHidden: abilityInfo.is_hidden,
+                        id: abilityJson.id // Usamos el ID para el 'key' al renderizar
+                    };
                 } catch (abilityFetchError) {
-                    console.error(`Error al obtener detalle de habilidad para ${chosenAbilityInfo.ability.name}:`, abilityFetchError);
-                    const fallbackName = chosenAbilityInfo.ability.name.replace(/-/g, ' ').split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
-                    setDetailedAbility({
-                        id: chosenAbilityInfo.ability.name,
-                        name: fallbackName,
-                        isHidden: chosenAbilityInfo.is_hidden,
-                        description: 'Error al cargar la descripción.'
-                    });
+                    console.error(`Error al obtener detalle de habilidad para ${abilityInfo.ability.name}:`, abilityFetchError);
+                    // Si hay un error de red, también devolvemos un objeto de fallback
+                    return {
+                        name: abilityInfo.ability.name.replace(/-/g, ' '),
+                        description: 'Error al cargar la descripción.',
+                        isHidden: abilityInfo.is_hidden,
+                        id: abilityInfo.ability.name // Fallback key
+                    };
                 }
-            } else {
-                setDetailedAbility(null);
-            }
+            });
+
+            const resolvedAbilities = await Promise.all(abilitiesPromises);
+            setTranslatedAbilities(resolvedAbilities);
         } else {
-            setDetailedAbility(null);
+            setTranslatedAbilities([]);
         }
+        // --- FIN DE LA MODIFICACIÓN ---
         
         // Lógica de Movimientos (sin cambios)
         if (pokemonJson.moves && pokemonJson.moves.length > 0) {
@@ -446,8 +446,7 @@ function PokemonDetail() {
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pokemonId]);
-
-  const handleGoBack = () => {
+const handleGoBack = () => {
     navigate('/');
   };
 
@@ -585,21 +584,22 @@ function PokemonDetail() {
         />
       )}
 
-      <h4>Habilidad:</h4>
-      {detailedAbility ? (
-        <div className="ability-detail-container">
-          <span
-            key={detailedAbility.id}
-            className={`ability-badge type-${firstPokemonType ? firstPokemonType.toLowerCase() : 'normal'}`}
-          >
-            {detailedAbility.name}
-            {detailedAbility.isHidden && " (Habilidad Oculta)"}
-          </span>
-          <p className="ability-description">{detailedAbility.description}</p>
-        </div>
+      {/* --- MODIFICACIÓN 3: Renderizamos la lista de habilidades traducidas --- */}
+      <h4>Habilidades:</h4>
+      {translatedAbilities.length > 0 ? (
+        translatedAbilities.map(ability => (
+          <div key={ability.id} className="ability-detail-container">
+            <span className={`ability-badge type-${firstPokemonType ? firstPokemonType.toLowerCase() : 'normal'}`}>
+              {ability.name}
+              {ability.isHidden && " (Habilidad Oculta)"}
+            </span>
+            <p className="ability-description">{ability.description}</p>
+          </div>
+        ))
       ) : (
         <p style={{ paddingLeft: '20px', marginBottom: '20px' }}>Este Pokémon no tiene habilidades listadas.</p>
       )}
+      {/* --- FIN DE LA MODIFICACIÓN --- */}
 
       <h4>Movimientos:</h4>
       {pokemonMoves.length > 0 ? (
@@ -626,13 +626,11 @@ function PokemonDetail() {
           <p className="pokedex-entry-text">Cargando descripción o no disponible.</p>
       )}
 
-      {/* --- LÍNEA EVOLUTIVA MEJORADA (¡CAMBIOS AQUÍ!) --- */}
       <h3>Línea Evolutiva</h3>
       {evolutionLine.length > 0 ? (
         <div className="evolution-line-container">
           {evolutionLine.map((evoPokemon, index) => (
             <React.Fragment key={evoPokemon.id}>
-              {/* Flecha y requisito si no es el primero */}
               {index > 0 && (
                 <div className="evolution-path-details">
                   <span className="evolution-requirement">
@@ -644,7 +642,6 @@ function PokemonDetail() {
                 </div>
               )}
 
-              {/* Etapa evolutiva */}
               <div 
                 className="evolution-stage"
                 onClick={() => navigate(`/pokemon/${evoPokemon.id}`)}
@@ -659,9 +656,6 @@ function PokemonDetail() {
         <p>Cargando línea evolutiva o no disponible.</p>
       )}
 
-      {/* --- FIN LÍNEA EVOLUTIVA MEJORADA --- */}
-
-      {/* >>>>> NUEVA SECCIÓN: Medios y Sprites Clásicos <<<<< */}
       <h3>Sonido y Sprites Clásicos</h3>
       <div className="media-section-container">
         {pokemonSoundUrl && (
@@ -688,13 +682,10 @@ function PokemonDetail() {
           </div>
         )}
 
-        {/* Mensaje si no hay sonido ni sprites clásicos */}
         {!pokemonSoundUrl && classicSprites.length === 0 && (
             <p>No se encontró sonido o sprites clásicos para este Pokémon.</p>
         )}
       </div>
-      {/* >>>>> FIN NUEVA SECCIÓN <<<<< */}
-
 
       <h3>Fortalezas y Debilidades</h3>
       {typeEffectiveness ? (

@@ -3,13 +3,13 @@ import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { Routes, Route, Link, useLocation } from 'react-router-dom';
 import ReactGA from 'react-ga4';
 
-// Componentes
+import UpdateModal from './components/UpdateModal';
+import WelcomeModal from './components/WelcomeModal';
 import PokemonCard from './components/PokemonCard';
 import PokemonDetail from './components/PokemonDetail';
 import PokemonBattleSelector from './components/PokemonBattleSelector';
 import PokemonBattleArena from './components/PokemonBattleArena';
 import MachineList from './components/MachineList';
-import WelcomeModal from './components/WelcomeModal';
 
 // Constantes
 const ALL_POKEMON_GENERATIONS = [
@@ -43,22 +43,24 @@ const ALL_POKEMON_TYPES = [
     { value: 'steel', display: 'Acero', color: '#B7B7CE' },
     { value: 'fairy', display: 'Hada', color: '#D685AD' },
 ];
-
 const GA_MEASUREMENT_ID = "G-KPGB8SXW4B"; 
 ReactGA.initialize(GA_MEASUREMENT_ID);
+
 
 function App() {
     const location = useLocation();
     const [pokemonList, setPokemonList] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [showWelcome, setShowWelcome] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedType, setSelectedType] = useState('');
     const [selectedGeneration, setSelectedGeneration] = useState('1');
     const [isGenMenuOpen, setIsGenMenuOpen] = useState(false);
 
-    // --- LÓGICA DE AUDIO (CORREGIDA) ---
+    const [showWelcome, setShowWelcome] = useState(true);
+    const [showUpdate, setShowUpdate] = useState(false); 
+    const LATEST_UPDATE_VERSION = "1.2.0"; 
+
     const [isMuted, setIsMuted] = useState(false);
     const audioRef = useRef(null);
 
@@ -72,16 +74,21 @@ function App() {
 
     const handleWelcomeClose = () => {
         setShowWelcome(false);
-        // --- AQUÍ ESTÁ EL CAMBIO CLAVE ---
-        // La música intenta sonar DESPUÉS del clic del usuario.
         if (audioRef.current) {
             audioRef.current.loop = true;
-            audioRef.current.play().catch(error => {
-                console.log("La reproducción de audio fue bloqueada, pero debería funcionar en el próximo clic.");
-            });
+            audioRef.current.play().catch(e => console.log("Audio play failed", e));
+        }
+
+        const lastSeenVersion = localStorage.getItem('lastUpdateSeen');
+        if (lastSeenVersion !== LATEST_UPDATE_VERSION) {
+            setShowUpdate(true);
         }
     };
-    // --- FIN LÓGICA DE AUDIO ---
+
+    const handleUpdateClose = () => {
+        setShowUpdate(false);
+        localStorage.setItem('lastUpdateSeen', LATEST_UPDATE_VERSION);
+    };
 
     useEffect(() => {
         ReactGA.send({ hitType: "pageview", page: location.pathname + location.search });
@@ -166,6 +173,7 @@ function App() {
             </button>
 
             {showWelcome && <WelcomeModal onClose={handleWelcomeClose} />}
+            {showUpdate && <UpdateModal onClose={handleUpdateClose} />}
             
             <header>
                 <Link to="/" style={{ textDecoration: 'none', color: 'inherit' }}>
@@ -175,6 +183,7 @@ function App() {
             </header>
 
             <Routes>
+                {/* ... (Tus rutas se quedan exactamente igual) ... */}
                 <Route path="/" element={
                     <>
                         <div className="welcome-message">
@@ -225,6 +234,9 @@ function App() {
                 <Route path="/moves" element={<MachineList />} />
                 <Route path="*" element={<div className="error">Página no encontrada</div>} />
             </Routes>
+            
+            {/* --- LÍNEA NUEVA PARA MOSTRAR LA VERSIÓN --- */}
+            <div className="app-version">v{LATEST_UPDATE_VERSION}</div>
         </div>
     );
 }
