@@ -1,0 +1,97 @@
+/* src/components/pokemonDetail/PokemonMedia.css */
+
+.media-section h3 {
+  text-align: center;
+  margin-top: 30px;
+  margin-bottom: 20px;
+  color:#34495e;
+  font-family: 'press start 2p';
+  font-size: 0.8em;
+  text-transform: uppercase;
+}
+
+.media-section-container {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+  padding: 5px;
+  background-color: rgb(255, 255, 255);
+  border-radius: 10px;
+  margin: 20px auto;
+  max-width: 600px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.pokemon-cry-section,
+.classic-sprites-gallery {
+  text-align: center;
+  margin-bottom: 5px;
+  margin-top: 5px;
+}
+
+.pokemon-cry-section h4,
+.classic-sprites-gallery h4 {
+  margin-top: 8px;
+  margin-bottom: 15px;
+  color: #004793;
+  font-size: 0.9em;
+  font-family: monospace;
+  text-transform: uppercase;
+  font-weight: bold;
+}
+
+.play-cry-button {
+    background-color: #6078dc;
+    color: white;
+    border: none;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    font-size: 1.5em;
+    cursor: pointer;
+    transition: background-color 0.2s, transform 0.2s;
+;
+}
+
+.play-cry-button:hover {
+  background-color: #2f4bba;
+  transform: scale(1.1);
+}
+
+.sprites-grid {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 15px;
+    padding: 10px;
+}
+
+.sprite-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #ffffff;
+    border-radius: 8px;
+    padding: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 40%);
+}
+
+.classic-sprite-image {
+    width: 70px;
+    height: 70px;
+    background-color: rgb(255, 255, 255);
+    border-radius: 5px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    margin-bottom: 0;
+}
+
+.sprite-name {
+    font-size: 0.75em;
+    margin-top: 5px;
+    color: #909090;
+    font-weight: bold;
+    text-align: center;
+    font-family: monospace;
+    text-transform: uppercase;
+}

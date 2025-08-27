@@ -138,7 +138,7 @@ header {
     border: none;
     border-radius: 6px; /* Bordes redondeados sutiles */
     cursor: pointer;
-    border: 2px solid #34495e;
+    border: 2px solid #900000;
     transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease;
     box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2); /* Sombra para dar profundidad */
     text-transform: uppercase; /* Texto en mayúsculas para impacto */
@@ -297,8 +297,8 @@ header {
     font-family: monospace;
     font-weight: bold;
     padding: 10px 15px;
-    border: 2px solid #34495e;
-    border-radius: 5px;
+    border: 2px solid #004b7d;
+    border-radius: 6px;
     background-color: #3498db;
     color: white;
     font-size: 1em;
@@ -1487,35 +1487,6 @@ header {
     width: calc(100% - 40px); /* Ajuste para que se adapte al ancho en móviles */
 }
 
-/* Los media queries para detail view están agrupados con los generales para mantener orden */
-
-
-.pokemon-detail-view h2 {
-    color: #2c3e50;
-    margin-top: 20px;
-    margin-bottom: 15px;
-    text-transform: uppercase;
-    font-size: 1.1em;
-    font-family: 'Press Start 2P';
-    text-shadow: 2px 2px 0px rgb(212, 212, 212);
-}
-
-.pokemon-detail-image {
-    width: 250px;
-    height: 250px;
-    margin: 20px auto;
-    display: block;
-    border: 8px solid #bdc3c7;
-    border-radius: 20px;
-    background-color: #fff;
-    image-rendering: pixelated;
-    filter: drop-shadow(3px 3px 2px rgba(0,0,0,0.3));
-    max-width: 80%;
-    height: auto;
-    object-fit: contain;
-}
-
-
 /* Ajustar tamaños de fuente de estadísticas y habilidades */
 .stat-name, .stat-value,
 .characteristic-label, .characteristic-value,
@@ -1523,50 +1494,12 @@ header {
     font-size: 0.9em;
 }
 
-
-.pokemon-detail-view h3 {
-    color: #34495e;
-    margin-top: 30px;
-    margin-bottom: 15px;
-    border-bottom: 2px solid #bdc3c7;
-    padding-bottom: 8px;
-    font-family: 'Press Start 2P', cursive;
-    font-size: 0.8em;
-}
-
 /* --- Estilos para las Estadísticas (Barras) --- */
-.stats-container {
-    margin-top: 18px;
-    text-align: left;
-    padding: 0 20px;
-    font-size: 0.8em;
-}
-
 .stat-item {
     display: flex;
     align-items: center;
     margin-bottom: 12px;
     font-size: 1em;
-}
-
-.stat-name {
-    width: 130px;
-    font-weight: bold;
-    margin-right: 15px;
-    text-transform: capitalize;
-    font-family: sans-serif;
-    font-size: 1em;
-    color: #2c3e50;
-}
-
-.stat-bar-background {
-    flex-grow: 1;
-    height: 15px;
-    background-color: #bdc3c7;
-    border-radius: 12px;
-    overflow: hidden;
-    position: relative;
-    border: 1px solid #95a5a6;
 }
 
 .stat-bar-fill {
@@ -1576,15 +1509,6 @@ header {
     align-items: center;
     padding-left: 8px;
     transition: width 0.8s ease-out;
-}
-
-.stat-value {
-    font-size: 1em;
-    color: white;
-    text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
-    z-index: 1;
-    font-weight: bold;
-    font-family: sans-serif;
 }
 
 /* Opcional: Colores de barra por estadística */
@@ -1601,7 +1525,7 @@ header {
     background-color: #3498db;
     border: 3px solid #2980b9;
     border-radius: 8px;
-    padding: 8px 20px;
+    padding: 6px 14px;
     font-size: 0.6em;
     cursor: pointer;
     transition: background-color 0.2s ease, transform 0.1s ease;
@@ -1626,36 +1550,6 @@ header {
 /* --- Estilos para la sección de Habilidades (con insignias de color) --- */
 
 /* Estilo para el subtítulo "Habilidades:" */
-.pokemon-detail-view h4 {
-    color: #2c3e50;
-    margin-top: 15px;
-    margin-bottom: 15px;
-    text-align: left;
-    padding-left: 20px;
-    font-size: 0.9em;
-    font-family: 'press start 2p', cursive;
-}
-
-.characteristics-container {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    margin-bottom: 25px;
-    padding: 0 20px;
-}
-
-.characteristic-item {
-    display: flex;
-    align-items: center;
-    background-color: #f8f9fa;
-    padding: 12px 18px;
-    border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08);
-    transition: transform 0.2s ease-in-out;
-    margin-bottom: 4px;
-    font-size: 0.9em;
-    height: 15px;
-}
 
 .characteristic-item:hover {
     transform: translateY(-2px);
@@ -1667,16 +1561,10 @@ header {
     color: #495057;
 }
 
-.characteristic-label {
-    font-weight: bold;
-    color: #343a40;
-    margin-right: 8px;
-    font-size: 0.95em;
-}
-
 .characteristic-value {
     font-size: 0.95em;
     color: #212529;
+    font-family: monospace;
 }
 
 /* Ajustes para pantallas pequeñas si es necesario */
@@ -1706,36 +1594,6 @@ header {
     display: inline-block;
 }
 
-/* Contenedor específico para la habilidad (NUEVO) */
-.ability-detail-container {
-    background-color: #f8f8f8;
-    padding: 10px 15px;
-    border-radius: 8px;
-    margin-top: 15px;
-    margin-bottom: 20px;
-    text-align: center;
-    max-width: 600px;
-    margin-left: auto;
-    margin-right: auto;
-}
-
-/* Sobrescribir o añadir solo propiedades específicas para el badge dentro de este contenedor */
-.ability-detail-container .ability-badge {
-    margin-bottom: 10px; /* Esto añade el espacio entre el badge y la descripción */
-    /* No necesitas repetir padding, border-radius, color, etc. si ya están en .ability-badge */
-}
-
-
-/* Estilos para la descripción de la habilidad (NUEVO) */
-.ability-description {
-    font-size: 0.95em;
-    color: #555;
-    line-height: 1.4;
-    text-align: justify;
-    margin-top: 10px;
-    font-family: monospace;
-}
-
 /* Asegurarse de que las clases de tipo existentes tengan color de texto contrastante */
 .type-fire,
 .type-water,
@@ -1760,136 +1618,16 @@ header {
     color: white;
 }
 
-/* Contenedor para los badges de movimientos */
-.moves-container {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1px;
-    margin-top: 10px;
-    margin-bottom: 10px;
-    padding: 0 15px;
-    justify-content: center;
-}
-
-/* Estilo base para los badges */
-.type-badge {
-    padding: 2px 8px;
-    border-radius: 10px;
-    color: white;
-    font-size: 0.8em;
-    font-weight: bold;
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.4);
-    text-align: center;
-    display: inline-block;
-    margin: 2px;
-}
-
-/* ---SECCION DE ENTRADA DE POKEDEX----------- */
-.pokedex-entry-text {
-    background-color: #f8f8f8; /* Un fondo gris claro para el cuadro de texto */
-    padding: 15px; /* Espacio interno para que el texto no esté pegado a los bordes */
-    border-radius: 8px; /* Bordes ligeramente redondeados */
-    margin: 10px auto 20px auto; /* Centrar y añadir margen superior/inferior */
-    max-width: 600px; /* Limita el ancho del texto para que no sea demasiado largo */
-    line-height: 1.5; /* Mejora la legibilidad del texto */
-    color: #333; /* Color de texto oscuro */
-    text-align: left; /* Alinea el texto a la izquierda dentro de su propio contenedor */
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* Sombra suave para darle profundidad */
-    font-family: monospace;
-    font-size: 0.95em;
-}
-
-/* ----LINEA EVOLUTIVA--------*/
-.evolution-line-container {
-    display: flex;
-    flex-wrap: wrap; /* Permite que los elementos se envuelvan en pantallas pequeñas */
-    justify-content: center; /* Centra los elementos horizontalmente */
-    align-items: center;
-    gap: 15px; /* Espacio entre etapas y flechas/requisitos */
-    margin-top: 20px;
-    padding: 10px;
-    background-color: #f7f7f7;
-    border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-}
-
 /* ----ESTILOS PARA CADA ETAPA DE LA EVOLUCION---------- */
-.evolution-stage {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    cursor: pointer;
-    padding: 10px;
-    border-radius: 8px;
-    background-color: #fff;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-    transition: transform 0.2s ease-in-out;
-    text-align: center;
-    flex-shrink: 0; /* Evita que el elemento se encoja excesivamente */
-}
 
 .evolution-stage:hover {
     transform: translateY(-5px);
 }
-
-/* ----ESTILOS PARA LA IMAGEN DEL POKEMON EVOLUTIVO----- */
-.evolution-sprite {
-    width: 90px; /* Ajusta el tamaño de la imagen según sea necesario */
-    height: 90px;
-    object-fit: contain;
-    margin-bottom: 5px;
-}
-
-/* ----ESTILOS PARA EL NOMBRE DEL POKEMON EVOLUTIVO-----*/
-.evolution-name {
-    font-weight: bold;
-    color: #333;
-    font-size: 0.95em;
-    text-transform: capitalize;
-}
-
-.evolution-path-details {
-    display: flex;
-    flex-direction: column; /* Apila el requisito y la flecha verticalmente */
-    align-items: center;
-    gap: 2px;
-    text-align: center;
-    min-width: 60px; /* Da un poco de espacio para el texto y la flecha */
-}
-
-/* -----FLECHA ENTRE EVOLUCIONES--------------------- */
-.evolution-arrow {
-    font-size: 1.8em;
-    color: #666;
-    font-weight: bold;
-}
-
-.evolution-requirement {
-    font-size: 0.75em;
-    color: #555;
-    background-color: #e0e0e0;
-    padding: 2px 6px;
-    border-radius: 4px;
-    white-space: nowrap; /* Mantiene el requisito en una sola línea si es posible */
-    margin-bottom: 3px;
-}
-
 /* Media Query para dispositivos muy pequeños si necesitas ajustar */
 @media (max-width: 480px) {
     .evolution-line-container {
         flex-direction: column; /* Apila completamente las etapas en pantallas muy pequeñas */
     }
-    .evolution-path-details {
-        margin: 10px 0; /* Espacio entre los elementos apilados */
-    }
-}
-
-/* Contenedor general para las relaciones de tipo */
-.type-effectiveness-container {
-    background-color: #f0f0f0; /* Un fondo gris claro para el contenedor */
-    padding: 2px;
-    border-radius: 8px;
-    margin-top: 1px;
 }
 
 /* Estilos para los títulos de cada categoría de efectividad */
@@ -1958,18 +1696,6 @@ header {
 .type-fairy { background-color: #D685AD; }
 .type-unknown { background-color: #68A090; }
 
-.ability-badge {
-    padding: 6px 12px;
-    border-radius: 16px;
-    color: white;
-    font-size: 0.85em;
-    font-weight: bold;
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.4);
-    text-align: center;
-    display: inline-block;
-    margin: 3px;
-}
-
 .loading, .error, .no-results {
     font-size: 1.2em;
     margin-top: 20px;
@@ -1986,110 +1712,6 @@ header {
     color: #34495e;
 }
 
-/* --- NUEVOS ESTILOS PARA LA SECCIÓN DE MEDIOS Y SPRITES CLÁSICOS --- */
-.media-section-container {
-    background-color: #f6f6f6; /* Un azul claro para el fondo */
-    padding: 20px;
-    border-radius: 10px;
-    margin: 20px auto;
-    max-width: 700px;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
-    text-align: center; /* Centra el contenido de esta sección */
-}
-
-.pokemon-cry-section {
-    margin-bottom: 25px;
-}
-
-.pokemon-cry-section h4 {
-    margin-top: 0;
-    margin-bottom: 10px;
-    color: #004793; /* Un azul más oscuro */
-    font-size: 0.7em;
-}
-
-.play-cry-button {
-    background-color: #0066d3; /* Azul vibrante */
-    color: white;
-    /* Ajustes para el botón con icono */
-    width: 50px; /* Ancho fijo para un botón cuadrado o casi cuadrado */
-    height: 50px; /* Alto fijo */
-    border-radius: 50%; /* Lo hace redondo */
-    display: flex; /* Para centrar el icono */
-    justify-content: center; /* Centra horizontalmente */
-    align-items: center; /* Centra verticalmente */
-    font-size: 1.6em; /* Tamaño del icono */
-    line-height: 1; /* Asegura que el icono no tenga espacio extra */
-    padding: 0; /* Elimina padding por defecto para mejor centrado */
-    
-    border: none;
-    cursor: pointer;
-    transition: background-color 0.3s ease, transform 0.1s ease; /* Añadido transform */
-    box-shadow: 0 4px 8px rgba(0,0,0,0.3); /* Sombra más pronunciada para botón 3D */
-    margin: 0 auto; /* Centrar el botón si su padre lo permite */
-}
-
-.play-cry-button:hover {
-    background-color: #0056b3; /* Azul más oscuro al pasar el ratón */
-    transform: scale(1.05); /* Ligeramente más grande al pasar el ratón */
-}
-
-.play-cry-button:active {
-    transform: scale(0.95); /* Ligeramente más pequeño al hacer click */
-    box-shadow: 0 2px 4px rgba(0,0,0,0.2); /* Sombra menos pronunciada al hacer click */
-}
-
-.classic-sprites-gallery {
-    margin-top: 25px;
-}
-
-.classic-sprites-gallery h4 {
-    margin-bottom: 15px;
-    color: #004793;
-    font-size: 0.7em;
-}
-
-.sprites-grid {
-    display: flex;
-    flex-wrap: wrap; /* Permite que los sprites pasen a la siguiente línea */
-    justify-content: center; /* Centra los sprites en la cuadrícula */
-    gap: 20px; /* Espacio entre los sprites */
-    padding: 10px;
-}
-
-.sprite-item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    background-color: #ffffff; /* Fondo blanco para cada sprite */
-    border-radius: 8px;
-    padding: 8px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    transition: transform 0.2s ease;
-}
-
-.sprite-item:hover {
-    transform: translateY(-5px); /* Efecto de elevación al pasar el ratón */
-}
-
-.classic-sprite-image {
-    width: 74px; /* Tamaño típico de los sprites clásicos, ajusta si es necesario */
-    height: 74px;
-    image-rendering: pixelated; /* Mantiene los píxeles nítidos para sprites retro */
-    image-rendering: -moz-crisp-edges; /* Para Firefox */
-    image-rendering: crisp-edges; /* Para otros navegadores */
-    margin-bottom: 2px;
-}
-
-.sprite-name {
-    font-size: 0.7em;
-    color: #555;
-    font-weight: bold;
-    text-align: center;
-}
-
-/* --- ESTILOS PARA LA COMPARACIÓN DE TAMAÑO --- */
-
 /* Contenedor que envuelve toda la sección de comparación */
 .size-comparison-container {
     margin-top: 20px;
@@ -2098,6 +1720,7 @@ header {
     border-radius: 8px;
     text-align: center;
     background-color: #f9f9f9; /* Un fondo sutil para diferenciar la sección */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 10%);
 }
 
 /* El área donde las siluetas se alinean */

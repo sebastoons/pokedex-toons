@@ -6,12 +6,11 @@ const UpdateModal = ({ onClose }) => {
   // Aquí puedes definir las notas de la actualización.
   // En el futuro, esto podría venir de un archivo de configuración o una API.
   const updateDetails = {
-    version: "1.2.0",
-    date: "25 de Agosto 2025",
+    version: "1.2.1",
+    date: "27 de Agosto 2025",
     changes: [
-      "Se añade ventana de Actualizaciones y Novedades al principio de la Pokedex.",
-      "Añadida la version en esquina inferior derecha de la pokedex.",
-      "Mensaje de Bienvenida al iniciar la pokedex.",
+      "Mejora visual en detalle de pokémon.",
+      "Reestructuración de algunos detalles en la sección detalle pokémon.",
       "Se han corregido algunos errores."
     ]
   };

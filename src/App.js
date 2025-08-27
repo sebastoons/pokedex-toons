@@ -59,7 +59,7 @@ function App() {
 
     const [showWelcome, setShowWelcome] = useState(true);
     const [showUpdate, setShowUpdate] = useState(false); 
-    const LATEST_UPDATE_VERSION = "1.2.0"; 
+    const LATEST_UPDATE_VERSION = "1.2.1"; 
 
     const [isMuted, setIsMuted] = useState(false);
     const audioRef = useRef(null);

@@ -1,0 +1,60 @@
+/* src/components/pokemonDetail/PokemonHeader.css */
+
+.header-section {
+  text-align: center;
+}
+
+.header-section h2 {
+    font-size: 1em;
+    text-transform: uppercase;
+    color: #2c3e50;
+    margin-top: 20px;
+    margin-bottom: 15px;
+    font-family: 'Press Start 2P';
+    text-shadow: 2px 2px 0px rgb(212, 212, 212);
+}
+
+.pokemon-detail-image {
+    max-width: 250px;
+    width: 100%;
+    height: auto;
+    margin: 10px 0;
+    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.4));
+    border: 5px solid #bdc3c7;
+    border-radius: 20px;
+    background-color: #fff;
+    object-fit: contain;
+}
+
+.header-section h3 {
+    margin-top: 20px;
+    margin-bottom: 15px;
+    border-bottom: 2px solid #bdc3c7;
+    padding-bottom: 8px;
+    font-family: 'Press Start 2P';
+    font-size: 0.8em;
+    color: #34495e;
+    text-transform: uppercase;
+}
+
+.pokemon-types {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.pokedex-entry-text {
+    padding: 15px;
+    background-color: rgb(255, 255, 255);
+    border-radius: 8px;
+    font-style: italic;
+    max-width: 600px;
+    margin: 0 auto;
+    color: #595959;
+    line-height: 1.5;
+    text-align: left;
+    box-shadow: 0 4px 4px rgba(0, 0, 0, 0.1);
+    font-family: monospace;
+    font-size: 0.95em;
+}

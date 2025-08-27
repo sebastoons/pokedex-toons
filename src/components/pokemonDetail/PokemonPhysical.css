@@ -1,0 +1,46 @@
+/* src/components/pokemonDetail/PokemonPhysical.css */
+
+.physical-section h3 {
+  text-align: center;
+  margin-top: 5px;
+  margin-bottom: 15px;
+  color:#34495e;
+  font-family: 'press start 2p';
+  font-size: 0.8em;
+  text-transform: uppercase;
+}
+
+.characteristics-container {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin-bottom: 20px;
+  flex-direction: column;
+}
+
+.characteristic-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  background-color: rgb(255, 255, 255);
+  padding: 5px 15px;
+  border-radius: 20px;
+  font-size: 1em;
+  box-shadow: 0 2px 5px rgb(195, 195, 195);
+  transition: transform 0.2s ease-in-out;
+  margin-bottom: 4px;
+  height: 15px;
+}
+
+.characteristic-icon {
+  font-size: 1.2em;
+}
+
+.characteristic-label {
+  font-weight: bold;
+  color: #343a40;
+  margin-right: 5px;
+  font-size: 0.9em;
+  font-family: monospace;
+  text-transform: uppercase;
+}

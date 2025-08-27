@@ -1,0 +1,87 @@
+/* src/components/pokemonDetail/PokemonEvolutionChain.css */
+
+.evolution-section h3 {
+    text-align: center;
+    margin-top: 30px;
+    margin-bottom: 20px;
+    color:#34495e;
+    font-family: 'press start 2p';
+    text-transform: uppercase;
+    font-size: 0.8em;
+}
+
+.evolution-line-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 5px;
+    padding: 15px;
+    background-color: rgb(255, 255, 255);
+    border-radius: 10px;
+    margin-top: 20px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 10%);
+}
+
+.evolution-stage {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+    padding: 5px;
+    border-radius: 8px;
+    transition: background-color 0.2s;
+    background-color: #fff;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 40%);
+    text-align: center;
+    flex-shrink: 0;
+}
+
+.evolution-stage:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.evolution-sprite {
+    width: 90px;
+    height: 90px;
+    object-fit: contain;
+    margin-bottom: 4px;
+}
+
+.evolution-name {
+    margin-top: 5px;
+    font-weight: bold;
+    text-transform: uppercase;
+    color: #595959;
+    font-size: 0.9em;
+    font-family: monospace;
+}
+
+.evolution-path-details {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    min-width: 80px;
+    margin: 10px 0;
+    gap: 2px;
+}
+
+.evolution-arrow {
+    font-size: 1.8em;
+    color: #5e5e5e;
+    font-weight: bold;
+}
+
+.evolution-requirement {
+    font-size: 0.9em;
+    color: #595959;
+    background-color: rgb(255, 255, 255);
+    padding: 2px 6px;
+    border-radius: 5px;
+    margin-bottom: 5px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 40%);
+    font-family: monospace;
+    text-transform: uppercase;
+}
