@@ -4,7 +4,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import '../App.css'; 
 
 // Importa las funciones de la API
-import { fetchPokemon, getPokemonTypeEffectiveness, fetchEvolutionChain, fetchPokemonBasicInfo } from '../services/pokeapi';
+import { fetchPokemon, getPokemonTypeEffectiveness, fetchPokemonBasicInfo } from '../services/pokeapi';
 
 // --- 1. IMPORTAMOS TODOS NUESTROS NUEVOS COMPONENTES HIJOS ---
 import PokemonHeader from './pokemonDetail/PokemonHeader';
