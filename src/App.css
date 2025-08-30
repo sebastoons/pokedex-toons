@@ -313,11 +313,6 @@ header {
     margin: auto;
 }
 
-.generation-button:hover {
-    background-color: #2980b9;
-    border-color: #2980b9;
-}
-
 .generation-dropdown-menu {
     position: absolute;
     top: 100%;
@@ -403,7 +398,6 @@ header {
     max-width: 100px;
     max-height: 100px;
     margin-bottom: 10px;
-    image-rendering: pixelated;
     display: block;
     filter: drop_shadow(2px 2px 1px rgba(0,0,0,0.2));
     object-fit: contain;
@@ -624,8 +618,8 @@ header {
     transition: background-color 0.2s ease, transform 0.1s ease;
     display: inline-block;
     margin-bottom: 1px;
-    margin-top: 35px;
-    font-family: 'Press Start 2P', cursive;
+    margin-top: 10px;
+    font-family: 'Press Start 2P';
     text-shadow: 1px 1px 0px rgba(0,0,0,0.3);
     color: white;
 }
@@ -1697,10 +1691,10 @@ header {
 .type-unknown { background-color: #68A090; }
 
 .loading, .error, .no-results {
-    font-size: 1.2em;
+    font-size: 1em;
     margin-top: 20px;
     color: #34495e;
-    font-family: 'Press Start 2P', cursive;
+    font-family: 'Press Start 2P';
     text-shadow: 1px 1px 0px rgba(255,255,255,0.5);
 }
 

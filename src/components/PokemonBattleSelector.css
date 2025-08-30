@@ -335,4 +335,36 @@
 .back-to-pokedex {
   margin-top: 10px;
 }
-/* --- FIN DEL CÓDIGO A AGREGAR --- */
+
+/* --- NUEVOS ESTILOS PARA EL FILTRO --- */
+.battle-controls-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 10px;
+  margin-bottom: 20px;
+  width: 100%;
+}
+
+/* Reutilizamos los estilos del filtro de App.css */
+.generation-filter-container {
+    position: relative;
+    display: inline-block;
+}
+
+.generation-button {
+    background-color: #3498db;
+    color: white;
+    padding: 7px 14px;
+    border-radius: 7px;
+    cursor: pointer;
+    font-weight: bold;
+    border: 2px solid #19679b;
+}
+
+.generation-button:hover {
+    background-color: rgb(24, 101, 153);
+}
+
+
+

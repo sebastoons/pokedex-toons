@@ -6,12 +6,12 @@ const UpdateModal = ({ onClose }) => {
   // Aquí puedes definir las notas de la actualización.
   // En el futuro, esto podría venir de un archivo de configuración o una API.
   const updateDetails = {
-    version: "1.2.1",
-    date: "27 de Agosto 2025",
+    version: "1.2.2",
+    date: "29 de Agosto 2025",
     changes: [
-      "Mejora visual en detalle de pokémon.",
-      "Reestructuración de algunos detalles en la sección detalle pokémon.",
-      "Se han corregido algunos errores."
+      "Nueva Generacion agregada, se añadiran progresivamente pokémon.",
+      "Éstos pokémon, nacieron de la imaginacion de un lapiz y hoja, transformados y adaptados con ayuda de la IA.",
+      "Nueva generación añadida al BattleArena."
     ]
   };
 

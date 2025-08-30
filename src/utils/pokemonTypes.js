@@ -17,7 +17,7 @@ export const POKEMON_TYPES = {
     ghost: { name: 'Fantasma', color: '#735797' },
     dragon: { name: 'Dragón', color: '#6F35FC' },
     steel: { name: 'Acero', color: '#B7B7CE' },
-    dark: { name: 'Oscuro', color: '#705746' },
+    dark: { name: 'Siniestro', color: '#705746' },
     fairy: { name: 'Hada', color: '#D685AD' },
 };
 

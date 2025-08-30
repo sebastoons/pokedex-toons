@@ -1,8 +1,7 @@
-// src/components/pokemonDetail/PokemonLocations.js
+// src/components/pokemonDetail/PokemonLocationDisplay.js
 import React from 'react';
-import './PokemonLocations.css';
+import './PokemonLocationDisplay.css';
 
-// Función para obtener un nombre más amigable de las versiones del juego
 const getVersionName = (version) => {
   return version
     .split('-')
@@ -10,7 +9,7 @@ const getVersionName = (version) => {
     .join(' ');
 };
 
-const PokemonLocations = ({ locations }) => {
+const PokemonLocationDisplay = ({ locations }) => {
   if (!locations || locations.length === 0) {
     return (
       <div className="locations-section">
@@ -20,7 +19,6 @@ const PokemonLocations = ({ locations }) => {
     );
   }
 
-  // Agrupamos las ubicaciones por región para mostrarlas de forma ordenada
   const locationsByRegion = locations.reduce((acc, location) => {
     const regionName = location.region;
     if (!acc[regionName]) {
@@ -52,4 +50,4 @@ const PokemonLocations = ({ locations }) => {
   );
 };
 
-export default PokemonLocations;
+export default PokemonLocationDisplay;
