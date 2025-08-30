@@ -181,7 +181,7 @@ function App() {
     };
     const toggleGenMenu = () => setIsGenMenuOpen(!isGenMenuOpen);
 
-    if (loading) return <div className="pokedex-container"><div className="loading">Cargando...</div></div>;
+    if (loading) return <div className="pokedex-container"><div className="loading">Cargando Pokedex...</div></div>;
     if (error) return <div className="pokedex-container"><div className="error">Error: {error.message}</div></div>;
 
     return (
