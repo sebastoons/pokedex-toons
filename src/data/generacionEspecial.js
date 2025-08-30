@@ -30,7 +30,7 @@ export const generacionEspecial = [
     // --- DESCRIPCIÓN ---
     // ¡Escribe aquí la historia de tu Pokémon!
     description: "Luzoto emerge en los claros del bosque donde la luz toca la tierra por primera vez. Su hoja actúa como una antena de energía solar, y su cuerpo vibra con una frecuencia que calma a otras criaturas.",
-    
+
     // --- EVOLUCIÓN (OPCIONAL) ---
     // Si sí tiene, añade un objeto por cada etapa.
     evolutionLine: [
@@ -108,6 +108,93 @@ export const generacionEspecial = [
            id: 1028,
            name: "Terravox",
            sprite: "/img-special/1028.png"
+        }
+    ],
+  },
+  {
+    id: 1029,
+    name: "Cindrusk",
+    types: ["fire","rock"],
+    imageUrl: "/img-special/1029.png",
+    stats: { hp: 100, attack: 100, defense: 100, 'special-attack': 100, 'special-defense': 100, speed: 100 },
+    height: 4,
+    weight: 92,
+    description: "Cindrusk se forma en minas abandonadas donde el carbón aún conserva calor residual. Sus ojos brillan con energía latente, y sus venas incandescentes indican que está listo para encenderse en cualquier momento. Es curioso y resistente, ideal para entrenadores que buscan un compañero tenaz.",
+    ability: { name: "Desconocida", description: "Información no disponible." },
+    moves: [],
+    evolutionLine: [
+        {
+            id: 1026,
+            name: "Cindrusk",
+            sprite: "/img-special/1029.png" // La imagen pequeña o thumbnail
+        },
+        {
+            id: 1027,
+            name: "Coalimp",
+            sprite: "/img-special/1030.png" // La imagen pequeña o thumbnail
+        },
+        {
+           id: 1028,
+           name: "Grillmaged",
+           sprite: "/img-special/1031.png"
+        }
+    ],
+  },
+  {
+    id: 1030,
+    name: "Coalimp",
+    types: ["fire","rock"],
+    imageUrl: "/img-special/1030.png",
+    stats: { hp: 100, attack: 100, defense: 100, 'special-attack': 100, 'special-defense': 100, speed: 100 },
+    height: 8,
+    weight: 185,
+    description: "Terravox es el guardián ancestral de los bosques. Aunque su aspecto es intimidante, sus flores sonrientes revelan su dualidad: fuerza y ternura. Sus raíces pueden romper el suelo para crear nuevos caminos, y su rugido se escucha a kilómetros.",
+    ability: { name: "Desconocida", description: "Información no disponible." },
+    moves: [],
+    evolutionLine: [
+        {
+            id: 1029,
+            name: "Cindrusk",
+            sprite: "/img-special/1029.png" // La imagen pequeña o thumbnail
+        },
+        {
+            id: 1030,
+            name: "Coalimp",
+            sprite: "/img-special/1030.png" // La imagen pequeña o thumbnail
+        },
+        {
+           id: 1031,
+           name: "Grillmaged",
+           sprite: "/img-special/1031.png"
+        }
+    ],
+  },
+  {
+    id: 1031,
+    name: "Grillmaged",
+    types: ["fire","dragon"],
+    imageUrl: "/img-special/1031.png",
+    stats: { hp: 100, attack: 100, defense: 100, 'special-attack': 100, 'special-defense': 100, speed: 100 },
+    height: 13,
+    weight: 720,
+    description: "Grillmaged es la forma final, una criatura que ha fusionado el calor del carbón con la estructura metálica de una parrilla viva. Sus ojos brillan como brasas, y su interior puede alcanzar temperaturas capaces de fundir rocas. Es temido por su rugido humeante y respetado por su poder.",
+    ability: { name: "Desconocida", description: "Información no disponible." },
+    moves: [],
+    evolutionLine: [
+        {
+            id: 1029,
+            name: "Cindrusk",
+            sprite: "/img-special/1029.png" // La imagen pequeña o thumbnail
+        },
+        {
+            id: 1030,
+            name: "Coalimp",
+            sprite: "/img-special/1030.png" // La imagen pequeña o thumbnail
+        },
+        {
+           id: 1031,
+           name: "Grillmaged",
+           sprite: "/img-special/1031.png"
         }
     ],
   },
