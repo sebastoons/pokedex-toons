@@ -178,5 +178,43 @@ export const generacionEspecial = [
                     {id: 1036,name: "Glaztorm",sprite: "/img-special/1036.png",details:{trigger:{name:'level-up'}, min_level: 20 }}
     ],
   },
+  {
+    id: 1037,
+    name: "Tamboll",
+    types: ["normal"],
+    imageUrl: "/img-special/1037.png",
+    stats: { hp: 45, attack: 70, defense: 55, 'special-attack': 40, 'special-defense': 35, speed: 45 },
+    height: 8,
+    weight: 103,
+    description: "Tamboll tiene un ritmo contagioso que anima a cualquier grupo. Cuando empieza a golpear sus baquetas, Pokémon cercanos se sincronizan con su energía. Se le encuentra en festivales y celebraciones rurales.",
+    evolutionLine: [{id: 1037, name: "Tamboll", sprite: "/img-special/1037.png"}
+    ],
+  },
+  {
+    id: 1038,
+    name: "Mosskreep",
+    types: ["grass","psychic"],
+    imageUrl: "/img-special/1038.png",
+    stats: { hp: 55, attack: 45, defense: 60, 'special-attack': 70, 'special-defense': 65, speed: 50 },
+    height: 9,
+    weight: 145,
+    description: "Mosskreep habita en bosques densos y silenciosos. Su cuerpo cubierto de musgo le permite camuflarse entre los árboles, mientras que sus poderes psíquicos le permiten comunicarse con la flora cercana. Se dice que puede alterar el estado emocional de quienes lo miran fijamente.",
+    evolutionLine: [{id: 1038, name: "Mosskreep", sprite: "/img-special/1038.png"},
+                    {id: 1039,name: "Creebell",sprite: "/img-special/1039.png",details:{trigger:{name:'level-up'}, min_level: 25 }}
+    ],
+  },
+  {
+    id: 1039,
+    name: "Creebell",
+    types: ["grass","psychic"],
+    imageUrl: "/img-special/1039.png",
+    stats: { hp: 90, attack: 65, defense: 85, 'special-attack': 105, 'special-defense': 90, speed: 70 },
+    height: 15,
+    weight: 480,
+    description: "Voltagon es la manifestación de la conciencia vegetal. Su cuerpo emite pulsos mentales que pueden alterar el clima local. Se le considera un guardián de los bosques antiguos, y su presencia puede provocar visiones en quienes se acercan demasiado.",
+    evolutionLine: [{id: 1038, name: "Mosskreep", sprite: "/img-special/1038.png"},
+                    {id: 1039,name: "Creebell",sprite: "/img-special/1039.png",details:{trigger:{name:'level-up'}, min_level: 25 }}
+    ],
+  },
   // --- FIN DEL ESPACIO PARA COPIAR Y PEGAR ---
 ];
