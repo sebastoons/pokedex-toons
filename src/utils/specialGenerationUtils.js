@@ -2,6 +2,164 @@
 
 // Listas de habilidades y movimientos por tipo (en español)
 const typeData = {
+  fairy: {
+    abilities: [
+      { name: "Inmunidad", description: "Su sistema inmunitario evita el envenenamiento" }
+    ],
+    moves: [
+      { id: "Charm", name: "Encanto", type: "fairy" },
+      { id: "Moonlight", name: "Luz lunar", type: "fairy" },
+      { id: "Sweet Kiss", name: "Beso dulce", type: "fairy" }
+    ]
+  },
+  dragon: {
+    abilities: [
+      { name: "Fuerza mental", description: "Gracias a su profunda concentración, no se amedrenta ante los ataques de otros Pokémon ni sufre los efectos de intimidación." }
+    ],
+    moves: [
+      { id: "Dragon-Rage", name: "Furia dragón", type: "dragon" },
+      { id: "Outrage", name: "Rayo", type: "dragon" },
+      { id: "Draco-Meteor", name: "Cometa draco", type: "dragon" },
+      { id: "Dragon-Rush", name: "Carga dragón", type: "dragon" }
+    ]
+  },
+  dark: {
+    abilities: [
+      { name: "Pararrayos", description: "Atrae y anula los movimientos de tipo Eléctrico, aumentando el Ataque Especial." }
+    ],
+    moves: [
+      { id: "thunder-shock", name: "Impactrueno", type: "dark" },
+      { id: "thunderbolt", name: "Rayo", type: "dark" },
+      { id: "volt-switch", name: "Voltiocambio", type: "dark" },
+      { id: "wild-charge", name: "Voltio Cruel", type: "dark" }
+    ]
+  },
+  rock: {
+    abilities: [
+      { name: "Pararrayos", description: "Atrae y anula los movimientos de tipo Eléctrico, aumentando el Ataque Especial." },
+      { name: "Electricidad Estática", description: "Puede paralizar al contacto." }
+    ],
+    moves: [
+      { id: "thunder-shock", name: "Impactrueno", type: "rock" },
+      { id: "thunderbolt", name: "Rayo", type: "rock" },
+      { id: "volt-switch", name: "Voltiocambio", type: "rock" },
+      { id: "wild-charge", name: "Voltio Cruel", type: "rock" }
+    ]
+  },
+  ghost: {
+    abilities: [
+      { name: "Pararrayos", description: "Atrae y anula los movimientos de tipo Eléctrico, aumentando el Ataque Especial." },
+      { name: "Electricidad Estática", description: "Puede paralizar al contacto." }
+    ],
+    moves: [
+      { id: "thunder-shock", name: "Impactrueno", type: "ghost" },
+      { id: "thunderbolt", name: "Rayo", type: "ghost" },
+      { id: "volt-switch", name: "Voltiocambio", type: "ghost" },
+      { id: "wild-charge", name: "Voltio Cruel", type: "elecghostric" }
+    ]
+  },
+  psychic: {
+    abilities: [
+      { name: "Pararrayos", description: "Atrae y anula los movimientos de tipo Eléctrico, aumentando el Ataque Especial." },
+      { name: "Electricidad Estática", description: "Puede paralizar al contacto." }
+    ],
+    moves: [
+      { id: "thunder-shock", name: "Impactrueno", type: "psychic" },
+      { id: "thunderbolt", name: "Rayo", type: "psychic" },
+      { id: "volt-switch", name: "Voltiocambio", type: "psychic" },
+      { id: "wild-charge", name: "Voltio Cruel", type: "psychic" }
+    ]
+  },
+  bug: {
+    abilities: [
+      { name: "Pararrayos", description: "Atrae y anula los movimientos de tipo Eléctrico, aumentando el Ataque Especial." },
+      { name: "Electricidad Estática", description: "Puede paralizar al contacto." }
+    ],
+    moves: [
+      { id: "thunder-shock", name: "Impactrueno", type: "bug" },
+      { id: "thunderbolt", name: "Rayo", type: "bug" },
+      { id: "volt-switch", name: "Voltiocambio", type: "bug" },
+      { id: "wild-charge", name: "Voltio Cruel", type: "bug" }
+    ]
+  },
+  poison: {
+    abilities: [
+      { name: "Pararrayos", description: "Atrae y anula los movimientos de tipo Eléctrico, aumentando el Ataque Especial." },
+      { name: "Electricidad Estática", description: "Puede paralizar al contacto." }
+    ],
+    moves: [
+      { id: "thunder-shock", name: "Impactrueno", type: "poison" },
+      { id: "thunderbolt", name: "Rayo", type: "poison" },
+      { id: "volt-switch", name: "Voltiocambio", type: "poison" },
+      { id: "wild-charge", name: "Voltio Cruel", type: "poison" }
+    ]
+  },
+  ground: {
+    abilities: [
+      { name: "Pararrayos", description: "Atrae y anula los movimientos de tipo Eléctrico, aumentando el Ataque Especial." },
+      { name: "Electricidad Estática", description: "Puede paralizar al contacto." }
+    ],
+    moves: [
+      { id: "thunder-shock", name: "Impactrueno", type: "ground" },
+      { id: "thunderbolt", name: "Rayo", type: "ground" },
+      { id: "volt-switch", name: "Voltiocambio", type: "ground" },
+      { id: "wild-charge", name: "Voltio Cruel", type: "ground" }
+    ]
+  },
+  flying: {
+    abilities: [
+      { name: "Pararrayos", description: "Atrae y anula los movimientos de tipo Eléctrico, aumentando el Ataque Especial." },
+      { name: "Electricidad Estática", description: "Puede paralizar al contacto." }
+    ],
+    moves: [
+      { id: "thunder-shock", name: "Impactrueno", type: "flying" },
+      { id: "thunderbolt", name: "Rayo", type: "flying" },
+      { id: "volt-switch", name: "Voltiocambio", type: "flying" },
+      { id: "wild-charge", name: "Voltio Cruel", type: "flying" }
+    ]
+  },
+  steel: {
+    abilities: [
+      { name: "Pararrayos", description: "Atrae y anula los movimientos de tipo Eléctrico, aumentando el Ataque Especial." },
+      { name: "Electricidad Estática", description: "Puede paralizar al contacto." }
+    ],
+    moves: [
+      { id: "thunder-shock", name: "Impactrueno", type: "steel" },
+      { id: "thunderbolt", name: "Rayo", type: "steel" },
+      { id: "volt-switch", name: "Voltiocambio", type: "steel" },
+      { id: "wild-charge", name: "Voltio Cruel", type: "steel" }
+    ]
+  },
+  ice: {
+    abilities: [
+      { name: "Pararrayos", description: "Atrae y anula los movimientos de tipo Eléctrico, aumentando el Ataque Especial." },
+      { name: "Electricidad Estática", description: "Puede paralizar al contacto." }
+    ],
+    moves: [
+      { id: "thunder-shock", name: "Impactrueno", type: "ice" },
+      { id: "thunderbolt", name: "Rayo", type: "ice" },
+      { id: "volt-switch", name: "Voltiocambio", type: "ice" },
+      { id: "wild-charge", name: "Voltio Cruel", type: "ice" },
+    ]
+  },
+  fighting: {
+    abilities: [
+      { name: "Pararrayos", description: "Atrae y anula los movimientos de tipo Eléctrico, aumentando el Ataque Especial." },
+      { name: "Electricidad Estática", description: "Puede paralizar al contacto." },
+      { name: "Electromotor", description: "Aumenta la Velocidad si es golpeado por un movimiento de tipo Eléctrico." },
+      { name: "Absorbe electricidad", description: "Si lo alcanza un movimiento de tipo eléctrico, recupera PS en vez de sufrir daño." }
+    ],
+    moves: [
+      { id: "thunder-shock", name: "Impactrueno", type: "fighting" },
+      { id: "thunderbolt", name: "Rayo", type: "fighting" },
+      { id: "volt-switch", name: "Voltiocambio", type: "fighting" },
+      { id: "wild-charge", name: "Voltio Cruel", type: "fighting" },
+      { id: "Volt-Tackle", name: "Placaje eléctrico", type: "fighting" },
+      { id: "Shock-Wave", name: "Onda voltio", type: "fighting" },
+      { id: "Zap-Cannon", name: "Electrocañón", type: "fighting" },
+      { id: "Thunder Punch", name: "Puño trueno", type: "fighting" }
+    ]
+  },
   electric: {
     abilities: [
       { name: "Pararrayos", description: "Atrae y anula los movimientos de tipo Eléctrico, aumentando el Ataque Especial." },
@@ -16,7 +174,8 @@ const typeData = {
       { id: "wild-charge", name: "Voltio Cruel", type: "electric" },
       { id: "Volt-Tackle", name: "Placaje eléctrico", type: "electric" },
       { id: "Shock-Wave", name: "Onda voltio", type: "electric" },
-      { id: "Zap-Cannon", name: "Electrocañón", type: "electric" }
+      { id: "Zap-Cannon", name: "Electrocañón", type: "electric" },
+      { id: "Thunder Punch", name: "Puño trueno", type: "electric" }
     ]
   },
   grass: {

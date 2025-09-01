@@ -296,5 +296,31 @@ export const generacionEspecial = [
                     {id: 1045,name: "Menox",sprite: "/img-special/1045.png",details:{trigger:{name:'level-up'}, min_level: 20 }}
     ],
   },
+  {
+    id: 1046,
+    name: "Octiblu",
+    types: ["water"],
+    imageUrl: "/img-special/1046.png",
+    stats: { hp: 55, attack: 45, defense: 50, 'special-attack': 65, 'special-defense': 55, speed: 50 },
+    height: 5,
+    weight: 72,
+    description: "Octiblu es un Pokémon juguetón que habita en aguas poco profundas. Su cuerpo emite una suave luz azul que calma a quienes lo rodean. Es conocido por formar burbujas con propiedades relajantes, y suele acompañar a entrenadores jóvenes por su naturaleza amigable.",
+    evolutionLine: [{id: 1046, name: "Octiblu", sprite: "/img-special/1046.png"},
+                    {id: 1047,name: "Krakenox",sprite: "/img-special/1047.png",details:{trigger:{name:'level-up'}, min_level: 20 }}
+    ],
+  },
+  {
+    id: 1047,
+    name: "Krakenox",
+    types: ["water","poison"],
+    imageUrl: "/img-special/1047.png",
+    stats: { hp: 80, attack: 70, defense: 75, 'special-attack': 100, 'special-defense': 85, speed: 70 },
+    height: 13,
+    weight: 380,
+    description: "Krakenox emerge de las profundidades cuando detecta actividad mental intensa. Sus tentáculos están recubiertos de ventosas que amplifican sus poderes psíquicos. Aunque su mirada es intimidante, solo ataca si se siente amenazado. Se dice que puede manipular corrientes marinas con su mente.",
+    evolutionLine: [{id: 1046, name: "Octiblu", sprite: "/img-special/1046.png"},
+                    {id: 1047,name: "Krakenox",sprite: "/img-special/1047.png",details:{trigger:{name:'level-up'}, min_level: 20 }}
+    ],
+  },
   // --- FIN DEL ESPACIO PARA COPIAR Y PEGAR ---
 ];
