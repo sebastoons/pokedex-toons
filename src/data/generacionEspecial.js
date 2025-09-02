@@ -379,7 +379,7 @@ export const generacionEspecial = [
   {
     id: 1052,
     name: "Fluffelle",
-    types: ["normal"],
+    types: ["fairy"],
     imageUrl: "/img-special/1052.png",
     stats: { hp: 75, attack: 50, defense: 60, 'special-attack': 85, 'special-defense': 80, speed: 70 },
     height: 7,
