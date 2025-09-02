@@ -345,7 +345,7 @@ export const generacionEspecial = [
     description: "Flambibi es una chispa viviente que aparece en zonas cálidas durante el atardecer. Su cuerpo flameante no quema al tacto, y su sonrisa constante lo convierte en un compañero ideal para entrenadores novatos. Se alimenta de emociones alegres.",
     evolutionLine: [{id: 1049, name: "Flambibi", sprite: "/img-special/1049.png"},
                     {id: 1050, name: "Pyrogeist",sprite: "/img-special/1050.png",details:{trigger:{name:'level-up'}, min_level: 18 }},
-                    {id: 1051, name: "Magmaraid",sprite: "/img-special/1051.png",details:{trigger:{name:'level-item'}, item: { name: 'fire-stone' }}}
+                    {id: 1051, name: "Magmaraid",sprite: "/img-special/1051.png",details:{trigger:{name:'use-item'}, item: { name: 'fire-stone' }}}
     ],
   },
   {
@@ -373,7 +373,7 @@ export const generacionEspecial = [
     description: "Furnaztor es la forma final, una estufa viviente alimentada por gas comprimido. Sus ojos rojos y boca ardiente reflejan su temperamento explosivo. Puede generar llamaradas capaces de fundir acero, y su presencia suele provocar apagones en zonas urbanas.",
     evolutionLine: [{id: 1049, name: "Flambibi", sprite: "/img-special/1049.png"},
                     {id: 1050, name: "Pyrogeist", sprite: "/img-special/1050.png",details:{trigger:{name:'level-up'}, min_level: 18 }},
-                    {id: 1051, name: "Magmaraid", sprite: "/img-special/1051.png",details:{trigger:{name:'item-up'}, item: { name: 'fire-stone' }}}
+                    {id: 1051, name: "Magmaraid", sprite: "/img-special/1051.png",details:{trigger:{name:'use-item'}, item: { name: 'fire-stone' }}}
     ],
   },
   {
