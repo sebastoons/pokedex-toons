@@ -49,9 +49,11 @@ const PokemonHeader = ({ pokemon, species }) => {
     return null;
   }
 
+  // --- CORRECCIÓN AQUÍ ---
+  // Hacemos la comprobación de 'sprites' más segura con encadenamiento opcional (?.)
   const imageUrl =
-    pokemon.sprites.other?.["official-artwork"]?.front_default ||
-    pokemon.sprites.front_default ||
+    pokemon.sprites?.other?.["official-artwork"]?.front_default ||
+    pokemon.sprites?.front_default ||
     `https://placehold.co/250x250/e0e0e0/333?text=No+Img`;
 
   return (
@@ -60,16 +62,17 @@ const PokemonHeader = ({ pokemon, species }) => {
       
       <img src={imageUrl} alt={pokemon.name} className="pokemon-detail-image"/>
 
-      <h3>Tipo</h3>
+      <h3>Tipos</h3>
       <div className="pokemon-types">
-        {pokemon.types.map(typeInfo => (
+        {/* Añadimos una comprobación aquí también por seguridad */}
+        {pokemon.types && pokemon.types.map(typeInfo => (
           <span key={typeInfo.type.name} className={`type-badge type-${typeInfo.type.name.toLowerCase()}`}>
             {translateTypeName(typeInfo.type.name)}
           </span>
         ))}
       </div>
 
-      <h3>Descripcion</h3>
+      <h3>Descripción Pokémon</h3>
       <p className="pokedex-entry-text">
           {species ? getSpanishDescription(species.flavor_text_entries) : "Cargando descripción..."}
       </p>
