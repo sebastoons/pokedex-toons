@@ -13,6 +13,7 @@ import WelcomeModal from './components/WelcomeModal';
 import UpdateModal from './components/UpdateModal';
 
 import { generacionEspecial } from './data/generacionEspecial';
+import  manualPokemonImages  from './data/manualPokemonImages';
 
 // Constantes
 const ALL_POKEMON_GENERATIONS = [
@@ -106,11 +107,14 @@ function App() {
                             const detailResponse = await fetch(pokemon.url);
                             if (!detailResponse.ok) return null;
                             const detailData = await detailResponse.json();
+                            // --- CORRECCIÓN AQUÍ ---
+                            // Ahora asignamos la imagen local a cada Pokémon de la API
                             return {
                                 name: detailData.name,
                                 url: pokemon.url,
                                 id: detailData.id,
-                                types: detailData.types.map(typeInfo => typeInfo.type.name)
+                                types: detailData.types.map(typeInfo => typeInfo.type.name),
+                                imageUrl: manualPokemonImages[detailData.id] || null // Asigna la imagen de tu archivo
                             };
                         } catch (detailErr) { return null; }
                     });
@@ -121,15 +125,14 @@ function App() {
                     }
                 }
 
-                // --- CORRECCIÓN: COMBINAMOS LAS LISTAS ANTES DE GUARDARLAS ---
                 const specialPokemonFormatted = generacionEspecial.map(p => ({
                   id: p.id,
                   name: p.name.toLowerCase(),
                   types: p.types,
+                  imageUrl: p.imageUrl, // Aseguramos que los especiales también tengan la imagen
                   isSpecial: true
                 }));
                 
-                // Guardamos la lista combinada de la API y la tuya en una sola vez
                 setPokemonList([...pokemonWithDetails, ...specialPokemonFormatted]);
 
             } catch (err) {
@@ -144,7 +147,6 @@ function App() {
 
     const filteredPokemon = useMemo(() => {
         let currentList = [...pokemonList];
-
         if (selectedGeneration) {
             if (selectedGeneration === 'special') {
                 currentList = currentList.filter(pokemon => pokemon.isSpecial);
@@ -157,7 +159,6 @@ function App() {
                 }
             }
         }
-
         if (searchTerm) {
             const lowerCaseSearchTerm = searchTerm.toLowerCase();
             currentList = currentList.filter(pokemon => 
@@ -165,11 +166,9 @@ function App() {
                 (pokemon.id && pokemon.id.toString().includes(lowerCaseSearchTerm))
             );
         }
-
         if (selectedType) {
             currentList = currentList.filter(pokemon => pokemon.types && pokemon.types.includes(selectedType));
         }
-
         return currentList;
     }, [pokemonList, searchTerm, selectedType, selectedGeneration]);
 
@@ -190,14 +189,12 @@ function App() {
           <button onClick={toggleMute} className="mute-button-main">{isMuted ? '🔊' : '🔇'}</button>
           {showWelcome && <WelcomeModal onClose={handleWelcomeClose} />}
           {showUpdate && <UpdateModal onClose={handleUpdateClose} />}
-          
           <header>
               <Link to="/" style={{ textDecoration: 'none', color: 'inherit' }}>
                   <img src="/logo.png" alt="Mi Pokedex Logo" className="pokedex-logo" />
                   <span style={{ textAlign: 'right', display: 'block', marginLeft: '150px', marginTop: '5px',fontWeight: 'bold',fontSize: '0.9em',fontFamily: 'monospace', color: '#ebebebff' }}>By Toons ♥ </span>
               </Link>
           </header>
-
           <Routes>
               <Route path="/" element={
                   <>
@@ -206,42 +203,16 @@ function App() {
                           <p>¡Encuentra a tu Pokémon favorito por nombre, ID o tipo!</p>
                       </div>
                       <div className="controls-container">
-                          <div>
-                              <label htmlFor="search-input">Nombre o ID:</label>
-                              <input id="search-input" type="text" placeholder="Buscar..." value={searchTerm} onChange={handleSearchChange} />
-                          </div>
-                          <div>
-                              <label htmlFor="type-filter">Tipo:</label>
-                              <select id="type-filter" value={selectedType} onChange={handleTypeChange}>
-                                  <option value="">Todos</option>
-                                  {ALL_POKEMON_TYPES.map(type => <option key={type.value} value={type.value}>{type.display}</option>)}
-                              </select>
-                          </div>
+                          <div><label htmlFor="search-input">Nombre o ID:</label><input id="search-input" type="text" placeholder="Buscar..." value={searchTerm} onChange={handleSearchChange} /></div>
+                          <div><label htmlFor="type-filter">Tipo:</label><select id="type-filter" value={selectedType} onChange={handleTypeChange}><option value="">Todos</option>{ALL_POKEMON_TYPES.map(type => <option key={type.value} value={type.value}>{type.display}</option>)}</select></div>
                           <div className="generation-filter-container">
-                              <button onClick={toggleGenMenu} className="generation-button">
-                                  Generación: {ALL_POKEMON_GENERATIONS.find(gen => gen.id.toString() === selectedGeneration)?.name || 'Seleccionar'}
-                              </button>
-                              {isGenMenuOpen && (
-                                  <ul className="generation-dropdown-menu">
-                                      {ALL_POKEMON_GENERATIONS.map(gen => (
-                                          <li key={gen.id} onClick={() => handleGenerationSelect(gen.id)} className={selectedGeneration === gen.id.toString() ? 'active' : ''}>
-                                              {gen.name}
-                                          </li>
-                                      ))}
-                                  </ul>
-                              )}
+                              <button onClick={toggleGenMenu} className="generation-button">Generación: {ALL_POKEMON_GENERATIONS.find(gen => gen.id.toString() === selectedGeneration)?.name || 'Seleccionar'}</button>
+                              {isGenMenuOpen && (<ul className="generation-dropdown-menu">{ALL_POKEMON_GENERATIONS.map(gen => (<li key={gen.id} onClick={() => handleGenerationSelect(gen.id)} className={selectedGeneration === gen.id.toString() ? 'active' : ''}>{gen.name}</li>))}</ul>)}
                           </div>
                           <Link to="/battle" className="battle-button">Ir a Batalla</Link>
                           <Link to="/moves" className="battle-button">MT/MO</Link>
                       </div>
-
-                      <div className="pokemon-list">
-                          {filteredPokemon.length > 0 ? (
-                              filteredPokemon.map(pokemon => <PokemonCard key={pokemon.id} pokemon={pokemon} />)
-                          ) : (
-                              <div className="no-results">No se encontraron Pokémon.</div>
-                          )}
-                      </div>
+                      <div className="pokemon-list">{filteredPokemon.length > 0 ? (filteredPokemon.map(pokemon => <PokemonCard key={pokemon.id} pokemon={pokemon} />)) : (<div className="no-results">No se encontraron Pokémon.</div>)}</div>
                   </>
               } />
               <Route path="/pokemon/:pokemonId" element={<PokemonDetail />} />
