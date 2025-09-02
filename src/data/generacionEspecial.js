@@ -322,5 +322,71 @@ export const generacionEspecial = [
                     {id: 1047,name: "Krakenox",sprite: "/img-special/1047.png",details:{trigger:{name:'level-up'}, min_level: 20 }}
     ],
   },
+  {
+    id: 1048,
+    name: "Lumibolt",
+    types: ["electric"],
+    imageUrl: "/img-special/1048.png",
+    stats: { hp: 50, attack: 65, defense: 50, 'special-attack': 70, 'special-defense': 50, speed: 75 },
+    height: 6,
+    weight: 98,
+    description: "Lumibolt es un Pokémon que transforma energía eléctrica en fuerza física. Su cuerpo de vidrio vibra cuando está cargado, y sus brazos de cable pueden extenderse para atacar a distancia. Se le encuentra cerca de generadores y torres de alta tensión, donde absorbe energía para mantenerse activo.",
+    evolutionLine: [{id: 1048, name: "Lumibolt", sprite: "/img-special/1048.png"}
+    ],
+  },
+  {
+    id: 1049,
+    name: "Flambibi",
+    types: ["fire"],
+    imageUrl: "/img-special/1049.png",
+    stats: { hp: 45, attack: 40, defense: 35, 'special-attack': 60, 'special-defense': 55, speed: 65 },
+    height: 4,
+    weight: 32,
+    description: "Flambibi es una chispa viviente que aparece en zonas cálidas durante el atardecer. Su cuerpo flameante no quema al tacto, y su sonrisa constante lo convierte en un compañero ideal para entrenadores novatos. Se alimenta de emociones alegres.",
+    evolutionLine: [{id: 1049, name: "Flambibi", sprite: "/img-special/1049.png"},
+                    {id: 1050,name: "Pyrogeist",sprite: "/img-special/1050.png",details:{trigger:{name:'level-up'}, min_level: 16 }},
+                    {id: 1051,name: "Magmaraid",sprite: "/img-special/1051.png",details:{trigger:{name:'level-up'}, min_level: 36 }}
+    ],
+  },
+  {
+    id: 1050,
+    name: "Pyrogeist",
+    types: ["fire"],
+    imageUrl: "/img-special/1050.png",
+    stats: { hp: 65, attack: 70, defense: 60, 'special-attack': 85, 'special-defense': 70, speed: 80 },
+    height: 9,
+    weight: 125,
+    description: "Pyrogeist es la forma evolucionada de Flambibi, una entidad ígnea que toma forma humanoide. Sus llamas cambian de color según su estado emocional, y puede atravesar objetos sólidos dejando marcas de quemadura. Se le asocia con leyendas de espíritus guardianes del fuego.",
+    evolutionLine: [{id: 1049, name: "Flambibi", sprite: "/img-special/1049.png"},
+                    {id: 1050,name: "Pyrogeist",sprite: "/img-special/1050.png",details:{trigger:{name:'level-up'}, min_level: 18 }},
+                    {id: 1051,name: "Magmaraid",sprite: "/img-special/1051.png",details:{trigger:{name:'use-item'}, item: 'fire-stone' }}
+    ],
+  },
+  {
+    id: 1051,
+    name: "Magmaraid",
+    types: ["fire","rock"],
+    imageUrl: "/img-special/1051.png",
+    stats: { hp: 95, attack: 110, defense: 100, 'special-attack': 90, 'special-defense': 85, speed: 70 },
+    height: 16,
+    weight: 850,
+    description: "Furnaztor es la forma final, una estufa viviente alimentada por gas comprimido. Sus ojos rojos y boca ardiente reflejan su temperamento explosivo. Puede generar llamaradas capaces de fundir acero, y su presencia suele provocar apagones en zonas urbanas.",
+    evolutionLine: [{id: 1049, name: "Flambibi", sprite: "/img-special/1049.png"},
+                    {id: 1050,name: "Pyrogeist",sprite: "/img-special/1050.png",details:{trigger:{name:'level-up'}, min_level: 18 }},
+                    {id: 1051,name: "Magmaraid",sprite: "/img-special/1051.png",details:{trigger:{name:'item-up'}, item: 'fire-stone' }}
+    ],
+  },
+  {
+    id: 1052,
+    name: "Fluffelle",
+    types: ["normal"],
+    imageUrl: "/img-special/1052.png",
+    stats: { hp: 75, attack: 50, defense: 60, 'special-attack': 85, 'special-defense': 80, speed: 70 },
+    height: 7,
+    weight: 108,
+    description: "Fluffelle es un Pokémon que detecta el estado emocional de quienes lo rodean. Sus cintas flotantes emiten pulsos que calman la ansiedad y fortalecen lazos afectivos. Se le encuentra en parques tranquilos y jardines floridos, donde su presencia mejora el ánimo de todos los seres vivos.",
+    evolutionLine: [{id: 1052, name: "Fluffelle", sprite: "/img-special/1052.png"}
+    ],
+  },
   // --- FIN DEL ESPACIO PARA COPIAR Y PEGAR ---
 ];
