@@ -388,5 +388,59 @@ export const generacionEspecial = [
     evolutionLine: [{id: 1052, name: "Fluffelle", sprite: "/img-special/1052.png"}
     ],
   },
+  {
+    id: 1053,
+    name: "Punchavox",
+    types: ["electric","fighting"],
+    imageUrl: "/img-special/1053.png",
+    stats: { hp: 70, attack: 90, defense: 65, 'special-attack': 50, 'special-defense': 60, speed: 75 },
+    height: 9,
+    weight: 285,
+    description: "Punchavox es un Pokémon que transmite energía a través de sus puños. Su pantalla muestra expresiones que cambian según el combate, y sus antenas captan vibraciones electromagnéticas para anticipar los movimientos del rival. Se le encuentra en gimnasios abandonados, entrenando frente a espejos rotos.",
+    evolutionLine: [{id: 1053, name: "Punchavox", sprite: "/img-special/1053.png"}
+    ],
+  },
+  {
+    id: 1054,
+    name: "Boxpecter",
+    types: ["dark"],
+    imageUrl: "/img-special/1054.png",
+    stats: { hp: 40, attack: 50, defense: 30, 'special-attack': 65, 'special-defense': 35, speed: 50 },
+    height: 12,
+    weight: 38,
+    description: "Boxpecter es un Pokémon misterioso que aparece como si surgiera de la nada. Sus piernas delgadas lo hacen tambalearse al caminar, pero se desliza con facilidad por superficies lisas. Se dice que habita en cajas olvidadas en rincones oscuros.",
+    evolutionLine: [{id: 1054, name: "Boxpecter", sprite: "/img-special/1054.png"},
+                    {id: 1055, name: "Spectross", sprite: "/img-special/1055.png",details:{trigger:{name:'level-up'}, min_level: 16 }},
+                    {id: 1056, name: "Aggregast", sprite: "/img-special/1056.png",details:{trigger:{name:'use-item'}, item: { name: 'fire-stone' }}}
+    ],
+  },
+  {
+    id: 1055,
+    name: "Spectross",
+    types: ["dark"],
+    imageUrl: "/img-special/1055.png",
+    stats: { hp: 55, attack: 70, defense: 55, 'special-attack': 80, 'special-defense': 65, speed: 60 },
+    height: 17,
+    weight: 62,
+    description: "FSpectross extiende sus brazos en silencio para atrapar a sus enemigos. A pesar de su figura delgada y alargada, posee una fuerza física sorprendente. Su presencia suele causar interferencias en dispositivos electrónicos.",
+    evolutionLine: [{id: 1054, name: "Boxpecter", sprite: "/img-special/1054.png"},
+                    {id: 1055, name: "Spectross", sprite: "/img-special/1055.png",details:{trigger:{name:'level-up'}, min_level: 16 }},
+                    {id: 1056, name: "Aggregast", sprite: "/img-special/1056.png",details:{trigger:{name:'use-item'}, item: { name: 'fire-stone' }}}
+    ],
+  },
+  {
+    id: 1056,
+    name: "Aggregast",
+    types: ["fairy"],
+    imageUrl: "/img-special/1056.png",
+    stats: { hp: 85, attack: 110, defense: 95, 'special-attack': 70, 'special-defense': 80, speed: 70 },
+    height: 18,
+    weight: 1150,
+    description: "Aggregast es un Pokémon estoico con una constitución imponente. Su golpe puede dejar cráteres en el suelo, aunque rara vez muestra agresividad. Se le considera un protector silencioso de ruinas antiguas y templos olvidados.",
+    evolutionLine: [{id: 1054, name: "Boxpecter", sprite: "/img-special/1054.png"},
+                    {id: 1055, name: "Spectross", sprite: "/img-special/1055.png",details:{trigger:{name:'level-up'}, min_level: 16 }},
+                    {id: 1056, name: "Aggregast", sprite: "/img-special/1056.png",details:{trigger:{name:'use-item'}, item: { name: 'fire-stone' }}}
+    ],
+  },
   // --- FIN DEL ESPACIO PARA COPIAR Y PEGAR ---
 ];
