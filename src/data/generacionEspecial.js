@@ -410,8 +410,8 @@ export const generacionEspecial = [
     weight: 38,
     description: "Boxpecter es un Pokémon misterioso que aparece como si surgiera de la nada. Sus piernas delgadas lo hacen tambalearse al caminar, pero se desliza con facilidad por superficies lisas. Se dice que habita en cajas olvidadas en rincones oscuros.",
     evolutionLine: [{id: 1054, name: "Boxpecter", sprite: "/img-special/1054.png"},
-                    {id: 1055, name: "Spectross", sprite: "/img-special/1055.png",details:{trigger:{name:'level-up'}, min_level: 16 }},
-                    {id: 1056, name: "Aggregast", sprite: "/img-special/1056.png",details:{trigger:{name:'use-item'}, item: { name: 'fire-stone' }}}
+                    {id: 1055, name: "Spectross", sprite: "/img-special/1055.png",details:{trigger:{name:'level-up'}, min_level: 20 }},
+                    {id: 1056, name: "Aggregast", sprite: "/img-special/1056.png",details:{trigger:{name:'level-up'}, min_level: 40 }}
     ],
   },
   {
@@ -424,22 +424,88 @@ export const generacionEspecial = [
     weight: 62,
     description: "FSpectross extiende sus brazos en silencio para atrapar a sus enemigos. A pesar de su figura delgada y alargada, posee una fuerza física sorprendente. Su presencia suele causar interferencias en dispositivos electrónicos.",
     evolutionLine: [{id: 1054, name: "Boxpecter", sprite: "/img-special/1054.png"},
-                    {id: 1055, name: "Spectross", sprite: "/img-special/1055.png",details:{trigger:{name:'level-up'}, min_level: 16 }},
-                    {id: 1056, name: "Aggregast", sprite: "/img-special/1056.png",details:{trigger:{name:'use-item'}, item: { name: 'fire-stone' }}}
+                    {id: 1055, name: "Spectross", sprite: "/img-special/1055.png",details:{trigger:{name:'level-up'}, min_level: 20 }},
+                    {id: 1056, name: "Aggregast", sprite: "/img-special/1056.png",details:{trigger:{name:'level-up'}, min_level: 40 }}
     ],
   },
   {
     id: 1056,
     name: "Aggregast",
-    types: ["fairy"],
+    types: ["dark","steel"],
     imageUrl: "/img-special/1056.png",
     stats: { hp: 85, attack: 110, defense: 95, 'special-attack': 70, 'special-defense': 80, speed: 70 },
     height: 18,
     weight: 1150,
     description: "Aggregast es un Pokémon estoico con una constitución imponente. Su golpe puede dejar cráteres en el suelo, aunque rara vez muestra agresividad. Se le considera un protector silencioso de ruinas antiguas y templos olvidados.",
     evolutionLine: [{id: 1054, name: "Boxpecter", sprite: "/img-special/1054.png"},
-                    {id: 1055, name: "Spectross", sprite: "/img-special/1055.png",details:{trigger:{name:'level-up'}, min_level: 16 }},
-                    {id: 1056, name: "Aggregast", sprite: "/img-special/1056.png",details:{trigger:{name:'use-item'}, item: { name: 'fire-stone' }}}
+                    {id: 1055, name: "Spectross", sprite: "/img-special/1055.png",details:{trigger:{name:'level-up'}, min_level: 20 }},
+                    {id: 1056, name: "Aggregast", sprite: "/img-special/1056.png",details:{trigger:{name:'level-up'}, min_level: 40 }}
+    ],
+  },
+  {
+    id: 1057,
+    name: "Sweepurt",
+    types: ["normal"],
+    imageUrl: "/img-special/1057.png",
+    stats: { hp: 60, attack: 65, defense: 60, 'special-attack': 40, 'special-defense': 55, speed: 60 },
+    height: 7,
+    weight: 50,
+    description: "Sweepurt es un Pokémon que disfruta ordenando el hogar de su entrenador. Barre con entusiasmo para dispersar enemigos y residuos peligrosos. Su energía aumenta en ambientes limpios, y se dice que puede detectar impurezas ocultas bajo tierra.",
+    evolutionLine: [{id: 1057, name: "Sweepurt", sprite: "/img-special/1057.png"}
+    ],
+  },
+  {
+    id: 1058,
+    name: "Appunchi",
+    types: ["grass"],
+    imageUrl: "/img-special/1058.png",
+    stats: { hp: 50, attack: 40, defense: 45, 'special-attack': 55, 'special-defense': 50, speed: 60 },
+    height: 4,
+    weight: 32,
+    description: "Appunchi es un Pokémon alegre que vive en huertos soleados. Su piel brillante y su energía positiva lo hacen popular entre entrenadores jóvenes. Aunque parece inofensivo, puede lanzar pequeños destellos de energía desde su hoja cuando se emociona.",
+    evolutionLine: [{id: 1058, name: "Appunchi", sprite: "/img-special/1058.png"},
+                    {id: 1059, name: "Frutox", sprite: "/img-special/1059.png",details:{trigger:{name:'level-up'}, min_level: 18 }},
+                    {id: 1060, name: "Pomblitz", sprite: "/img-special/1060.png",details:{trigger:{name:'level-up'}, min_level: 34 }}
+    ],
+  },
+  {
+    id: 1059,
+    name: "Frutox",
+    types: ["grass","ghost"],
+    imageUrl: "/img-special/1059.png",
+    stats: { hp: 70, attack: 80, defense: 65, 'special-attack': 65, 'special-defense': 65, speed: 70 },
+    height: 8,
+    weight: 120,
+    description: "Frutox ha desarrollado extremidades óseas que usa para defender su territorio. Su hoja trasera se convierte en una cola afilada que utiliza como látigo. Se le ve entrenando en campos abiertos, golpeando árboles para fortalecer sus brazos.",
+    evolutionLine: [{id: 1058, name: "Appunchi", sprite: "/img-special/1058.png"},
+                    {id: 1059, name: "Frutox", sprite: "/img-special/1059.png",details:{trigger:{name:'level-up'}, min_level: 18 }},
+                    {id: 1060, name: "Pomblitz", sprite: "/img-special/1060.png",details:{trigger:{name:'level-up'}, min_level: 34 }}
+    ],
+  },
+  {
+    id: 1060,
+    name: "Pomblitz",
+    types: ["grass","ghost"],
+    imageUrl: "/img-special/1060.png",
+    stats: { hp: 90, attack: 110, defense: 85, 'special-attack': 70, 'special-defense': 80, speed: 80 },
+    height: 13,
+    weight: 385,
+    description: "Pomblitz es la forma final, una fruta viviente con poder explosivo. Su cuerpo está reforzado con energía vegetal concentrada, y sus brazos pueden romper rocas con facilidad. Se dice que su mordida puede liberar una onda de choque si está en combate intenso.",
+    evolutionLine: [{id: 1058, name: "Appunchi", sprite: "/img-special/1058.png"},
+                    {id: 1059, name: "Frutox", sprite: "/img-special/1059.png",details:{trigger:{name:'level-up'}, min_level: 18 }},
+                    {id: 1060, name: "Pomblitz", sprite: "/img-special/1060.png",details:{trigger:{name:'level-up'}, min_level: 34 }}
+    ],
+  },
+  {
+    id: 1061,
+    name: "Tungoon",
+    types: ["dark","rock"],
+    imageUrl: "/img-special/1061.png",
+    stats: { hp: 85, attack: 95, defense: 80, 'special-attack': 70, 'special-defense': 65, speed: 55 },
+    height: 9,
+    weight: 386,
+    description: "Tungoon es un Pokémon travieso que asusta a otros con su lengua babosa. Su apetito es insaciable, y suele aparecer durante noches sin luna. Se desliza silenciosamente por los cielos, dejando una estela de energía oscura que altera los sueños de quienes duermen cerca.",
+    evolutionLine: [{id: 1061, name: "Tungoon", sprite: "/img-special/1061.png"}
     ],
   },
   // --- FIN DEL ESPACIO PARA COPIAR Y PEGAR ---
