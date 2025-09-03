@@ -508,5 +508,47 @@ export const generacionEspecial = [
     evolutionLine: [{id: 1061, name: "Tungoon", sprite: "/img-special/1061.png"}
     ],
   },
+  {
+    id: 1062,
+    name: "Dralivy",
+    types: ["dragon"],
+    imageUrl: "/img-special/1062.png",
+    stats: { hp: 50, attack: 45, defense: 40, 'special-attack': 55, 'special-defense': 50, speed: 65 },
+    height: 8,
+    weight: 95,
+    description: "Dralivy es un Pokémon serpentino que flota suavemente en el aire. Sus alas pequeñas le permiten planear entre árboles, y su carácter amistoso lo convierte en un compañero ideal para entrenadores principiantes. Se alimenta de frutas y luz solar.",
+    evolutionLine: [{id: 1062, name: "Dralivy", sprite: "/img-special/1062.png"},
+                    {id: 1063, name: "Dravolt", sprite: "/img-special/1063.png",details:{trigger:{name:'level-up'}, min_level: 20 }},
+                    {id: 1064, name: "Ignidrake", sprite: "/img-special/1064.png",details:{trigger:{name:'level-up'}, min_level: 38 }}
+    ],
+  },
+  {
+    id: 1063,
+    name: "Dravolt",
+    types: ["dragon","flying"],
+    imageUrl: "/img-special/1063.png",
+    stats: { hp: 75, attack: 90, defense: 70, 'special-attack': 60, 'special-defense': 65, speed: 80 },
+    height: 14,
+    weight: 420,
+    description: "Dravolt ha desarrollado un cuerpo musculoso y alas reforzadas con energía interna. Sus garras pueden cortar roca, y su entrenamiento constante lo convierte en un combatiente formidable. Se le ve en montañas aisladas, perfeccionando su técnica.",
+    evolutionLine: [{id: 1062, name: "Dralivy", sprite: "/img-special/1062.png"},
+                    {id: 1063, name: "Dravolt", sprite: "/img-special/1063.png",details:{trigger:{name:'level-up'}, min_level: 20 }},
+                    {id: 1064, name: "Ignidrake", sprite: "/img-special/1064.png",details:{trigger:{name:'level-up'}, min_level: 38 }}
+    ],
+  },
+  {
+    id: 1064,
+    name: "Ignidrake",
+    types: ["dragon","flying"],
+    imageUrl: "/img-special/1064.png",
+    stats: { hp: 95, attack: 115, defense: 85, 'special-attack': 90, 'special-defense': 80, speed: 85 },
+    height: 19,
+    weight: 880,
+    description: "Ignidrake es la forma final, un dragón de fuego que domina el cielo y la tierra. Su aliento ígneo puede fundir acero, y sus alas generan corrientes térmicas que alteran el clima local. Solo los entrenadores más experimentados logran controlar su poder.",
+    evolutionLine: [{id: 1062, name: "Dralivy", sprite: "/img-special/1062.png"},
+                    {id: 1063, name: "Dravolt", sprite: "/img-special/1063.png",details:{trigger:{name:'level-up'}, min_level: 20 }},
+                    {id: 1064, name: "Ignidrake", sprite: "/img-special/1064.png",details:{trigger:{name:'level-up'}, min_level: 38 }}
+    ],
+  },
   // --- FIN DEL ESPACIO PARA COPIAR Y PEGAR ---
 ];
