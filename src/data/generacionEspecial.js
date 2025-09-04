@@ -550,5 +550,59 @@ export const generacionEspecial = [
                     {id: 1064, name: "Ignidrake", sprite: "/img-special/1064.png",details:{trigger:{name:'level-up'}, min_level: 38 }}
     ],
   },
+  {
+    id: 1065,
+    name: "Buddo",
+    types: ["grass"],
+    imageUrl: "/img-special/1065.png",
+    stats: { hp: 45, attack: 35, defense: 40, 'special-attack': 50, 'special-defense': 45, speed: 55 },
+    height: 3,
+    weight: 28,
+    description: "mBuddo es un Pokémon redondo y curioso que rueda por los campos buscando rayos de sol. Su cuerpo es suave y cálido, y su hoja dorsal vibra cuando está feliz. Aunque parece indefenso, puede endurecer su piel si se siente en peligro.",
+    evolutionLine: [{id: 1065, name: "Buddo", sprite: "/img-special/1065.png"},
+                    {id: 1066, name: "Thornox", sprite: "/img-special/1066.png",details:{trigger:{name:'level-up'}, min_level: 16 }},
+                    {id: 1067, name: "Verdanox", sprite: "/img-special/1067.png",details:{trigger:{name:'use-item'}, item: { name: 'grass-stone' }}}
+    ],
+  },
+  {
+    id: 1066,
+    name: "Thornox",
+    types: ["grass","dark"],
+    imageUrl: "/img-special/1066.png",
+    stats: { hp: 65, attack: 75, defense: 60, 'special-attack': 70, 'special-defense': 65, speed: 70 },
+    height: 8,
+    weight: 135,
+    description: "Thornox ha endurecido su cuerpo y desarrollado brazos fuertes con espinas. Su actitud es desafiante, y defiende su territorio con ferocidad. Se le ve entrenando golpeando troncos y rocas para fortalecer sus extremidades.",
+    evolutionLine: [{id: 1065, name: "Buddo", sprite: "/img-special/1065.png"},
+                    {id: 1066, name: "Thornox", sprite: "/img-special/1066.png",details:{trigger:{name:'level-up'}, min_level: 16 }},
+                    {id: 1067, name: "Verdanox", sprite: "/img-special/1067.png",details:{trigger:{name:'use-item'}, item: { name: 'grass-stone' }}}
+    ],
+  },
+  {
+    id: 1067,
+    name: "Verdanox",
+    types: ["grass","dark"],
+    imageUrl: "/img-special/1067.png",
+    stats: { hp: 95, attack: 110, defense: 85, 'special-attack': 90, 'special-defense': 90, speed: 75 },
+    height: 18,
+    weight: 820,
+    description: "Verdanox es un guardián ancestral del bosque. Su cuerpo está formado por corteza viva y canales de energía verde que recorren sus músculos. Sus puños pueden romper rocas, pero solo los usa para proteger a los más débiles. Se dice que puede comunicarse con los árboles más antiguos.",
+    evolutionLine: [{id: 1065, name: "Buddo", sprite: "/img-special/1065.png"},
+                    {id: 1066, name: "Thornox", sprite: "/img-special/1066.png",details:{trigger:{name:'level-up'}, min_level: 16 }},
+                    {id: 1067, name: "Verdanox", sprite: "/img-special/1067.png",details:{trigger:{name:'use-item'}, item: { name: 'grass-stone' }}}
+    ],
+  },
+  {
+    id: 1068,
+    name: "Emenuts",
+    types: ["fairy","grass"],
+    imageUrl: "/img-special/1068.png",
+    stats: { hp: 70, attack: 50, defense: 80, 'special-attack': 65, 'special-defense': 85, speed: 45 },
+    height: 6,
+    weight: 74,
+    description: "Emenuts se considera la realeza del huerto, aunque nadie lo haya coronado oficialmente. Con su sonrisa encantadora y mirada brillante, convence a otros Pokémon de hacer su trabajo por él. Dicen que su corona no es mágica, pero su carisma sí lo es.",
+    evolutionLine: [{id: 1068, name: "Emenuts", sprite: "/img-special/1068.png"}
+    ],
+  },
   // --- FIN DEL ESPACIO PARA COPIAR Y PEGAR ---
 ];
