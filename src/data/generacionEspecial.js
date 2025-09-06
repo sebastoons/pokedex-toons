@@ -604,5 +604,69 @@ export const generacionEspecial = [
     evolutionLine: [{id: 1068, name: "Emenuts", sprite: "/img-special/1068.png"}
     ],
   },
+  {
+    id: 1069,
+    name: "Spikron",
+    types: ["steel"],
+    imageUrl: "/img-special/1069.png",
+    stats: { hp: 50, attack: 55, defense: 60, 'special-attack': 65, 'special-defense': 50, speed: 55 },
+    height: 5,
+    weight: 120,
+    description: "Spikron es un Pokémon flotante que acumula energía en su núcleo metálico. Sus pinchos actúan como antenas que detectan campos magnéticos, y puede emitir descargas eléctricas si se siente amenazado. Se le encuentra cerca de instalaciones abandonadas o zonas con alta carga eléctrica.",
+    evolutionLine: [{id: 1069, name: "Spikron", sprite: "/img-special/1069.png"},
+                    {id: 1070, name: "Voltarmor", sprite: "/img-special/1070.png",details:{trigger:{name:'level-up'}, min_level: 25 }}
+    ],
+  },
+  {
+    id: 1070,
+    name: "Voltarmor",
+    types: ["steel","electric"],
+    imageUrl: "/img-special/1070.png",
+    stats: { hp: 85, attack: 100, defense: 95, 'special-attack': 80, 'special-defense': 85, speed: 70 },
+    height: 16,
+    weight: 980,
+    description: "Voltarmor es la evolución de Spikron, una máquina de combate con núcleo sobrecargado. Su armadura está reforzada con placas de titanio y líneas de energía que canalizan rayos concentrados. Sus cuernos funcionan como conductores de alto voltaje, capaces de perforar estructuras metálicas.",
+    evolutionLine: [{id: 1069, name: "Spikron", sprite: "/img-special/1069.png"},
+                    {id: 1070, name: "Voltarmor", sprite: "/img-special/1070.png",details:{trigger:{name:'level-up'}, min_level: 25 }}
+    ],
+  },
+  {
+    id: 1071,
+    name: "Magnocub",
+    types: ["electric","steel"],
+    imageUrl: "/img-special/1071.png",
+    stats: { hp: 45, attack: 40, defense: 55, 'special-attack': 65, 'special-defense': 55, speed: 60 },
+    height: 4,
+    weight: 68,
+    description: "EMagnocub es un Pokémon robótico que flota usando campos magnéticos. Sus antenas detectan ondas electromagnéticas, y puede comunicarse con dispositivos electrónicos cercanos. Es común verlo en laboratorios abandonados, absorbiendo energía residual.",
+    evolutionLine: [{id: 1071, name: "Magnocub", sprite: "/img-special/1071.png"}
+    ],
+  },
+  {
+    id: 1072,
+    name: "Spiknut",
+    types: ["ground"],
+    imageUrl: "/img-special/1072.png",
+    stats: { hp: 55, attack: 60, defense: 70, 'special-attack': 40, 'special-defense': 50, speed: 45 },
+    height: 5,
+    weight: 112,
+    description: "Spiknut es un Pokémon que se enrolla para protegerse de ataques. Su cuerpo dorado está cubierto de espinas metálicas que repelen a los depredadores. Aunque parece inofensivo, puede girar a gran velocidad para embestir con fuerza.",
+    evolutionLine: [{id: 1072, name: "Spiknut", sprite: "/img-special/1072.png"},
+                    {id: 1073, name: "Bravernox", sprite: "/img-special/1073.png",details:{trigger:{name:'level-up'}, min_level: 20 }}
+    ],
+  },
+  {
+    id: 1073,
+    name: "Bravernox",
+    types: ["ground","rock"],
+    imageUrl: "/img-special/1073.png",
+    stats: { hp: 90, attack: 110, defense: 100, 'special-attack': 60, 'special-defense': 85, speed:65 },
+    height: 14,
+    weight: 780,
+    description: "Bravernox es la evolución de Spiknut, un Pokémon de cuerpo blindado y temperamento firme. Sus puños pueden romper rocas, y su espalda espinada lo protege de ataques por sorpresa. Se le considera un defensor natural de zonas áridas y cavernas profundas.",
+    evolutionLine: [{id: 1072, name: "Spiknut", sprite: "/img-special/1072.png"},
+                    {id: 1073, name: "Bravernox", sprite: "/img-special/1073.png",details:{trigger:{name:'level-up'}, min_level: 20 }}
+    ],
+  },
   // --- FIN DEL ESPACIO PARA COPIAR Y PEGAR ---
 ];
