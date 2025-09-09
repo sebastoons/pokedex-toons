@@ -1,145 +1,186 @@
 // src/utils/typeEffectiveness.js
 
-// Definición de los tipos de Pokémon y sus colores asociados
-export const POKEMON_TYPES = {
-    normal: { name: 'Normal', color: '#A8A77A' },
-    fire: { name: 'Fuego', color: '#EE8130' },
-    water: { name: 'Agua', color: '#6390F0' },
-    grass: { name: 'Planta', color: '#7AC74C' },
-    electric: { name: 'Eléctrico', color: '#F7D02C' },
-    ice: { name: 'Hielo', color: '#96D9D6' },
-    fighting: { name: 'Lucha', color: '#C22E28' },
-    poison: { name: 'Veneno', color: '#A33EA1' },
-    ground: { name: 'Tierra', color: '#E2BF65' },
-    flying: { name: 'Volador', color: '#A98FF3' },
-    psychic: { name: 'Psíquico', color: '#F95587' },
-    bug: { name: 'Bicho', color: '#A6B91A' },
-    rock: { name: 'Roca', color: '#B6A136' },
-    ghost: { name: 'Fantasma', color: '#735797' },
-    dragon: { name: 'Dragón', color: '#6F35FC' },
-    steel: { name: 'Acero', color: '#B7B7CE' },
-    dark: { name: 'Siniestro', color: '#705746' },
-    fairy: { name: 'Hada', color: '#D685AD' },
-};
-
-// Tabla de efectividad de tipos (Ataque vs Defensa)
-// key: tipo atacante
-// value: objeto con 'superEffective' (x2), 'notEffective' (x0.5), 'noEffect' (x0)
-const TYPE_EFFECTIVENESS = {
+// Definir las relaciones de efectividad de tipos (simplificado como ejemplo)
+// Esto debería ser más completo con todos los tipos y sus interacciones.
+const typeRelations = {
     normal: {
-        notEffective: ['rock', 'steel'],
-        noEffect: ['ghost'],
+        immune: ['ghost'],
+        weaknesses: ['fighting'],
+        resistances: []
     },
     fire: {
-        superEffective: ['grass', 'ice', 'bug', 'steel'],
-        notEffective: ['fire', 'water', 'dragon', 'rock'],
+        immune: [],
+        weaknesses: ['water', 'ground', 'rock'],
+        resistances: ['fire', 'grass', 'ice', 'bug', 'steel', 'fairy']
     },
     water: {
-        superEffective: ['fire', 'ground', 'rock'],
-        notEffective: ['water', 'grass', 'dragon'],
+        immune: [],
+        weaknesses: ['grass', 'electric'],
+        resistances: ['fire', 'water', 'ice', 'steel']
     },
     grass: {
-        superEffective: ['water', 'ground', 'rock'],
-        notEffective: ['fire', 'grass', 'poison', 'flying', 'bug', 'dragon', 'steel'],
+        immune: [],
+        weaknesses: ['fire', 'ice', 'poison', 'flying', 'bug'],
+        resistances: ['water', 'electric', 'grass', 'ground']
     },
     electric: {
-        superEffective: ['water', 'flying'],
-        notEffective: ['electric', 'grass', 'dragon'],
-        noEffect: ['ground'],
+        immune: [],
+        weaknesses: ['ground'],
+        resistances: ['electric', 'flying', 'steel']
     },
     ice: {
-        superEffective: ['grass', 'ground', 'flying', 'dragon'],
-        notEffective: ['fire', 'water', 'ice', 'steel'],
+        immune: [],
+        weaknesses: ['fire', 'fighting', 'rock', 'steel'],
+        resistances: ['ice']
     },
     fighting: {
-        superEffective: ['normal', 'ice', 'rock', 'dark', 'steel'],
-        notEffective: ['poison', 'flying', 'psychic', 'bug', 'fairy'],
-        noEffect: ['ghost'],
+        immune: [],
+        weaknesses: ['flying', 'psychic', 'fairy'],
+        resistances: ['bug', 'rock', 'dark']
     },
     poison: {
-        superEffective: ['grass', 'fairy'],
-        notEffective: ['poison', 'ground', 'rock', 'ghost'],
-        noEffect: ['steel'],
+        immune: [],
+        weaknesses: ['ground', 'psychic'],
+        resistances: ['fighting', 'poison', 'grass', 'fairy']
     },
     ground: {
-        superEffective: ['fire', 'electric', 'poison', 'rock', 'steel'],
-        notEffective: ['grass', 'bug'],
-        noEffect: ['flying'],
+        immune: ['electric'],
+        weaknesses: ['water', 'grass', 'ice'],
+        resistances: ['poison', 'rock']
     },
     flying: {
-        superEffective: ['grass', 'fighting', 'bug'],
-        notEffective: ['electric', 'rock', 'steel'],
+        immune: ['ground'], // Ground moves have no effect
+        weaknesses: ['electric', 'ice', 'rock'],
+        resistances: ['fighting', 'bug', 'grass']
     },
     psychic: {
-        superEffective: ['fighting', 'poison'],
-        notEffective: ['psychic', 'steel'],
-        noEffect: ['dark'],
+        immune: [],
+        weaknesses: ['bug', 'ghost', 'dark'],
+        resistances: ['fighting', 'psychic']
     },
     bug: {
-        superEffective: ['grass', 'psychic', 'dark'],
-        notEffective: ['fire', 'fighting', 'poison', 'flying', 'ghost', 'steel', 'fairy'],
+        immune: [],
+        weaknesses: ['fire', 'flying', 'rock'],
+        resistances: ['fighting', 'ground', 'grass']
     },
     rock: {
-        superEffective: ['fire', 'ice', 'flying', 'bug'],
-        notEffective: ['fighting', 'ground', 'steel'],
+        immune: [],
+        weaknesses: ['fighting', 'ground', 'steel', 'water', 'grass'],
+        resistances: ['normal', 'fire', 'flying', 'poison']
     },
     ghost: {
-        superEffective: ['psychic', 'ghost'],
-        notEffective: ['dark'],
-        noEffect: ['normal'],
+        immune: ['normal', 'fighting'],
+        weaknesses: ['ghost', 'dark'],
+        resistances: ['poison', 'bug']
     },
     dragon: {
-        superEffective: ['dragon'],
-        notEffective: ['steel'],
-        noEffect: ['fairy'],
+        immune: [],
+        weaknesses: ['ice', 'dragon', 'fairy'],
+        resistances: ['fire', 'water', 'electric', 'grass']
     },
     steel: {
-        superEffective: ['ice', 'rock', 'fairy'],
-        notEffective: ['fire', 'water', 'electric', 'steel'],
-    },
-    dark: {
-        superEffective: ['psychic', 'ghost'],
-        notEffective: ['fighting', 'dark', 'fairy'],
+        immune: ['poison'],
+        weaknesses: ['fire', 'fighting', 'ground'],
+        resistances: ['normal', 'flying', 'rock', 'bug', 'steel', 'grass', 'psychic', 'ice', 'dragon', 'fairy']
     },
     fairy: {
-        superEffective: ['fighting', 'dragon', 'dark'],
-        notEffective: ['fire', 'poison', 'steel'],
+        immune: ['dragon'],
+        weaknesses: ['poison', 'steel'],
+        resistances: ['fighting', 'bug', 'dark']
     },
+    dark: {
+        immune: ['psychic'],
+        weaknesses: ['fighting', 'bug', 'fairy'],
+        resistances: ['ghost', 'dark']
+    }
 };
 
 /**
- * Calcula el multiplicador de daño basado en la efectividad de tipos.
- * @param {string} attackingType - El tipo del movimiento atacante (ej. 'fire').
- * @param {string[]} defendingTypes - Un array de los tipos del Pokémon defensor (ej. ['grass', 'poison']).
- * @returns {number} El multiplicador de daño (0, 0.25, 0.5, 1, 2, 4).
+ * Calcula el multiplicador de efectividad de un tipo de movimiento contra los tipos de un Pokémon defensor.
+ * @param {string} moveType - El tipo del movimiento (e.g., "fire").
+ * @param {string[]} defenderTypes - Un array con los tipos del Pokémon defensor (e.g., ["grass", "poison"]).
+ * @returns {object} Un objeto con el multiplicador numérico y un mensaje de efectividad.
  */
-export const calculateTypeEffectiveness = (attackingType, defendingTypes) => {
+export const calculateTypeEffectiveness = (moveType, defenderTypes) => {
     let multiplier = 1;
-    const effectivenessData = TYPE_EFFECTIVENESS[attackingType];
+    let message = '';
 
-    if (!effectivenessData) {
-        console.warn(`Tipo de ataque desconocido: ${attackingType}`);
-        return 1; // Si el tipo no está definido, asumimos daño normal
+    if (!moveType || !typeRelations[moveType]) {
+        return { multiplier: 1, message: 'El tipo del movimiento no es reconocido.' };
     }
 
-    defendingTypes.forEach(defendingType => {
-        if (effectivenessData.noEffect && effectivenessData.noEffect.includes(defendingType)) {
+    defenderTypes.forEach(dType => {
+        const relations = typeRelations[dType];
+        if (!relations) return; // Tipo defensor no reconocido
+
+        if (relations.immune.includes(moveType)) {
             multiplier *= 0;
-        } else if (effectivenessData.superEffective && effectivenessData.superEffective.includes(defendingType)) {
+        } else if (relations.weaknesses.includes(moveType)) {
             multiplier *= 2;
-        } else if (effectivenessData.notEffective && effectivenessData.notEffective.includes(defendingType)) {
+        } else if (relations.resistances.includes(moveType)) {
             multiplier *= 0.5;
         }
     });
 
-    return multiplier;
+    if (multiplier === 0) {
+        message = '¡No tiene efecto!';
+    } else if (multiplier >= 2) {
+        message = '¡Es súper efectivo!';
+    } else if (multiplier > 1 && multiplier < 2) { // Por ejemplo, 1.5x por un tipo y 1x por otro
+        message = 'Es efectivo.';
+    } else if (multiplier < 1 && multiplier > 0) {
+        message = 'No es muy efectivo...';
+    }
+
+    // Ajuste para mensajes de "cuádruple efectivo"
+    if (multiplier >= 4) {
+        message = '¡Es cuádruple efectivo!';
+    } else if (multiplier <= 0.25 && multiplier > 0) {
+        message = 'Apenas hace efecto...';
+    }
+
+
+    return { multiplier, message };
 };
 
-/**
- * Obtiene la información (nombre y color) de un tipo de Pokémon.
- * @param {string} typeName - El nombre del tipo en minúsculas (ej. 'fire').
- * @returns {object} Un objeto con 'name' y 'color', o un objeto por defecto si no se encuentra.
- */
-export const getTypeInfo = (typeName) => {
-    return POKEMON_TYPES[typeName] || { name: typeName.charAt(0).toUpperCase() + typeName.slice(1), color: '#68A090' }; // Default para tipos no encontrados
+// Puedes mantener o añadir tus otras funciones aquí si las necesitas
+export const getTypeInfo = (type) => {
+    return typeRelations[type];
+};
+
+export const getWeaknessesAndResistances = (types) => {
+    let allWeaknesses = new Set();
+    let allResistances = new Set();
+    let allImmunities = new Set();
+
+    types.forEach(type => {
+        const relations = typeRelations[type];
+        if (relations) {
+            relations.weaknesses.forEach(w => allWeaknesses.add(w));
+            relations.resistances.forEach(r => allResistances.add(r));
+            relations.immune.forEach(i => allImmunities.add(i));
+        }
+    });
+
+    // Remover duplicados y conflictos (ej. si un tipo es débil a algo y el otro lo resiste)
+    allWeaknesses.forEach(t => {
+        if (allResistances.has(t)) {
+            allWeaknesses.delete(t);
+            allResistances.delete(t); // Se cancelan
+        }
+        if (allImmunities.has(t)) {
+            allWeaknesses.delete(t); // La inmunidad siempre prevalece
+        }
+    });
+    allResistances.forEach(t => {
+        if (allImmunities.has(t)) {
+            allResistances.delete(t); // La inmunidad siempre prevalece
+        }
+    });
+
+    return {
+        weaknesses: Array.from(allWeaknesses),
+        resistances: Array.from(allResistances),
+        immunities: Array.from(allImmunities)
+    };
 };

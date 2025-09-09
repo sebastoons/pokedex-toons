@@ -1,0 +1,202 @@
+/* src/components/battle/PokemonBattleArena.css */
+
+.battle-arena-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: linear-gradient(to bottom, #343434, #242424ff); /* Cielo azul claro */
+    font-family: 'Press Start 2P', cursive; /* O alguna fuente de estilo pixel art */
+    color: #333;
+    position: relative;
+    overflow: hidden;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.battle-arena-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/dream-world/1.svg'); /* Ejemplo, puedes poner una imagen de fondo genérica o dejar solo el gradiente */
+    background-size: cover;
+    background-position: center;
+    opacity: 0.1; /* Sutil */
+    z-index: 0;
+}
+
+.battle-elements {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    width: 100%;
+    max-width: 1200px; /* Ancho máximo para el contenido de la batalla */
+    align-items: center;
+}
+
+.battle-top-section {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    padding: 0 20px; /* Espaciado lateral */
+    box-sizing: border-box;
+}
+
+.battle-bottom-section {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    align-items: center;
+}
+
+.battle-field {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end; /* Los Pokémon se asientan en la parte inferior de su área */
+    width: 100%;
+    min-height: 350px; /* Altura mínima para el campo de batalla */
+    padding: 20px;
+    box-sizing: border-box;
+    position: relative;
+}
+
+.field-grass-player, .field-grass-opponent {
+    position: absolute;
+    bottom: 50%; /* Ajusta esto para que el césped esté en la posición correcta */
+    height: 100px; /* Altura del "césped" */
+    background: linear-gradient(to top, #7CFC00, #32CD32); /* Césped */
+    border-radius: 50%; /* Forma ovalada */
+    filter: blur(5px); /* Efecto de desenfoque */
+    transform: translateY(50px); /* Ajuste vertical */
+    z-index: -1; /* Detrás de los Pokémon */
+}
+
+.field-grass-player {
+    left: 10%;
+    width: 300px;
+    height: 80px;
+    background: linear-gradient(to top, #32CD32, #228B22); /* Césped más oscuro para el jugador */
+    border-radius: 50% / 30%; /* Ovalado más marcado */
+    bottom: 0;
+    transform: translateY(30px);
+}
+
+.field-grass-opponent {
+    right: 10%;
+    width: 300px;
+    height: 80px;
+    background: linear-gradient(to top, #6B8E23, #556B2F); /* Césped más claro para el oponente */
+    border-radius: 50% / 30%;
+    bottom: 0;
+    transform: translateY(30px);
+}
+
+
+/* Adaptación para pantallas más pequeñas */
+@media (max-width: 768px) {
+    .battle-arena-container {
+        padding: 10px;
+    }
+
+    .battle-top-section {
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+        padding: 0 10px;
+    }
+
+    .battle-field {
+        flex-direction: column;
+        align-items: center;
+        min-height: 250px;
+        padding: 10px;
+    }
+    
+    .field-grass-player, .field-grass-opponent {
+        width: 200px;
+        height: 60px;
+        bottom: 5px; /* Ajusta la posición para móviles */
+    }
+
+    .field-grass-player {
+        left: 50%;
+        transform: translateX(-50%);
+        bottom: 0;
+    }
+    .field-grass-opponent {
+        right: 50%;
+        transform: translateX(50%);
+        bottom: 100px; /* Un poco más arriba para que no se superpongan tanto */
+    }
+
+    .battle-player-area, .battle-opponent-area {
+        margin: 10px 0; /* Espaciado entre ellos en móvil */
+    }
+}
+
+/* Animaciones */
+.pokemon-attacking {
+    animation: attack-animation 0.5s ease-in-out;
+}
+
+.pokemon-damaged {
+    animation: damage-animation 0.3s ease-out;
+}
+
+@keyframes attack-animation {
+    0% { transform: translate(0, 0); }
+    50% { transform: translate(20px, -20px); } /* Hacia adelante y un poco arriba */
+    100% { transform: translate(0, 0); }
+}
+
+@keyframes damage-animation {
+    0% { filter: brightness(1); }
+    50% { filter: brightness(2) drop-shadow(0 0 5px red); } /* Brillo y sombra roja */
+    100% { filter: brightness(1); }
+}
+
+/* Modales */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background: white;
+    padding: 30px;
+    border-radius: 10px;
+    text-align: center;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    font-size: 1.2rem;
+    color: #333;
+    max-width: 90%;
+}
+
+.modal-content button {
+    margin: 10px;
+    padding: 10px 20px;
+    font-size: 1rem;
+    cursor: pointer;
+    border: none;
+    border-radius: 5px;
+    background-color: #007bff;
+    color: white;
+    transition: background-color 0.3s ease;
+}
+
+.modal-content button:hover {
+    background-color: #0056b3;
+}

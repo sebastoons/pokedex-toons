@@ -1,0 +1,179 @@
+/* src/components/battle/CombatantUI.css */
+
+.combatant-ui-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    background-color: rgba(255, 255, 255, 0.9);
+    border: 3px solid #333;
+    border-radius: 15px;
+    padding: 15px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    width: 48%; /* Ocupa casi la mitad del ancho */
+    min-height: 180px; /* Altura mínima para asegurar espacio */
+    box-sizing: border-box;
+    transition: transform 0.3s ease;
+    margin: 10px 0; /* Espacio vertical */
+}
+
+/* Orientación para el jugador */
+.combatant-ui-container.player {
+    flex-direction: row-reverse; /* Sprite a la derecha, info a la izquierda */
+    justify-content: flex-end; /* Alinear a la derecha del contenedor */
+}
+
+/* Orientación para el oponente */
+.combatant-ui-container.opponent {
+    flex-direction: row; /* Sprite a la izquierda, info a la derecha */
+    justify-content: flex-start; /* Alinear a la izquierda del contenedor */
+}
+
+
+.pokemon-info {
+    flex-grow: 1; /* Ocupa el espacio restante */
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 0 10px;
+}
+
+.pokemon-name-hp {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    text-align: center;
+}
+
+.pokemon-name {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #333;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+}
+
+.hp-bar-container {
+    width: 100%;
+    background-color: #ddd;
+    border: 1px solid #555;
+    border-radius: 5px;
+    overflow: hidden;
+    height: 15px;
+}
+
+.hp-bar-fill {
+    height: 100%;
+    width: 100%; /* Valor por defecto, se sobrescribe con JS */
+    transition: width 0.5s ease-out, background-color 0.5s ease-out;
+    border-radius: 3px;
+}
+
+.hp-text {
+    font-size: 0.9rem;
+    color: #555;
+}
+
+.team-status {
+    display: flex;
+    justify-content: center;
+    gap: 5px;
+    margin-top: 10px;
+}
+
+.team-pokemon-icon {
+    width: 40px;
+    height: 40px;
+    border: 2px solid #666;
+    border-radius: 50%;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #eee;
+}
+
+.team-pokemon-icon img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    filter: brightness(0.9);
+}
+
+.team-pokemon-icon.fainted {
+    opacity: 0.4;
+    filter: grayscale(100%);
+}
+
+.team-pokemon-icon.active {
+    border-color: #007bff;
+    box-shadow: 0 0 8px rgba(0, 123, 255, 0.7);
+    transform: scale(1.1);
+}
+
+.pokemon-sprite-container {
+    width: 120px; /* Tamaño del sprite */
+    height: 120px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 10px;
+}
+
+.pokemon-sprite {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    image-rendering: pixelated; /* Para sprites de Pokémon */
+    transition: transform 0.2s ease-out, filter 0.2s ease-out;
+}
+
+/* Animaciones */
+.pokemon-sprite.attacking {
+    animation: attack-animation 0.5s ease-in-out;
+}
+
+.pokemon-sprite.damaged {
+    animation: damage-animation 0.3s ease-out;
+}
+
+@keyframes attack-animation {
+    0% { transform: translate(0, 0) scale(1); }
+    50% { transform: translate(20px, -20px) scale(1.1); } /* Hacia adelante y un poco arriba, escala ligeramente */
+    100% { transform: translate(0, 0) scale(1); }
+}
+
+@keyframes damage-animation {
+    0% { filter: brightness(1) sepia(0); transform: translateX(0); }
+    25% { filter: brightness(2) sepia(1) drop-shadow(0 0 5px red); transform: translateX(-5px); }
+    50% { filter: brightness(1) sepia(0); transform: translateX(5px); }
+    75% { filter: brightness(2) sepia(1) drop-shadow(0 0 5px red); transform: translateX(-5px); }
+    100% { filter: brightness(1) sepia(0); transform: translateX(0); }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .combatant-ui-container {
+        flex-direction: column !important; /* Forzar columna en móviles */
+        width: 95%;
+        margin-bottom: 20px;
+    }
+
+    .combatant-ui-container.player, .combatant-ui-container.opponent {
+        justify-content: center;
+        align-items: center;
+    }
+
+    .pokemon-info {
+        padding: 10px 0;
+        text-align: center;
+    }
+
+    .pokemon-name {
+        font-size: 1.2rem;
+    }
+
+    .pokemon-sprite-container {
+        width: 100px;
+        height: 100px;
+        margin: 10px 0;
+    }
+}

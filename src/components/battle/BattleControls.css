@@ -1,0 +1,164 @@
+/* src/components/battle/BattleControls.css */
+
+.battle-controls-container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 800px;
+    background-color: rgba(255, 255, 255, 0.95);
+    border: 3px solid #333;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    padding: 15px;
+    gap: 15px;
+    box-sizing: border-box;
+    margin-top: 20px;
+}
+
+.battle-log {
+    height: 120px;
+    overflow-y: auto;
+    background-color: #e0f2f7; /* Fondo más claro para el log */
+    border: 1px solid #a7d9ee;
+    border-radius: 8px;
+    padding: 10px;
+    font-size: 0.9rem;
+    color: #444;
+    line-height: 1.4;
+    scrollbar-width: thin; /* Firefox */
+    scrollbar-color: #888 #f1f1f1; /* Firefox */
+}
+
+.battle-log::-webkit-scrollbar {
+    width: 8px;
+}
+
+.battle-log::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+.battle-log::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 10px;
+}
+
+.battle-log::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+.log-message {
+    margin: 3px 0;
+    padding: 2px 0;
+}
+
+.action-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.moves-container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+}
+
+.move-button, .switch-button, .switch-team-button {
+    padding: 12px 15px;
+    font-size: 1rem;
+    font-weight: bold;
+    color: white;
+    background-color: #007bff; /* Azul primario */
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.1s ease;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
+}
+
+.move-button:hover:not(:disabled), .switch-button:hover:not(:disabled), .switch-team-button:hover:not(:disabled) {
+    background-color: #0056b3;
+    transform: translateY(-2px);
+}
+
+.move-button:disabled, .switch-button:disabled, .switch-team-button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+.switch-container {
+    display: flex;
+    justify-content: center;
+}
+
+.switch-team-button {
+    background-color: #28a745; /* Verde para cambiar */
+    width: 100%; /* Ocupa todo el ancho disponible */
+}
+
+.switch-team-button:hover:not(:disabled) {
+    background-color: #218838;
+}
+
+.switch-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+}
+
+.switch-options h2 {
+    width: 100%;
+    text-align: center;
+    margin-bottom: 10px;
+    font-size: 1.2rem;
+    color: #333;
+}
+
+.switch-button {
+    background-color: #ffc107; /* Amarillo para opciones de cambio */
+    color: #333;
+    flex: 1 1 auto; /* Permite que los botones se ajusten */
+    min-width: 120px; /* Ancho mínimo para cada botón */
+}
+
+.switch-button:hover:not(:disabled) {
+    background-color: #e0a800;
+}
+
+.switch-button.active-pokemon-button {
+    background-color: #17a2b8; /* Turquesa si es el activo (aunque debería estar deshabilitado) */
+}
+
+.switch-button.fainted-pokemon-button {
+    background-color: #dc3545; /* Rojo para debilitado */
+    text-decoration: line-through;
+    color: white;
+}
+
+@media (max-width: 768px) {
+    .battle-controls-container {
+        width: 95%;
+        padding: 10px;
+    }
+
+    .moves-container {
+        grid-template-columns: 1fr; /* Una columna en móvil */
+    }
+
+    .move-button, .switch-button, .switch-team-button {
+        font-size: 0.9rem;
+        padding: 10px;
+    }
+
+    .battle-log {
+        height: 100px;
+        font-size: 0.8rem;
+    }
+    
+    .switch-options {
+        flex-direction: column; /* Apilar opciones de cambio en móvil */
+    }
+}

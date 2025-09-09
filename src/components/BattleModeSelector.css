@@ -1,0 +1,82 @@
+/* src/components/BattleModeSelector.css */
+.battle-mode-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 50vh;
+  padding: 20px;
+  background-color: #2c3e50; /* Un fondo oscuro para la ocasión */
+  color: white;
+}
+
+.battle-mode-title {
+  font-family: 'Press Start 2P';
+  font-size: 1em;
+  color: #f1c40f;
+  margin-bottom: 40px;
+  text-shadow: 2px 2px 4px #000;
+  text-transform: uppercase;
+}
+
+.battle-mode-options {
+  display: flex;
+  gap: 30px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.mode-card {
+  background-color: rgba(255, 255, 255, 0.1);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-radius: 15px;
+  padding: 15px;
+  width: 250px;
+  text-align: center;
+  cursor: pointer;
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.mode-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
+  border-color: #f1c40f;
+}
+
+.mode-card h2 {
+  margin-top: 0;
+  color: #ffffff;
+  font-family: 'Press Start 2P';
+  font-size: 0.75em;
+  text-transform: uppercase;
+  text-shadow: 2px 2px 4px #000;
+}
+
+.mode-card p {
+  font-size: 0.9em;
+  color: #ccc;
+  line-height: 1.5;
+  font-family: monospace;
+  text-transform: uppercase;
+}
+
+.back-to-pokedex-button {
+  margin-top: 40px;
+  background-color: transparent;
+  color: white;
+  padding: 8px 15px;
+  text-decoration: none;
+  border: 2px solid white;
+  border-radius: 8px;
+  transition: background-color 0.2s, color 0.2s;
+  width: 45%;
+  font-family: monospace;
+  font-size: 0.8em;
+  text-transform: uppercase;
+}
+
+
+.back-to-pokedex-button:hover {
+  background-color: white;
+  color: #2c3e50;
+}

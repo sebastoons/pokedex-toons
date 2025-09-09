@@ -7,10 +7,11 @@ import ReactGA from 'react-ga4';
 import PokemonCard from './components/PokemonCard';
 import PokemonDetail from './components/PokemonDetail';
 import PokemonBattleSelector from './components/PokemonBattleSelector';
-import PokemonBattleArena from './components/PokemonBattleArena';
+import PokemonBattleArena from './components/battle/PokemonBattleArena';
 import MachineList from './components/MachineList';
 import WelcomeModal from './components/WelcomeModal';
 import UpdateModal from './components/UpdateModal';
+import BattleModeSelector from './components/BattleModeSelector';
 
 import { generacionEspecial } from './data/generacionEspecial';
 import  manualPokemonImages  from './data/manualPokemonImages';
@@ -216,7 +217,8 @@ function App() {
                   </>
               } />
               <Route path="/pokemon/:pokemonId" element={<PokemonDetail />} />
-              <Route path="/battle" element={<PokemonBattleSelector pokemonList={pokemonList} />} />
+              <Route path="/battle" element={<BattleModeSelector />} />
+              <Route path="/battle-selector" element={<PokemonBattleSelector pokemonList={pokemonList} />} />
               <Route path="/battle/arena" element={<PokemonBattleArena pokemonList={pokemonList} />} />
               <Route path="/moves" element={<MachineList />} />
               <Route path="*" element={<div className="error">Página no encontrada</div>} />
