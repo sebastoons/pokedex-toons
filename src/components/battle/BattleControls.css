@@ -1,125 +1,264 @@
-.battle-controls-modern {
-  background: rgba(255,255,255,0.92);
-  border-radius: 14px;
-  box-shadow: 0 4px 28px rgba(0,0,0,0.10);
-  padding: 18px 20px 14px 20px;
-  margin: 18px auto;
-  width: 96%;
-  max-width: 520px;
+/* src/components/battle/BattleControls.css */
+
+.battle-controls-container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 800px;
+    background-color: rgba(255, 255, 255, 0.95);
+    border: 3px solid #333;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    padding: 15px;
+    gap: 15px;
+    box-sizing: border-box;
+    margin-top: 20px;
 }
 
-.battle-log-modern {
-  background: rgba(245,245,245,0.96);
-  border-radius: 10px;
-  box-shadow: 0 2px 8px #bbb;
-  padding: 13px 14px;
-  min-height: 50px;
-  max-height: 120px;
-  font-family: 'Roboto Mono', 'Courier New', monospace;
-  font-size: 1em;
-  color: #222;
-  overflow-y: auto;
-  margin-bottom: 14px;
-}
-.log-message-modern {
-  margin-bottom: 3px;
-  line-height: 1.25;
-  opacity: 0.92;
+.battle-log {
+    height: 120px;
+    overflow-y: auto;
+    background-color: #e0f2f7; /* Fondo más claro para el log */
+    border: 1px solid #a7d9ee;
+    border-radius: 8px;
+    padding: 10px;
+    font-size: 0.9rem;
+    color: #444;
+    line-height: 1.4;
+    scrollbar-width: thin; /* Firefox */
+    scrollbar-color: #888 #f1f1f1; /* Firefox */
 }
 
-.action-buttons-modern {
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-  gap: 12px;
-}
-.moves-container-modern {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  justify-content: center;
-  margin-bottom: 10px;
-}
-.move-button-modern {
-  background: #616161;
-  color: #fff;
-  padding: 10px 18px;
-  border: none;
-  border-radius: 11px;
-  font-weight: bold;
-  letter-spacing: 1px;
-  box-shadow: 0 1px 4px #bdbdbd;
-  cursor: pointer;
-  transition: background .2s, transform .2s, box-shadow .2s;
-  margin-bottom: 4px;
-  font-size: 1em;
-  display: flex;
-  align-items: center;
-  gap: 7px;
-}
-.move-button-modern:active { transform: scale(1.09); }
-.move-button-modern[disabled] { opacity: 0.6; cursor: not-allowed; }
-
-.move-icon-modern {
-  width: 20px;
-  height: 20px;
-  display: inline-block;
-  background-color: #666666ff;
+.battle-log::-webkit-scrollbar {
+    width: 8px;
 }
 
-/* Ejemplo de colores por tipo */
-.move-button-modern.type-fire { background: linear-gradient(90deg,#ff6f3c 60%,#fe3261 150%); }
-.move-button-modern.type-water { background: linear-gradient(90deg,#2196f3 70%,#4fc3f7 140%); }
-.move-button-modern.type-grass { background: linear-gradient(90deg,#43ea7a 70%,#b8e986 140%); }
-.move-button-modern.type-electric { background: linear-gradient(90deg,#ffd600 70%,#ffe082 140%); color: #222;}
-.move-button-modern.type-psychic { background: linear-gradient(90deg,#f50057 70%,#ff80ab 140%);}
-.move-button-modern.type-bug { background: linear-gradient(90deg,#aeea00 70%,#c6ff00 140%); color: #222;}
-.move-button-modern.type-normal { background: #bdbdbd; color: #333;}
-/* Agrega más tipos si lo deseas */
+.battle-log::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
 
-.switch-container-modern { text-align: center; margin-top: 7px; }
-.switch-team-button-modern {
-  background: #1976d2;
-  color: #fff;
-  padding: 8px 22px;
-  border: none;
-  border-radius: 10px;
-  font-weight: bold;
-  box-shadow: 0 2px 8px #bdbdbd;
-  cursor: pointer;
-  transition: background .2s, transform .2s;
+.battle-log::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 10px;
 }
-.switch-team-button-modern:active { transform: scale(1.05); }
-.switch-team-button-modern[disabled] { opacity: 0.55; cursor: not-allowed; }
 
-.switch-options-modern {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-  justify-content: center;
-  margin-top: 10px;
+.battle-log::-webkit-scrollbar-thumb:hover {
+    background: #555;
 }
-.switch-button-modern {
-  background: #ffe082;
-  color: #222;
-  padding: 9px 14px;
-  border: 2px solid #eee;
-  border-radius: 12px;
-  font-weight: bold;
-  box-shadow: 0 1px 4px #bdbdbd;
-  cursor: pointer;
-  transition: background .2s, border-color .2s, transform .2s;
-  font-size: 1em;
+
+.log-message {
+    margin: 3px 0;
+    padding: 2px 0;
 }
-.switch-button-modern.active-pokemon-button {
-  border-color: #1976d2;
-  background: #bbdefb;
+
+.action-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
 }
-.switch-button-modern.fainted-pokemon-button {
-  background: #e57373;
-  color: #fff;
-  opacity: 0.4;
-  cursor: not-allowed;
+
+.moves-container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
 }
-.switch-button-modern:active { transform: scale(1.05); }
-.switch-button-modern[disabled] { cursor: not-allowed; opacity: 0.65; }
+
+.move-button, .switch-button, .switch-team-button {
+    padding: 12px 15px;
+    font-size: 1rem;
+    font-weight: bold;
+    color: white;
+    background-color: #007bff; /* Azul primario */
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.1s ease;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
+}
+
+.move-button:hover:not(:disabled), .switch-button:hover:not(:disabled), .switch-team-button:hover:not(:disabled) {
+    background-color: #0056b3;
+    transform: translateY(-2px);
+}
+
+.move-button:disabled, .switch-button:disabled, .switch-team-button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+.switch-container {
+    display: flex;
+    justify-content: center;
+}
+
+.switch-team-button {
+    background-color: #28a745; /* Verde para cambiar */
+    width: 100%; /* Ocupa todo el ancho disponible */
+}
+
+.switch-team-button:hover:not(:disabled) {
+    background-color: #218838;
+}
+
+.switch-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+}
+
+.switch-options h2 {
+    width: 100%;
+    text-align: center;
+    margin-bottom: 10px;
+    font-size: 1.2rem;
+    color: #333;
+}
+
+.switch-button {
+    background-color: #ffc107; /* Amarillo para opciones de cambio */
+    color: #333;
+    flex: 1 1 auto; /* Permite que los botones se ajusten */
+    min-width: 120px; /* Ancho mínimo para cada botón */
+}
+
+.switch-button:hover:not(:disabled) {
+    background-color: #e0a800;
+}
+
+.switch-button.active-pokemon-button {
+    background-color: #17a2b8; /* Turquesa si es el activo (aunque debería estar deshabilitado) */
+}
+
+.switch-button.fainted-pokemon-button {
+    background-color: #dc3545; /* Rojo para debilitado */
+    text-decoration: line-through;
+    color: white;
+}
+
+/* Estilos para mensajes especiales */
+.forced-switch-message {
+    text-align: center;
+    padding: 20px;
+    background-color: #fff3cd;
+    border: 2px solid #ffc107;
+    border-radius: 10px;
+    color: #856404;
+}
+
+.forced-switch-message h2 {
+    color: #dc3545;
+    margin-bottom: 10px;
+    font-size: 1.3rem;
+}
+
+.forced-switch-message p {
+    font-size: 1rem;
+    margin-bottom: 0;
+}
+
+.circle-switch-info {
+    text-align: center;
+    padding: 8px;
+    background-color: #e3f2fd;
+    border: 1px solid #2196f3;
+    border-radius: 5px;
+    margin-top: 5px;
+}
+
+.circle-switch-info small {
+    color: #1565c0;
+    font-size: 0.85rem;
+    font-style: italic;
+}
+
+/* Mejorar estilos de los botones de movimiento */
+.move-button {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+}
+
+.move-name {
+    font-weight: bold;
+    font-size: 0.9em;
+}
+
+.move-power {
+    font-size: 0.75em;
+    opacity: 0.9;
+}
+
+/* Estilos para los tipos de movimiento mejorados */
+.move-button.type-normal { background-color: #A8A878; }
+.move-button.type-fire { background-color: #EE8130; }
+.move-button.type-water { background-color: #6390F0; }
+.move-button.type-grass { background-color: #7AC74C; }
+.move-button.type-electric { background-color: #F7D02C; color: #333; }
+.move-button.type-ice { background-color: #96D9D6; color: #333; }
+.move-button.type-fighting { background-color: #C22E28; }
+.move-button.type-poison { background-color: #A33EA1; }
+.move-button.type-ground { background-color: #E2BF65; color: #333; }
+.move-button.type-flying { background-color: #A98FF3; }
+.move-button.type-psychic { background-color: #F95587; }
+.move-button.type-bug { background-color: #A6B91A; }
+.move-button.type-rock { background-color: #B6A136; }
+.move-button.type-ghost { background-color: #735797; }
+.move-button.type-dragon { background-color: #6F35FC; }
+.move-button.type-steel { background-color: #B7B7CE; color: #333; }
+.move-button.type-dark { background-color: #705746; }
+.move-button.type-fairy { background-color: #D685AD; color: #333; }
+
+@media (max-width: 768px) {
+    .battle-controls-container {
+        width: 95%;
+        max-width: 350px; /* Ancho más controlado en móvil */
+        padding: 8px;
+        margin-top: 10px;
+    }
+
+    .battle-log {
+        height: 80px; /* Altura más pequeña en móvil */
+        font-size: 0.8rem;
+        padding: 6px;
+    }
+
+    .moves-container {
+        grid-template-columns: 1fr; /* Una columna en móvil */
+        gap: 8px;
+    }
+
+    .move-button, .switch-button, .switch-team-button {
+        font-size: 0.85rem;
+        padding: 8px 10px;
+    }
+
+    .switch-options {
+        flex-direction: column; /* Apilar opciones de cambio en móvil */
+    }
+
+    .forced-switch-message {
+        padding: 12px;
+    }
+
+    .forced-switch-message h2 {
+        font-size: 1rem;
+        margin-bottom: 8px;
+    }
+
+    .forced-switch-message p {
+        font-size: 0.85rem;
+    }
+
+    .circle-switch-info {
+        padding: 6px;
+    }
+
+    .circle-switch-info small {
+        font-size: 0.75rem;
+    }
+}

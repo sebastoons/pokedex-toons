@@ -1,180 +1,258 @@
-/* Fondo simple y gradiente para la arena */
-.battle-arena {
+/* src/components/battle/PokemonBattleArena.css */
+
+.battle-arena-container {
     display: flex;
     flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    min-height: 100vh;
+    background: linear-gradient(to bottom, #87CEEB, #98FB98); /* Cielo azul a verde */
+    font-family: 'Press Start 2P', cursive;
+    color: #333;
+    position: relative;
+    overflow-x: hidden;
     padding: 10px;
-    background: linear-gradient(135deg, #444 50%, #222 100%);
-    border-radius: 8px;
-    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
-    min-height: calc(100vh - 20px);
     box-sizing: border-box;
-    margin: 0 auto;
+}
+
+.battle-arena-background {
+    position: absolute;
+    top: 0;
+    left: 0;
     width: 100%;
-    max-width: 500px;
-    gap: 5px;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+    opacity: 0.1;
+    z-index: 0;
 }
 
-/* Turno */
-.turn-counter {
-    color: white;
-    font-size: 1.2em;
-    margin-bottom: 5px;
-    text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
-    text-align: center;
-    order: 0;
-}
-
-/* Contenedor principal de Pokémon */
-.pokemon-main-container {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    align-items: center;
-    width: 100%;
-    margin: 20px 0;
-}
-
-.player-pokemon-wrapper,
-.opponent-pokemon-wrapper {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 100%;
-    margin-bottom: 15px;
-}
-
-.opponent-pokemon-wrapper {
-    order: 1;
-}
-
-.player-pokemon-wrapper {
-    order: 2;
-}
-
-/* Info Pokémon */
-.pokemon-info {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    background: #fff;
-    padding: 6px 20px 6px 20px;
-    border-radius: 8px;
-    margin-top: 8px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.07);
-}
-.pokemon-name {
-    font-weight: bold;
-    font-size: 1.1em;
-    letter-spacing: 1px;
-    margin-bottom: 2px;
-}
-.hp-bar {
-    font-size: 0.95em;
-    color: #444;
-    background: #e0e0e0;
-    padding: 2px 10px;
-    border-radius: 5px;
-    margin-bottom: 1px;
-}
-
-/* Pokéballs para cambiar Pokémon */
-.player-pokemon-pokeballs {
-    display: flex;
-    justify-content: center;
-    gap: 8px;
-    margin-top: 10px;
-}
-
-.pokeball-icon {
-    width: 32px;
-    height: 32px;
-    transition: transform 0.2s;
-    opacity: 0.8;
-}
-.pokeball-icon.active {
-    transform: scale(1.15);
-    filter: drop-shadow(0 0 5px #ffca28);
-    opacity: 1;
-}
-
-/* Panel de acciones */
-.actions-panel {
-    order: 4;
+.battle-elements {
+    position: relative;
+    z-index: 1;
     display: flex;
     flex-direction: column;
     gap: 15px;
+    width: 100%;
+    max-width: 1200px;
     align-items: center;
+    padding: 10px;
+    box-sizing: border-box;
 }
 
-/* Botones de movimientos */
-.moves-list {
+.battle-top-section {
     display: flex;
     justify-content: center;
-    gap: 10px;
-    margin-top: 10px;
+    width: 100%;
+    padding: 0 20px;
+    box-sizing: border-box;
+    margin-bottom: 10px;
 }
 
-/* Log de batalla */
-.battle-log-container {
-    order: 3;
-    max-height: 130px;
-    overflow-y: auto;
-    background-color: rgba(255, 255, 255, 0.95);
-    padding: 8px;
-    border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    font-family: 'Consolas', 'monospace';
-    font-size: 0.98em;
-    margin-top: 10px;
-}
-
-/* Mensaje de fin de batalla */
-.battle-end-message {
-    order: 5;
-    text-align: center;
-    background-color: rgba(255, 255, 255, 0.97);
+.battle-field {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    max-width: 800px;
+    min-height: 200px;
     padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.18);
-    margin-top: 15px;
+    box-sizing: border-box;
+    position: relative;
+    background: linear-gradient(to bottom, 
+        transparent 0%, 
+        rgba(34, 139, 34, 0.1) 50%, 
+        rgba(34, 139, 34, 0.3) 100%
+    );
+    border-radius: 20px;
+    margin: 10px 0;
 }
 
-.battle-end-message h3 {
-    margin-top: 0;
-    color: #c0392b;
-    font-size: 1.5em;
+.battle-bottom-section {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    align-items: center;
+    gap: 10px;
 }
 
-.battle-end-message p {
-    color: #333;
-    font-size: 1em;
-    margin-bottom: 15px;
+/* Elementos visuales del campo de batalla */
+.field-grass-player, .field-grass-opponent {
+    position: absolute;
+    height: 60px;
+    background: linear-gradient(to top, #32CD32, #228B22);
+    border-radius: 50%;
+    filter: blur(3px);
+    z-index: -1;
+    opacity: 0.7;
 }
 
-.new-battle-button {
-    display: inline-block;
-    padding: 10px 20px;
-    background-color: #4CAF50;
+.field-grass-player {
+    left: 15%;
+    bottom: 20px;
+    width: 200px;
+    height: 50px;
+    background: linear-gradient(to top, #228B22, #32CD32);
+    border-radius: 50% / 30%;
+}
+
+.field-grass-opponent {
+    right: 15%;
+    top: 20px;
+    width: 200px;
+    height: 50px;
+    background: linear-gradient(to top, #6B8E23, #9ACD32);
+    border-radius: 50% / 30%;
+}
+
+/* Animaciones de batalla */
+.pokemon-attacking {
+    animation: attack-animation 0.6s ease-in-out;
+}
+
+.pokemon-damaged {
+    animation: damage-animation 0.4s ease-out;
+}
+
+@keyframes attack-animation {
+    0% { transform: translate(0, 0) scale(1); }
+    25% { transform: translate(10px, -10px) scale(1.05); }
+    50% { transform: translate(20px, -20px) scale(1.1); }
+    75% { transform: translate(10px, -10px) scale(1.05); }
+    100% { transform: translate(0, 0) scale(1); }
+}
+
+@keyframes damage-animation {
+    0% { filter: brightness(1); transform: translateX(0); }
+    25% { filter: brightness(2) drop-shadow(0 0 5px red); transform: translateX(-8px); }
+    50% { filter: brightness(1); transform: translateX(8px); }
+    75% { filter: brightness(2) drop-shadow(0 0 5px red); transform: translateX(-4px); }
+    100% { filter: brightness(1); transform: translateX(0); }
+}
+
+/* Estilos responsive */
+@media (max-width: 768px) {
+    .battle-arena-container {
+        padding: 5px;
+    }
+
+    .battle-elements {
+        gap: 10px;
+        padding: 5px;
+    }
+
+    .battle-top-section {
+        padding: 0 10px;
+        margin-bottom: 5px;
+    }
+
+    .battle-field {
+        min-height: 150px;
+        padding: 10px;
+        margin: 5px 0;
+    }
+
+    .field-grass-player, .field-grass-opponent {
+        width: 150px;
+        height: 40px;
+        filter: blur(2px);
+    }
+
+    .field-grass-player {
+        left: 10%;
+        bottom: 10px;
+    }
+
+    .field-grass-opponent {
+        right: 10%;
+        top: 10px;
+    }
+}
+
+@media (max-width: 480px) {
+    .battle-arena-container {
+        padding: 2px;
+    }
+
+    .battle-field {
+        min-height: 120px;
+        padding: 5px;
+    }
+
+    .field-grass-player, .field-grass-opponent {
+        width: 120px;
+        height: 30px;
+    }
+}
+
+/* Estilos de carga mejorados */
+.loading-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    alignItems: center;
+    minHeight: 60vh;
     color: white;
-    text-decoration: none;
-    border-radius: 5px;
-    font-size: 1.1em;
-    margin-top: 8px;
-    box-shadow: 0 2px 6px rgba(76,175,80,0.15);
-    transition: background 0.2s;
-}
-.new-battle-button:hover {
-    background-color: #388E3C;
+    text-align: center;
+    padding: 20px;
 }
 
-/* Pantalla de carga */
-.battle-loading-screen {
+.loading-log {
+    max-width: 400px;
+    margin-top: 20px;
+}
+
+/* Modal overlay - asegurar que esté por encima de todo */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.8);
     display: flex;
     justify-content: center;
     align-items: center;
-    min-height: 250px;
-    font-size: 1.2em;
-    background: rgba(255,255,255,0.95);
-    border-radius: 10px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+    z-index: 9999;
+}
+
+.modal-content {
+    background: white;
+    padding: 30px;
+    border-radius: 15px;
+    text-align: center;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    font-size: 1.2rem;
+    color: #333;
+    max-width: 90%;
+    width: 400px;
+    animation: modal-appear 0.3s ease-out;
+}
+
+@keyframes modal-appear {
+    from { 
+        opacity: 0; 
+        transform: scale(0.8) translateY(-50px); 
+    }
+    to { 
+        opacity: 1; 
+        transform: scale(1) translateY(0); 
+    }
+}
+
+.modal-content button {
+    margin: 10px;
+    padding: 12px 20px;
+    font-size: 1rem;
+    cursor: pointer;
+    border: none;
+    border-radius: 8px;
+    background-color: #007bff;
+    color: white;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.modal-content button:hover {
+    background-color: #0056b3;
+    transform: translateY(-2px);
 }

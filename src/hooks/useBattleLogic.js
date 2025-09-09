@@ -103,6 +103,10 @@ export const useBattleLogic = () => {
                 addLog(`${p1TeamWithHp[0].name.toUpperCase()} vs ${p2TeamWithHp[0].name.toUpperCase()}`);
                 playSound(battleMusicRef, 0.3, true);
 
+                // Log de movimientos para debug (opcional, remover en producción)
+                console.log('Movimientos P1:', p1TeamWithHp[0].moves);
+                console.log('Movimientos P2:', p2TeamWithHp[0].moves);
+
             } catch (error) {
                 console.error("Error al preparar la batalla:", error);
                 addLog("Error al cargar los datos de la batalla.");
@@ -199,7 +203,8 @@ export const useBattleLogic = () => {
         setPokemonP1Attacking, setPokemonP2Attacking, setPokemonP1Damaged, setPokemonP2Damaged,
         setAnimationBlocking, setIsPlayer1Turn, setAwaitingSwitch, setWinner
     ]);
-    // --- FUNCIÓN DE CAMBIO DE POKÉMON ---
+
+    // --- FUNCIÓN DE CAMBIO DE POKÉMON (MEJORADA PARA CÍRCULOS) ---
     const handleSwitchPokemon = useCallback(async (newPokemonId, isPlayer1 = true) => {
         if (animationBlocking || winner) return false;
 
@@ -238,6 +243,16 @@ export const useBattleLogic = () => {
         animationBlocking, winner, player1Team, player2Team, activePokemonP1, activePokemonP2,
         addLog, lowHpSoundRef, setIsPlayer1Turn, setAwaitingSwitch, setActivePokemonP1, setActivePokemonP2
     ]);
+
+    // --- NUEVA FUNCIÓN PARA MANEJAR CLICKS EN LOS CÍRCULOS ---
+    const handlePokemonCircleClick = useCallback(async (pokemonId) => {
+        // Solo el jugador 1 puede hacer click, y solo si es su turno o está forzado a cambiar
+        if (animationBlocking || winner || (!isPlayer1Turn && awaitingSwitch !== 'player1')) {
+            return false;
+        }
+
+        return await handleSwitchPokemon(pokemonId, true); // true = es el jugador 1
+    }, [animationBlocking, winner, isPlayer1Turn, awaitingSwitch, handleSwitchPokemon]);
 
 
     // --- EFECTO: LÓGICA DE LA IA (Turno del Jugador 2 en modo vsIA) ---
@@ -337,6 +352,6 @@ export const useBattleLogic = () => {
         // Funciones de acción
         handleAttack: handleAttackAction, // Renombrado para claridad
         handleSwitchPokemon,
-        // navigate, // Si necesitas navegar desde fuera del hook
+        handlePokemonCircleClick, // NUEVA FUNCIÓN PARA CLICKS EN CÍRCULOS
     };
 };
