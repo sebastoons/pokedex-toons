@@ -2,24 +2,24 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useBattleLogic } from '../../hooks/useBattleLogic';
-
-// Importa los componentes hijos desde la MISMA CARPETA (./)
 import { CombatantUI } from './CombatantUI';
 import { BattleControls } from './BattleControls';
 import { BattleEndModal } from './BattleEndModal';
 
-// Importa los archivos CSS desde la MISMA CARPETA (./)
+// Importa los CSS necesarios
 import './PokemonBattleArena.css';
 import './CombatantUI.css';
 import './BattleControls.css';
-import './BattleEndModal.css';
+import './BattleEndModal.css'; 
+
+// Importamos la imagen de fondo desde la carpeta 'assets'
+import battleBg from '../../assets/images/battle-backgrounds.jpg'; 
 
 const PokemonBattleArena = () => {
     const navigate = useNavigate();
 
-    // Desestructuramos todos los valores y funciones del hook useBattleLogic (incluyendo las nuevas)
     const {
-        loading, winner, battleLog, gameMode,
+        loading, winner, battleLog,
         player1Team, player2Team,
         activePokemonP1, activePokemonP2,
         isPlayer1Turn, awaitingSwitch,
@@ -28,61 +28,23 @@ const PokemonBattleArena = () => {
         animationBlocking,
         attackSoundRef, hitSoundRef, battleMusicRef, lowHpSoundRef, victorySoundRef,
         handleAttack,
-        handleSwitchPokemon,
-        handlePokemonCircleClick, // NUEVA FUNCIÓN para clicks en círculos
+        handlePokemonCircleClick,
     } = useBattleLogic();
 
-    // Renderizado condicional mientras cargan los Pokémon
     if (loading || !activePokemonP1 || !activePokemonP2) {
         return (
-            <div className="battle-arena-container">
-                <div className="loading-container" style={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    minHeight: '60vh',
-                    color: 'white'
-                }}>
-                    <p style={{ 
-                        fontSize: '1.2rem', 
-                        textAlign: 'center',
-                        marginBottom: '20px' 
-                    }}>
-                        Cargando batalla...
-                    </p>
-                    <div className="loading-log" style={{
-                        maxWidth: '400px',
-                        textAlign: 'center'
-                    }}>
-                        {battleLog.map((msg, index) => (
-                            <p key={index} style={{ 
-                                color: '#ccc', 
-                                fontSize: '0.9rem',
-                                margin: '5px 0',
-                                textAlign: 'center' 
-                            }}>
-                                {msg}
-                            </p>
-                        ))}
-                    </div>
+            <div className="battle-arena-container" style={{ backgroundImage: `url(${battleBg})` }}>
+                <div className="loading-container">
+                    <p>Cargando batalla...</p>
                 </div>
             </div>
         );
     }
 
-    // Determinar si el jugador puede cambiar Pokémon (para los círculos)
-    const canPlayerSwitchPokemon = (
-        isPlayer1Turn && // Es el turno del jugador
-        !animationBlocking && // No hay animaciones bloqueando
-        !winner && // La batalla no ha terminado
-        player1Team.filter(p => p.currentHp > 0 && p.id !== activePokemonP1.id).length > 0 // Hay Pokémon vivos para cambiar
-    ) || awaitingSwitch === 'player1'; // O está forzado a cambiar
+    const canPlayerSwitch = isPlayer1Turn && !animationBlocking && !winner;
 
-    // Una vez que los Pokémon han cargado, renderizamos la arena completa
     return (
-        <div className="battle-arena-container">
-            {/* Audio elements */}
+        <div className="battle-arena-container" style={{ backgroundImage: `url(${battleBg})` }}>
             <audio ref={attackSoundRef} src="/sounds/attack.mp3" preload="auto" />
             <audio ref={hitSoundRef} src="/sounds/hit.mp3" preload="auto" />
             <audio ref={battleMusicRef} src="/sounds/battle-music.mp3" preload="auto" />
@@ -90,62 +52,44 @@ const PokemonBattleArena = () => {
             <audio ref={victorySoundRef} src="/sounds/victory.mp3" preload="auto" />
 
             <div className="battle-elements">
-                <div className="battle-top-section">
-                    {/* UI del Oponente (Jugador 2) */}
+                <div className="combatants-container">
+                    {/* Panel del Oponente */}
                     <CombatantUI
                         pokemon={activePokemonP2}
                         team={player2Team}
                         isOpponent={true}
                         isAttacking={pokemonP2Attacking}
-                        isDamaged={pokemonP1Attacking && pokemonP2Damaged}
-                        // Los oponentes no pueden hacer click en círculos
-                        onPokemonCircleClick={null}
-                        canSwitchPokemon={false}
-                        awaitingSwitch={awaitingSwitch === 'player2'}
+                        isDamaged={pokemonP1Damaged}
                     />
-                </div>
 
-                <div className="battle-field">
-                    <div className="field-grass-player"></div>
-                    <div className="field-grass-opponent"></div>
-                </div>
-
-                <div className="battle-bottom-section">
-                    {/* UI del Jugador (Jugador 1) - CON FUNCIONALIDADES DE CÍRCULOS */}
+                    {/* Panel del Jugador */}
                     <CombatantUI
                         pokemon={activePokemonP1}
                         team={player1Team}
                         isOpponent={false}
                         isAttacking={pokemonP1Attacking}
-                        isDamaged={pokemonP2Attacking && pokemonP1Damaged}
-                        // NUEVAS PROPS PARA CÍRCULOS CLICKEABLES
+                        isDamaged={pokemonP2Damaged}
                         onPokemonCircleClick={handlePokemonCircleClick}
-                        canSwitchPokemon={canPlayerSwitchPokemon}
-                        awaitingSwitch={awaitingSwitch === 'player1'}
-                    />
-
-                    {/* Controles de Batalla - CON SISTEMA DE CÍRCULOS ACTIVADO */}
-                    <BattleControls
-                        playerActivePokemon={activePokemonP1}
-                        playerTeam={player1Team}
-                        battleLog={battleLog}
-                        isPlayersTurn={isPlayer1Turn}
-                        awaitingPlayerSwitch={awaitingSwitch === 'player1'}
-                        animationBlocking={animationBlocking || awaitingSwitch === 'player2' || (gameMode === 'vsIA' && !isPlayer1Turn)}
-                        onAttack={handleAttack}
-                        onSwitch={handleSwitchPokemon} // Mantenemos como fallback aunque no se use
-                        battleEnded={!!winner}
-                        // NUEVA PROP: Ocultar el botón de cambio regular porque usamos círculos
-                        hideRegularSwitching={true}
+                        canSwitch={canPlayerSwitch}
                     />
                 </div>
+
+                {/* Controles y Log de Batalla */}
+                <BattleControls
+                    playerActivePokemon={activePokemonP1}
+                    battleLog={battleLog}
+                    isPlayersTurn={isPlayer1Turn}
+                    awaitingPlayerSwitch={awaitingSwitch === 'player1'}
+                    animationBlocking={animationBlocking}
+                    onAttack={handleAttack}
+                    battleEnded={!!winner}
+                />
             </div>
 
-            {/* Modal de fin de batalla */}
             {winner && (
                 <BattleEndModal
                     winner={winner}
-                    onRestart={() => window.location.reload()}
+                    onRestart={() => navigate('/')}
                     onGoHome={() => navigate('/')}
                 />
             )}

@@ -1,258 +1,36 @@
 /* src/components/battle/PokemonBattleArena.css */
-
 .battle-arena-container {
     display: flex;
     flex-direction: column;
-    justify-content: flex-start;
     align-items: center;
+    justify-content: space-between; /* Espacio entre elementos */
     min-height: 100vh;
-    background: linear-gradient(to bottom, #87CEEB, #98FB98); /* Cielo azul a verde */
-    font-family: 'Press Start 2P', cursive;
-    color: #333;
-    position: relative;
-    overflow-x: hidden;
-    padding: 10px;
-    box-sizing: border-box;
-}
-
-.battle-arena-background {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
+    padding: 20px;
     background-size: cover;
     background-position: center;
-    opacity: 0.1;
-    z-index: 0;
+    position: relative;
+    overflow: hidden;
 }
 
 .battle-elements {
-    position: relative;
-    z-index: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
     width: 100%;
     max-width: 1200px;
-    align-items: center;
-    padding: 10px;
-    box-sizing: border-box;
-}
-
-.battle-top-section {
-    display: flex;
-    justify-content: center;
-    width: 100%;
-    padding: 0 20px;
-    box-sizing: border-box;
-    margin-bottom: 10px;
-}
-
-.battle-field {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 100%;
-    max-width: 800px;
-    min-height: 200px;
-    padding: 20px;
-    box-sizing: border-box;
-    position: relative;
-    background: linear-gradient(to bottom, 
-        transparent 0%, 
-        rgba(34, 139, 34, 0.1) 50%, 
-        rgba(34, 139, 34, 0.3) 100%
-    );
-    border-radius: 20px;
-    margin: 10px 0;
-}
-
-.battle-bottom-section {
     display: flex;
     flex-direction: column;
+    flex-grow: 1; /* Permite que ocupe el espacio vertical */
+}
+
+.combatants-container {
+    display: flex;
+    justify-content: space-around;
+    align-items: flex-end; /* Alinea las tarjetas en la parte inferior */
     width: 100%;
-    align-items: center;
-    gap: 10px;
+    flex-grow: 1;
 }
 
-/* Elementos visuales del campo de batalla */
-.field-grass-player, .field-grass-opponent {
-    position: absolute;
-    height: 60px;
-    background: linear-gradient(to top, #32CD32, #228B22);
-    border-radius: 50%;
-    filter: blur(3px);
-    z-index: -1;
-    opacity: 0.7;
-}
-
-.field-grass-player {
-    left: 15%;
-    bottom: 20px;
-    width: 200px;
-    height: 50px;
-    background: linear-gradient(to top, #228B22, #32CD32);
-    border-radius: 50% / 30%;
-}
-
-.field-grass-opponent {
-    right: 15%;
-    top: 20px;
-    width: 200px;
-    height: 50px;
-    background: linear-gradient(to top, #6B8E23, #9ACD32);
-    border-radius: 50% / 30%;
-}
-
-/* Animaciones de batalla */
-.pokemon-attacking {
-    animation: attack-animation 0.6s ease-in-out;
-}
-
-.pokemon-damaged {
-    animation: damage-animation 0.4s ease-out;
-}
-
-@keyframes attack-animation {
-    0% { transform: translate(0, 0) scale(1); }
-    25% { transform: translate(10px, -10px) scale(1.05); }
-    50% { transform: translate(20px, -20px) scale(1.1); }
-    75% { transform: translate(10px, -10px) scale(1.05); }
-    100% { transform: translate(0, 0) scale(1); }
-}
-
-@keyframes damage-animation {
-    0% { filter: brightness(1); transform: translateX(0); }
-    25% { filter: brightness(2) drop-shadow(0 0 5px red); transform: translateX(-8px); }
-    50% { filter: brightness(1); transform: translateX(8px); }
-    75% { filter: brightness(2) drop-shadow(0 0 5px red); transform: translateX(-4px); }
-    100% { filter: brightness(1); transform: translateX(0); }
-}
-
-/* Estilos responsive */
-@media (max-width: 768px) {
-    .battle-arena-container {
-        padding: 5px;
-    }
-
-    .battle-elements {
-        gap: 10px;
-        padding: 5px;
-    }
-
-    .battle-top-section {
-        padding: 0 10px;
-        margin-bottom: 5px;
-    }
-
-    .battle-field {
-        min-height: 150px;
-        padding: 10px;
-        margin: 5px 0;
-    }
-
-    .field-grass-player, .field-grass-opponent {
-        width: 150px;
-        height: 40px;
-        filter: blur(2px);
-    }
-
-    .field-grass-player {
-        left: 10%;
-        bottom: 10px;
-    }
-
-    .field-grass-opponent {
-        right: 10%;
-        top: 10px;
-    }
-}
-
-@media (max-width: 480px) {
-    .battle-arena-container {
-        padding: 2px;
-    }
-
-    .battle-field {
-        min-height: 120px;
-        padding: 5px;
-    }
-
-    .field-grass-player, .field-grass-opponent {
-        width: 120px;
-        height: 30px;
-    }
-}
-
-/* Estilos de carga mejorados */
 .loading-container {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    alignItems: center;
-    minHeight: 60vh;
     color: white;
+    font-size: 1.5rem;
     text-align: center;
-    padding: 20px;
-}
-
-.loading-log {
-    max-width: 400px;
-    margin-top: 20px;
-}
-
-/* Modal overlay - asegurar que esté por encima de todo */
-.modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background: rgba(0, 0, 0, 0.8);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 9999;
-}
-
-.modal-content {
-    background: white;
-    padding: 30px;
-    border-radius: 15px;
-    text-align: center;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-    font-size: 1.2rem;
-    color: #333;
-    max-width: 90%;
-    width: 400px;
-    animation: modal-appear 0.3s ease-out;
-}
-
-@keyframes modal-appear {
-    from { 
-        opacity: 0; 
-        transform: scale(0.8) translateY(-50px); 
-    }
-    to { 
-        opacity: 1; 
-        transform: scale(1) translateY(0); 
-    }
-}
-
-.modal-content button {
-    margin: 10px;
-    padding: 12px 20px;
-    font-size: 1rem;
-    cursor: pointer;
-    border: none;
-    border-radius: 8px;
-    background-color: #007bff;
-    color: white;
-    transition: background-color 0.3s ease, transform 0.2s ease;
-}
-
-.modal-content button:hover {
-    background-color: #0056b3;
-    transform: translateY(-2px);
+    margin: auto;
 }

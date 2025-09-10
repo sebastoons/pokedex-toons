@@ -29,15 +29,10 @@ export const fetchPokemonDetails = async (pokemonId) => {
 
         const pokemonTypes = pokemonData.types.map(t => t.type.name);
         
-        // *** NUEVO SISTEMA DE GENERACIÓN DE MOVIMIENTOS ***
-        // Usar nuestro sistema de generación basado en tipos
         const generatedMoves = generateMovesByTypes(pokemonTypes, stats);
         
-        // Si queremos mantener algo del comportamiento anterior (búsqueda en la API),
-        // podemos intentar obtener movimientos de la API y luego mejorarlos
         let finalMoves = generatedMoves;
         
-        // Intentar obtener movimientos reales de la API como alternativa
         if (pokemonData.moves.length > 0) {
             try {
                 const allMoveUrls = pokemonData.moves.map(move => move.move.url);
@@ -49,7 +44,6 @@ export const fetchPokemonDetails = async (pokemonId) => {
                 const fetchedMoveDetails = (await Promise.all(moveDetailsPromises)).filter(Boolean);
 
                 if (fetchedMoveDetails.length > 0) {
-                    // Crear movimientos de la API con el formato correcto
                     const apiMoves = fetchedMoveDetails.map(moveDetail => ({
                         name: getLocalizedMoveName(moveDetail),
                         power: moveDetail.power || 0,
@@ -57,23 +51,19 @@ export const fetchPokemonDetails = async (pokemonId) => {
                         damage_class: moveDetail.damage_class.name,
                     }));
 
-                    // Crear un Pokémon temporal para usar la función de mejora
                     const tempPokemon = {
                         types: pokemonTypes,
                         moves: apiMoves,
                         stats: stats
                     };
 
-                    // Usar la función de mejora para optimizar los movimientos
                     finalMoves = improvePokemonMoves(tempPokemon);
                 }
             } catch (apiError) {
                 console.log(`Error fetching API moves for ${pokemonId}, using generated moves:`, apiError);
-                // finalMoves ya está establecido a generatedMoves
             }
         }
 
-        // Asegurar que tenemos exactamente 4 movimientos
         while (finalMoves.length < 4) {
             const fallbackMove = fallbackMoves.find(m => !finalMoves.some(fm => fm.name === m.name));
             if (fallbackMove) {
@@ -92,7 +82,7 @@ export const fetchPokemonDetails = async (pokemonId) => {
             maxHp: Math.floor(stats.hp * 2.5),
             attack: Math.floor(stats.attack * 0.5),
             defense: Math.floor(stats.defense * 0.5),
-            stats: stats, // Agregamos las stats completas para el generador de movimientos
+            stats: stats,
             types: pokemonData.types,
             moves: finalMoves.slice(0, 4),
             sprites: {
@@ -104,13 +94,13 @@ export const fetchPokemonDetails = async (pokemonId) => {
     } catch (error) {
         console.error(`Error fetching details for Pokemon ID ${pokemonId}:`, error);
         
-        // Fallback con movimientos generados por tipo si conocemos los tipos
-        let fallbackMoves = [...fallbackMoves];
+        // **CORRECCIÓN**: Usar una variable 'let' en lugar de reasignar una 'const'.
+        let movesForFallback = [...fallbackMoves]; 
         
-        // Si podemos inferir tipos básicos por ID (esto es muy básico, pero mejor que nada)
         const basicTypes = getPokemonBasicTypes(pokemonId);
         if (basicTypes.length > 0) {
-            fallbackMoves = generateMovesByTypes(basicTypes);
+            // **CORRECCIÓN**: Asignar a la nueva variable.
+            movesForFallback = generateMovesByTypes(basicTypes);
         }
         
         return {
@@ -122,7 +112,7 @@ export const fetchPokemonDetails = async (pokemonId) => {
             defense: 15,
             stats: { hp: 40, attack: 50, defense: 30, 'special-attack': 40, 'special-defense': 30, speed: 40 },
             types: basicTypes.map(type => ({ type: { name: type } })),
-            moves: fallbackMoves,
+            moves: movesForFallback,
             sprites: { 
                 front_default: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${pokemonId}.png` 
             }
@@ -130,19 +120,13 @@ export const fetchPokemonDetails = async (pokemonId) => {
     }
 };
 
-/**
- * Función auxiliar para inferir tipos básicos por ID del Pokémon
- * Esto es muy básico y solo cubre algunos casos conocidos
- */
 const getPokemonBasicTypes = (pokemonId) => {
-    // Algunos tipos básicos por rangos de ID (muy simplificado)
-    if (pokemonId >= 1 && pokemonId <= 3) return ['grass', 'poison']; // Bulbasaur línea
-    if (pokemonId >= 4 && pokemonId <= 6) return ['fire']; // Charmander línea
-    if (pokemonId >= 7 && pokemonId <= 9) return ['water']; // Squirtle línea
-    if (pokemonId >= 25 && pokemonId <= 26) return ['electric']; // Pikachu línea
-    if (pokemonId >= 144 && pokemonId <= 146) return ['ice', 'flying']; // Legendarios aves
+    if (pokemonId >= 1 && pokemonId <= 3) return ['grass', 'poison'];
+    if (pokemonId >= 4 && pokemonId <= 6) return ['fire'];
+    if (pokemonId >= 7 && pokemonId <= 9) return ['water'];
+    if (pokemonId >= 25 && pokemonId <= 26) return ['electric'];
+    if (pokemonId >= 144 && pokemonId <= 146) return ['ice', 'flying'];
     
-    // Fallback a normal si no podemos determinar
     return ['normal'];
 };
 
@@ -152,14 +136,11 @@ export const fetchPokemonDetailsByIds = async (ids) => {
             const specialPokemon = generacionEspecial.find(p => p.id === id);
             if (!specialPokemon) return null;
 
-            // --- NUEVO SISTEMA PARA POKÉMON ESPECIALES ---
             let finalMoves = specialPokemon.moves;
             
-            // Si no tiene movimientos o están vacíos, generar por tipo
             if (!finalMoves || finalMoves.length === 0) {
                 finalMoves = generateMovesByTypes(specialPokemon.types, specialPokemon.stats);
             } else {
-                // Si tiene movimientos, mejorarlos para seguir el patrón de tipos
                 const tempPokemon = {
                     types: specialPokemon.types,
                     moves: finalMoves,
