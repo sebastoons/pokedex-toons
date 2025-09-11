@@ -16,7 +16,7 @@
     margin-bottom: 15px; /* Ajuste de margen */
     font-size: 1em; /* Tamaño de fuente para móvil */
     text-align: center;
-     font-family: Verdana;
+    font-family: 'press start 2p';
     text-transform: uppercase;
 }
 
@@ -153,12 +153,14 @@
 }
 
 .pokemon-grid-name {
-    font-size: 0.75em; /* Ajuste de tamaño para móvil */
+    font-size: 0.85em; /* Ajuste de tamaño para móvil */
     font-weight: bold;
-    color: #333;
+    color: #676767;
     text-align: center;
     margin-bottom: 3px;
     word-break: break-word; /* Romper palabras largas si es necesario */
+    font-family: monospace;
+    text-transform: uppercase;
 }
 
 .pokemon-grid-types-container {
@@ -179,20 +181,24 @@
 .start-battle-button {
     background-color: #4CAF50;
     color: white;
-    padding: 10px 20px; /* Menos padding en móvil */
+    padding: 8px 20px; /* Menos padding en móvil */
     border: none;
     border-radius: 8px;
-    font-size: 1.1em; /* Ajuste de tamaño para móvil */
+    font-size: 0.95em; /* Ajuste de tamaño para móvil */
     cursor: pointer;
     margin-top: 20px;
-    margin-bottom: 15px;
+    margin-bottom: 5px;
     transition: background-color 0.3s ease;
-    width: 90%; /* Ancho completo en móvil */
-    max-width: 300px; /* Límite para que no sea excesivamente ancho */
+    width: 40%; /* Ancho completo en móvil */
+    max-width: 250px; /* Límite para que no sea excesivamente ancho */
+    font-family: monospace;
+    text-transform: uppercase;
 }
 
 .start-battle-button:hover:not(:disabled) {
     background-color: #45a049;
+    transform: translateY(-3px);
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.3);
 }
 
 .start-battle-button:disabled {
@@ -278,19 +284,12 @@
     }
 
     .pokemon-grid-name {
-        font-size: 0.8em;
+        font-size: 0.85em;
     }
 
     .pokemon-type-badge-small {
         font-size: 0.65em;
         padding: 2px 5px;
-    }
-
-    .start-battle-button {
-        padding: 12px 25px;
-        font-size: 1.2em;
-        width: auto; /* Ancho automático, no 100% */
-        max-width: none;
     }
 
     .back-to-pokedex {
@@ -306,7 +305,7 @@
     }
 
     .battle-selector-container h1 {
-        font-size: 2.5em;
+        font-size: 1.4em;
     }
 
     .selection-slots-display {
@@ -334,16 +333,6 @@
 /* Ajustamos el margen del botón original para que no tenga tanto espacio arriba */
 .back-to-pokedex {
   margin-top: 10px;
-}
-
-/* --- NUEVOS ESTILOS PARA EL FILTRO --- */
-.battle-controls-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 10px;
-  margin-bottom: 20px;
-  width: 100%;
 }
 
 /* Reutilizamos los estilos del filtro de App.css */

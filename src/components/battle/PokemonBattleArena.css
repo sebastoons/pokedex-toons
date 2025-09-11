@@ -23,9 +23,9 @@
 .combatants-container {
     display: flex;
     justify-content: space-around;
-    align-items: flex-end; /* Alinea las tarjetas en la parte inferior */
+    align-items: center; 
     width: 100%;
-    flex-grow: 1;
+    flex-direction: row-reverse;
 }
 
 .loading-container {

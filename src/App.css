@@ -412,10 +412,10 @@ header {
 }
 
 .pokemon-name {
-    font-size: 1.2em;
+    font-size: 1em;
     font-weight: bold;
     margin: 0 0 5px 0;
-    text-transform: capitalize;
+    text-transform: uppercase;
     color: #2c3e50;
     white-space: nowrap;
     overflow: hidden;
@@ -423,6 +423,7 @@ header {
     width: 100%;
     padding: 0 2px;
     box-sizing: border-box;
+    font-family: monospace;
 }
 
 .pokemon-types {
@@ -576,27 +577,6 @@ header {
     color: #666;
     font-family: monospace;
     text-transform: uppercase;
-}
-
-.start-battle-button {
-    padding: 10px 20px;
-    font-size: 1.2em;
-    background-color: #66c65f; /* Naranja brillante */
-    color: white;
-    border: none;
-    border-radius: 20px;
-    cursor: pointer;
-    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease;
-    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
-    margin-top: 5px;
-    font-family: monospace;
-    text-transform: uppercase;
-}
-
-.start-battle-button:hover:not(:disabled) {
-    background-color: #1f8418;
-    transform: translateY(-3px);
-    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.3);
 }
 
 .start-battle-button:disabled {
@@ -1099,9 +1079,6 @@ header {
         max-width: 100px;
         max-height: 100px;
     }
-    .pokemon-name {
-        font-size: 1.2em;
-    }
     .pokemon-types span {
         font-size: 0.7em;
     }
@@ -1201,13 +1178,6 @@ header {
         font-size: 1.8em;
     }
 
-    .battle-log {
-        margin-top: 20px;
-        max-height: 100px;
-        font-size: 0.8em;
-        padding: 10px;
-    }
-
     .battle-controls {
         margin-top: 20px;
         gap: 10px;
@@ -1240,9 +1210,6 @@ header {
     .pokemon-card .pokemon-image {
         max-width: 120px; /* Un poco más grandes en desktop */
         max-height: 120px;
-    }
-    .pokemon-name {
-        font-size: 1.3em;
     }
     .pokemon-number {
         font-size: 1.1em;
@@ -1348,14 +1315,6 @@ header {
 
     .battle-vs {
         font-size: 2em;
-    }
-
-    .battle-log {
-        padding: 10px;
-        margin-top: 5px;
-        max-height: 140px;
-        font-size: 1em;
-        text-align: center;
     }
 
     .battle-controls {

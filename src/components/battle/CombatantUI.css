@@ -27,12 +27,21 @@
 }
 
 .combatant-name {
-    font-size: 1.5rem;
+    font-size: 0.85em;
     font-weight: bold;
+    font-family: 'Press Start 2P';
+    text-transform: uppercase;
+    color: #2c3e50;
+    text-shadow: 2px 2px 4px #aaa;
 }
 
 .combatant-level {
-    font-size: 1.2rem;
+    font-size: 0.6rem;
+    font-weight: bold;
+    font-family: 'Press Start 2P';
+    text-transform: uppercase;
+    color: #2c3e50;
+    text-shadow: 2px 2px 4px #aaa;
 }
 
 .combatant-hp-bar-container {
@@ -43,12 +52,14 @@
 }
 
 .hp-label {
-    background-color: #feca57;
+    background-color: #b47b00ff;
     color: white;
     font-weight: bold;
     padding: 1px 6px;
     border-radius: 5px;
-    font-size: 0.9rem;
+    font-size: 0.8rem;
+    font-family: monospace;
+    text-transform: uppercase;
 }
 
 .combatant-hp-bar-bg {
@@ -62,14 +73,15 @@
 
 .combatant-hp-bar-fill {
     height: 100%;
-    transition: width 0.5s ease-out, background-color 0.5s ease-out;
+    transition: width 0.3s ease-out, background-color 0.3s ease-out;
 }
 
 .combatant-hp-text {
     text-align: right;
-    font-size: 1rem;
-    font-weight: bold;
-    color: #444;
+    color: #2b2b2bff;
+    font-size: 0.6em;
+    font-family: 'press start 2p';
+    text-transform: uppercase;
 }
 
 .pokemon-team-circles {
@@ -119,10 +131,9 @@
 }
 
 .pokemon-combatant-sprite {
-    width: 250px;
-    height: 250px;
+    width: 280px;
+    height: 280px;
     object-fit: contain;
-    image-rendering: pixelated;
     filter: drop-shadow(4px 4px 4px rgba(0, 0, 0, 0.3));
     transition: transform 0.3s ease;
 }
