@@ -153,3 +153,22 @@
     10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
     20%, 40%, 60%, 80% { transform: translateX(5px); }
 }
+
+/* --- INICIO DE LA MODIFICACIÓN --- */
+  /*
+    Aquí están las clases para la barra de vida.
+    Ahora puedes cambiar estos colores o añadirles estilos
+    sin tocar el código JavaScript.
+  */
+  
+  .combatant-hp-bar-fill.high-hp {
+    background: linear-gradient(to right, #43ea7a, #1a9e4a); /* Verde */
+  }
+  
+  .combatant-hp-bar-fill.medium-hp {
+    background: linear-gradient(to right, #feca57, #e5a933); /* Amarillo */
+  }
+  
+  .combatant-hp-bar-fill.low-hp {
+    background: linear-gradient(to right, #fe3261, #c81a42); /* Rojo */
+  }

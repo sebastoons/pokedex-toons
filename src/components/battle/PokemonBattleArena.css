@@ -1,23 +1,19 @@
 /* src/components/battle/PokemonBattleArena.css */
-.battle-arena-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: space-between; /* Espacio entre elementos */
-    min-height: 100vh;
+.pokemon-battle-arena {
+    display: grid;
+    grid-template-areas:
+        "opponent-ui opponent-ui"
+        "player-ui player-ui"
+        "battle-log battle-controls";
+    grid-template-rows: 2fr 2fr 1.5fr; /* Modificado para dar más espacio a la fila inferior */
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    height: 100vh;
     padding: 20px;
-    background-size: cover;
-    background-position: center;
+    background: url('../../assets/images/battle-backgrounds.jpg') no-repeat center center/cover;
+    box-sizing: border-box;
     position: relative;
     overflow: hidden;
-}
-
-.battle-elements {
-    width: 100%;
-    max-width: 1200px;
-    display: flex;
-    flex-direction: column;
-    flex-grow: 1; /* Permite que ocupe el espacio vertical */
 }
 
 .combatants-container {
@@ -29,8 +25,95 @@
 }
 
 .loading-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
     color: white;
-    font-size: 1.5rem;
-    text-align: center;
-    margin: auto;
+    font-size: 2em;
+    text-shadow: 2px 2px 4px #000;
+}
+
+.combatant-container {
+  position: relative;
+}
+
+.opponent-ui-container {
+  grid-area: opponent-ui;
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-start;
+}
+
+.player-ui-container {
+  grid-area: player-ui;
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-end;
+}
+
+.battle-log-container {
+  grid-area: battle-log;
+}
+
+.battle-controls-container {
+  grid-area: battle-controls;
+}
+
+.battle-end-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.75);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.battle-arena-container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    background-size: cover;
+    background-position: center;
+    overflow: hidden;
+    position: relative;
+}
+
+/* --- INICIO DE MODIFICACIONES DE RESPONSIVIDAD --- */
+
+/* Estilos para Tablet (hasta 768px) */
+@media (max-width: 768px) {
+    .battle-arena-container {
+        height: auto; /* Permite que el contenido determine la altura */
+        min-height: 100vh;
+    }
+
+    .combatants-container {
+        flex-direction: column; /* Apila los paneles verticalmente */
+        justify-content: center;
+        align-items: center;
+        gap: 20px; /* Espacio entre los paneles */
+    }
+}
+
+/* Estilos para Celular (hasta 480px) */
+@media (max-width: 480px) {
+    .battle-arena-container {
+        padding: 10px;
+    }
+
+    .combatants-container {
+        /* Los paneles se superponen un poco para ahorrar espacio */
+        padding-bottom: 30px; 
+    }
+
+    .combatant-ui {
+        width: 90%; /* Ocupa casi todo el ancho */
+        max-width: none; /* Elimina el límite de ancho máximo */
+        max-height: 350px; /* Limita la altura máxima */
+    }
 }

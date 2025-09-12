@@ -113,3 +113,57 @@
     font-size: 1em;
     text-transform: uppercase;
 }
+
+.battle-interface {
+    display: flex;
+    height: 180px; /* Altura fija para el área de controles */
+    gap: 10px;
+    margin-top: 15px
+}
+
+.battle-log-wrapper {
+    flex: 1;
+    min-width: 0;
+}
+
+.controls-wrapper {
+    flex: 1;
+}
+
+.moves-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    gap: 8px;
+    height: 100%;
+}
+
+/* --- INICIO DE MODIFICACIONES DE RESPONSIVIDAD --- */
+
+/* Estilos para Tablet (hasta 768px) */
+@media (max-width: 768px) {
+    .battle-interface {
+        height: 160px; /* Un poco menos de altura */
+    }
+    .move-button {
+        font-size: 0.8em; /* Letra de botones más pequeña */
+    }
+}
+
+/* Estilos para Celular (hasta 480px) */
+@media (max-width: 480px) {
+    .battle-interface {
+        flex-direction: column; /* Apilamos el log y los controles */
+        height: auto; /* La altura se ajusta al contenido */
+        gap: 5px;
+        margin-top: 0;
+    }
+
+    .controls-wrapper {
+        height: 140px; /* Damos una altura fija a los controles */
+    }
+
+    .moves-grid {
+        gap: 5px;
+    }
+}
