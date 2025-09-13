@@ -1,5 +1,6 @@
 import React from 'react';
 import BattleLogDisplay from '../BattleLogDisplay';
+import { getMoveTypeGradient } from '../../utils/moveTypeColors';
 import './BattleControls.css';
 
 export const BattleControls = ({
@@ -11,17 +12,18 @@ export const BattleControls = ({
   onAttack,
   battleEnded,
   gameMode,
+  controlsActive = true // Nueva prop con valor por defecto
 }) => {
   if (!activePokemon) return null;
 
-  const controlsDisabled = animationBlocking || battleEnded || awaitingPlayerSwitch || 
+  // CORREGIDO: Lógica de deshabilitación más clara
+  const controlsDisabled = !controlsActive || animationBlocking || battleEnded || awaitingPlayerSwitch || 
     (gameMode === 'vsIA' && !isPlayersTurn);
     
-  // --- INICIO DE LA CORRECCIÓN ---
-  // Si 'activePokemon.moves' aún no existe, usamos un array vacío ([]) como respaldo.
-  // Esto previene el error ".map is not a function".
   const movesToDisplay = (activePokemon.moves || []).slice(0, 4);
-  // --- FIN DE LA CORRECCIÓN ---
+
+  // CORREGIDO: Mostrar mensaje especial cuando no es el turno del jugador en modo IA
+  const showIAWaitingMessage = gameMode === 'vsIA' && !isPlayersTurn && !battleEnded && !awaitingPlayerSwitch;
 
   return (
     <div className="battle-interface">
@@ -29,20 +31,41 @@ export const BattleControls = ({
         <BattleLogDisplay messages={battleLog} />
       </div>
       <div className="controls-wrapper">
-        <div className="moves-grid">
-          {/* Usamos la nueva variable segura 'movesToDisplay' */}
-          {movesToDisplay.map((move, index) => (
-            <button
-              key={index}
-              className="move-button"
-              onClick={() => onAttack(move)}
-              disabled={controlsDisabled}
-            >
-              <span className="move-name">{move.name}</span>
-              <span className="move-pp">{move.pp}/{move.pp}</span>
-            </button>
-          ))}
-        </div>
+        {/* CORREGIDO: Mostrar mensaje de espera en lugar de ocultar controles */}
+        {showIAWaitingMessage ? (
+          <div className="ia-waiting-message">
+            <div className="waiting-text">Turno de la IA...</div>
+            <div className="waiting-dots">
+              <span>●</span>
+              <span>●</span>
+              <span>●</span>
+            </div>
+          </div>
+        ) : (
+          <div className="moves-grid">
+            {movesToDisplay.map((move, index) => {
+              const moveGradient = getMoveTypeGradient(move.type);
+              
+              return (
+                <button
+                  key={index}
+                  className="move-button"
+                  onClick={() => onAttack(move)}
+                  disabled={controlsDisabled}
+                  style={{ 
+                    background: moveGradient,
+                    borderColor: controlsDisabled ? '#666' : 'rgba(255, 255, 255, 0.3)'
+                  }}
+                >
+                  <span className="move-name">{move.name}</span>
+                  <span className="move-power">
+                    {move.power > 0 ? move.power : move.damage_class === 'status' ? 'EST' : '-'}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+        )}
       </div>
     </div>
   );

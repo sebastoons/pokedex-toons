@@ -3,164 +3,347 @@
 /* Estilos base (Mobile First: para pantallas pequeñas, como celulares) */
 .battle-selector-container {
     display: flex;
-    flex-direction: column; /* Por defecto, apilado en móvil */
+    flex-direction: column;
     align-items: center;
-    padding: 10px; /* Menos padding en móvil */
-    background-color: #f0f0f0;
+    padding: 10px;
+    background: linear-gradient(135deg, #2c3e50 0%, #2e3236ff 100%);
     min-height: 100vh;
-    box-sizing: border-box; /* Asegura que padding y borde se incluyan en el ancho */
+    box-sizing: border-box;
 }
 
 .battle-selector-container h1 {
-    color: #333;
-    margin-bottom: 15px; /* Ajuste de margen */
-    font-size: 1em; /* Tamaño de fuente para móvil */
+    color: #f1c40f;
+    margin-bottom: 15px;
+    font-size: 1em;
     text-align: center;
     font-family: 'press start 2p';
     text-transform: uppercase;
+    text-shadow: 2px 4px 6px rgba(0, 0, 0, 0.5);
 }
 
-.selection-slots-display {
-    display: flex;
-    flex-direction: column; /* Apilar los slots de selección en móvil */
-    gap: 15px; /* Menos espacio entre slots en móvil */
+.battle-selector-container p {
+    color: #fff;
+    text-align: center;
+    font-family: monospace;
     margin-bottom: 20px;
-    width: 95%; /* Ocupa casi todo el ancho disponible en móvil */
-    justify-content: center;
-    align-items: center; /* Centrar los slots apilados */
-}
-
-.selected-pokemon-slot {
-    background-color: #fff;
-    border: 2px dashed #ccc;
-    border-radius: 10px;
-    padding: 10px; /* Menos padding en móvil */
-    width: 90%; /* Mucho más flexible: ocupa el 90% del contenedor padre */
-    max-width: 280px; /* Un máximo para que no se estire demasiado en móviles grandes */
-    min-height: 230px; /* Altura mínima ajustada para móvil */
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    position: relative;
-    box-sizing: border-box; /* Importante para el cálculo del width */
-}
-
-.selected-pokemon-slot h2 {
-    color: #555;
-    margin-bottom: 8px;
-    font-size: 1.1em; /* Ajuste de tamaño para móvil */
-    text-align: center;
-}
-
-.empty-slot {
-    text-align: center;
-    color: #888;
-    font-style: italic;
     font-size: 0.9em;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+    text-transform: uppercase;
 }
 
-.selected-pokemon-card-preview {
+/* --- PREVIEW DEL EQUIPO (MEJORADO) --- */
+.team-preview-container {
     display: flex;
-    flex-direction: column;
+    justify-content: center;
     align-items: center;
+    gap: 15px;
+    margin-bottom: 20px;
+    padding: 15px;
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 15px;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
 }
 
-.pokemon-preview-image {
-    width: 100px; /* Tamaño más pequeño para la imagen en móvil */
-    height: 100px;
+.team-slot {
+    width: 80px;
+    height: 80px;
+    background: rgba(255, 255, 255, 0.2);
+    border: 3px dashed rgba(255, 255, 255, 0.5);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(5px);
+}
+
+.team-slot:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+}
+
+/* SLOT VACÍO CON SIGNO DE PREGUNTA */
+.empty-team-slot {
+    font-size: 2.5em;
+    color: rgba(255, 255, 255, 0.6);
+    font-weight: bold;
+    font-family: 'Press Start 2P', cursive;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 0.6; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.1); }
+}
+
+/* SLOT CON POKÉMON */
+.team-slot img {
+    width: 70px;
+    height: 70px;
     object-fit: contain;
-    margin-bottom: 8px;
+    border-radius: 8px;
+    filter: drop-shadow(2px 2px 4px rgba(0, 0, 0, 0.3));
+    transition: transform 0.3s ease;
 }
 
-.selected-pokemon-card-preview h3 {
-    margin: 3px 0 8px;
-    color: #333;
-    font-size: 1em;
+.team-slot:hover img {
+    transform: scale(1.1);
 }
 
-.remove-pokemon-button {
+/* BOTÓN X PARA ELIMINAR POKÉMON */
+.remove-pokemon-button-small {
     position: absolute;
-    top: 5px; /* Ajuste de posición para móvil */
-    right: 5px;
-    background-color: #ff4d4d;
+    top: -5px;
+    right: -5px;
+    background: linear-gradient(135deg, #ff6b6b, #ee5a52);
     color: white;
     border: none;
     border-radius: 50%;
-    width: 22px; /* Tamaño del botón más pequeño */
-    height: 22px;
-    font-size: 12px;
+    width: 25px;
+    height: 25px;
+    font-size: 14px;
+    font-weight: bold;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    line-height: 1;
-    padding: 0;
+    box-shadow: 0 4px 15px rgba(255, 107, 107, 0.4);
+    transition: all 0.3s ease;
+    font-family: 'Arial', sans-serif;
+    z-index: 10;
 }
 
-.remove-pokemon-button:hover {
-    background-color: #cc0000;
+.remove-pokemon-button-small:hover {
+    background: linear-gradient(135deg, #ff5252, #d32f2f);
+    transform: scale(1.1);
+    box-shadow: 0 6px 20px rgba(255, 82, 82, 0.6);
 }
 
+.remove-pokemon-button-small:active {
+    transform: scale(0.95);
+}
+
+/* --- BOTÓN DE CONFIRMAR EQUIPO --- */
+.start-battle-button {
+    background: linear-gradient(135deg, #4CAF50, #45a049);
+    color: white;
+    padding: 12px 30px;
+    border: none;
+    border-radius: 25px;
+    font-size: 1em;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    transition: all 0.3s ease;
+    font-family: 'Press Start 2P', cursive;
+    text-transform: uppercase;
+    box-shadow: 0 8px 25px rgba(76, 175, 80, 0.3);
+    position: relative;
+    overflow: hidden;
+}
+
+.start-battle-button::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s;
+}
+
+.start-battle-button:hover::before {
+    left: 100%;
+}
+
+.start-battle-button:hover:not(:disabled) {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 35px rgba(76, 175, 80, 0.4);
+}
+
+.start-battle-button:disabled {
+    background: linear-gradient(135deg, #cccccc, #999999);
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+/* --- CONTROLES DE BATALLA --- */
+.battle-controls-container {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.generation-filter-container {
+    position: relative;
+    display: inline-block;
+}
+
+.generation-button {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    font-weight: bold;
+    font-family: monospace;
+    text-transform: uppercase;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+}
+
+.generation-button:hover {
+    background: linear-gradient(135deg, #5a6fd8, #6a4190);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+}
+
+.generation-dropdown-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-radius: 10px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+    max-height: max-content;
+    overflow-y: auto;
+    margin-top: 5px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.generation-dropdown-menu li {
+    padding: 10px 15px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-family: monospace;
+    color: #333;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.generation-dropdown-menu li:hover {
+    background: rgba(102, 126, 234, 0.1);
+    color: #667eea;
+}
+
+.generation-dropdown-menu li.active {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+}
+
+/* --- GRID DE POKÉMON DISPONIBLES --- */
 .available-pokemon-grid {
     display: grid;
-    /* Columnas flexibles: mínimo 80px, máximo 1fr para llenar espacio */
-    grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
-    gap: 10px; /* Menos espacio entre ítems en móvil */
-    width: 95%; /* Ocupa casi todo el ancho */
-    max-width: 900px; /* Límite para que no sea demasiado ancha en pantallas grandes */
-    margin-top: 15px;
-    padding: 15px;
-    background-color: #fff;
-    border-radius: 10px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    box-sizing: border-box;
+    grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+    gap: 15px;
+    width: 95%;
+    max-width: 900px;
+    margin-top: 20px;
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
 }
 
 .pokemon-grid-item {
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 8px; /* Menos padding en móvil */
-    border: 1px solid #eee;
-    border-radius: 8px;
+    padding: 12px;
+    background: rgba(255, 255, 255, 0.15);
+    border: 2px solid transparent;
+    border-radius: 15px;
     cursor: pointer;
-    transition: all 0.2s ease-in-out;
-    background-color: #fcfcfc;
-    text-align: center; /* Centrar texto dentro del ítem de la grilla */
+    transition: all 0.3s ease;
+    text-align: center;
+    backdrop-filter: blur(5px);
+    position: relative;
+    overflow: hidden;
+}
+
+.pokemon-grid-item::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+    transition: left 0.5s;
+}
+
+.pokemon-grid-item:hover::before {
+    left: 100%;
 }
 
 .pokemon-grid-item:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
-    border-color: #a0d9ff;
+    transform: translateY(-8px);
+    background: rgba(255, 255, 255, 0.25);
+    border-color: rgba(255, 255, 255, 0.5);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
 }
 
 .pokemon-grid-item.selected-in-slot {
-    border: 3px solid #007bff;
-    box-shadow: 0 0 10px rgba(0, 123, 255, 0.5);
-    background-color: #e6f7ff;
+    border: 3px solid #4CAF50;
+    background: rgba(76, 175, 80, 0.2);
+    box-shadow: 0 0 20px rgba(76, 175, 80, 0.4);
     pointer-events: none;
     opacity: 0.8;
 }
 
+.pokemon-grid-item.selected-in-slot::after {
+    content: '✓';
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background: #4CAF50;
+    color: white;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: bold;
+}
+
 .pokemon-grid-image {
-    width: 60px; /* Tamaño más pequeño para la imagen de la grilla */
-    height: 60px;
+    width: 70px;
+    height: 70px;
     object-fit: contain;
-    margin-bottom: 3px;
+    margin-bottom: 8px;
+    filter: drop-shadow(2px 2px 4px rgba(0, 0, 0, 0.2));
+    transition: transform 0.3s ease;
+}
+
+.pokemon-grid-item:hover .pokemon-grid-image {
+    transform: scale(1.1);
 }
 
 .pokemon-grid-name {
-    font-size: 0.85em; /* Ajuste de tamaño para móvil */
+    font-size: 0.7em;
     font-weight: bold;
-    color: #676767;
+    color: #fff;
     text-align: center;
-    margin-bottom: 3px;
-    word-break: break-word; /* Romper palabras largas si es necesario */
+    margin-bottom: 5px;
+    word-break: break-word;
     font-family: monospace;
     text-transform: uppercase;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+    line-height: 1.2;
 }
 
 .pokemon-grid-types-container {
@@ -171,189 +354,113 @@
 }
 
 .pokemon-type-badge-small {
-    font-size: 0.6em; /* Más pequeño para las miniaturas */
-    padding: 1px 4px;
-    border-radius: 3px;
-    color: white;
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
-}
-
-.start-battle-button {
-    background-color: #4CAF50;
-    color: white;
-    padding: 8px 20px; /* Menos padding en móvil */
-    border: none;
+    font-size: 0.5em;
+    padding: 2px 6px;
     border-radius: 8px;
-    font-size: 0.95em; /* Ajuste de tamaño para móvil */
-    cursor: pointer;
-    margin-top: 20px;
-    margin-bottom: 5px;
-    transition: background-color 0.3s ease;
-    width: 40%; /* Ancho completo en móvil */
-    max-width: 250px; /* Límite para que no sea excesivamente ancho */
-    font-family: monospace;
+    color: white;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+    font-weight: bold;
     text-transform: uppercase;
+    font-family: monospace;
+    border: 1px solid rgba(255, 255, 255, 0.3);
 }
 
-.start-battle-button:hover:not(:disabled) {
-    background-color: #45a049;
-    transform: translateY(-3px);
-    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.3);
-}
-
-.start-battle-button:disabled {
-    background-color: #cccccc;
-    cursor: not-allowed;
-}
-
-.back-to-pokedex {
-    margin-top: 15px;
-    padding: 8px 15px;
-    background-color: #007bff;
+/* --- BOTÓN DE VOLVER --- */
+.back-to-pokedex-top {
+    background: #3498db;
     color: white;
+    padding: 8px 20px;
     text-decoration: none;
-    border-radius: 8px;
-    font-size: 0.9em;
-    transition: background-color 0.3s ease;
+    border-radius: 20px;
+    font-size: 0.65em;
+    font-family: 'Press Start 2P';
+    text-transform: uppercase;
+    transition: all 0.3s ease;
+    margin-bottom: 20px;
+    backdrop-filter: blur(5px);
+    border: 1px solid #0c6aa8ff;
 }
 
-.back-to-pokedex:hover {
-    background-color: #0056b3;
+.back-to-pokedex-top:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
 }
 
+/* --- MEDIA QUERIES --- */
 
-/* --- Media Query para Tablets (min-width: 768px) --- */
+/* Tablets */
 @media (min-width: 481px) {
     .battle-selector-container {
-        padding: 15px;
-        border-radius: 20px;
-        margin:auto 0;
-        max-width:660px;
-    }
-
-    .battle-selector-container h1 {
-        font-size: 1.6em;
-    }
-
-    .selection-slots-display {
-        flex-direction: row; /* Ahora los slots se muestran en fila */
-        gap: 20px;
-        width: 100%; /* Permite que el flexbox distribuya los ítems */
-        max-width: 600px; /* Limita el ancho del contenedor de los slots */
-        margin-top: 15px;
-    }
-
-    .selected-pokemon-slot {
-        width: 250px; /* Volvemos al ancho fijo, pero ahora hay espacio */
-        min-height: 300px;
-        padding: 15px;
-    }
-
-    .selected-pokemon-slot h2 {
-        font-size: 1.2em;
-    }
-
-    .pokemon-preview-image {
-        width: 120px;
-        height: 120px;
-    }
-
-    .selected-pokemon-card-preview h3 {
-        font-size: 1.1em;
-    }
-
-    .remove-pokemon-button {
-        width: 25px;
-        height: 25px;
-        font-size: 14px;
-        top: 10px;
-        right: 10px;
-    }
-
-    .available-pokemon-grid {
-        /* Ajuste de columnas para tablet, más grandes o más cantidad */
-        grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
-        gap: 15px;
-        width: 90%;
         padding: 20px;
-    }
-
-    .pokemon-grid-image {
-        width: 70px;
-        height: 70px;
-    }
-
-    .pokemon-grid-name {
-        font-size: 0.85em;
-    }
-
-    .pokemon-type-badge-small {
-        font-size: 0.65em;
-        padding: 2px 5px;
-    }
-
-    .back-to-pokedex {
-        padding: 8px 16px;
-        font-size: 0.7em;
-    }
-}
-
-/* --- Media Query para Desktops (min-width: 1025px) --- */
-@media (min-width: 1025px) {
-    .battle-selector-container {
-        padding: 40px;
     }
 
     .battle-selector-container h1 {
         font-size: 1.4em;
     }
 
-    .selection-slots-display {
-        gap: 30px;
-        max-width: 800px; /* Para que los slots no se separen demasiado */
+    .team-preview-container {
+        gap: 20px;
+        padding: 20px;
+    }
+
+    .team-slot {
+        width: 100px;
+        height: 100px;
+    }
+
+    .team-slot img {
+        width: 90px;
+        height: 90px;
+    }
+
+    .empty-team-slot {
+        font-size: 3em;
     }
 
     .available-pokemon-grid {
-        grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); /* Más espacio para miniaturas */
+        grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
         gap: 20px;
-        width: 85%;
+        padding: 25px;
+    }
+
+    .pokemon-grid-image {
+        width: 80px;
+        height: 80px;
+    }
+
+    .pokemon-grid-name {
+        font-size: 0.75em;
     }
 }
-/* src/components/PokemonBattleSelector.css */
 
-/* --- CÓDIGO A AGREGAR --- */
-.battle-selector-top-bar {
-  width: 100%;
-  display: flex;
-  justify-content:center; /* Alinea el botón a la izquierda */
-  padding: 5px 5px; /* Añade un poco de espacio */
-  box-sizing: border-box; /* Asegura que el padding no afecte el ancho total */
+/* Desktop */
+@media (min-width: 1025px) {
+    .battle-selector-container {
+        padding: 30px;
+    }
+
+    .battle-selector-container h1 {
+        font-size: 1.6em;
+    }
+
+    .team-preview-container {
+        gap: 25px;
+        padding: 25px;
+    }
+
+    .available-pokemon-grid {
+        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+        gap: 25px;
+        width: 90%;
+    }
+
+    .pokemon-grid-image {
+        width: 90px;
+        height: 90px;
+    }
+
+    .pokemon-grid-name {
+        font-size: 0.8em;
+    }
 }
-
-/* Ajustamos el margen del botón original para que no tenga tanto espacio arriba */
-.back-to-pokedex {
-  margin-top: 10px;
-}
-
-/* Reutilizamos los estilos del filtro de App.css */
-.generation-filter-container {
-    position: relative;
-    display: inline-block;
-}
-
-.generation-button {
-    background-color: #3498db;
-    color: white;
-    padding: 7px 14px;
-    border-radius: 7px;
-    cursor: pointer;
-    font-weight: bold;
-    border: 2px solid #19679b;
-}
-
-.generation-button:hover {
-    background-color: rgb(24, 101, 153);
-}
-
-
-

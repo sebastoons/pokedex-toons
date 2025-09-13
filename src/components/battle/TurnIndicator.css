@@ -1,0 +1,118 @@
+/* src/components/battle/TurnIndicator.css */
+.turn-indicator {
+    position: relative;
+    width: 100%;
+    max-width: 400px;
+    margin: 0 auto 15px auto;
+    background: linear-gradient(145deg, #f8f9fa, #e9ecef);
+    border: 4px solid #2c3e50;
+    border-radius: 12px;
+    padding: 8px 16px;
+    text-align: center;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    box-shadow: 
+        0 4px 8px rgba(0, 0, 0, 0.3),
+        inset 0 2px 0 rgba(255, 255, 255, 0.3),
+        inset 0 -2px 0 rgba(0, 0, 0, 0.1);
+    z-index: 10;
+}
+
+.turn-indicator::before {
+    content: '';
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    right: 2px;
+    bottom: 2px;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.2), transparent);
+    border-radius: 8px;
+    pointer-events: none;
+}
+
+.turn-text {
+    color: #2c3e50;
+    text-shadow: 1px 1px 0 rgba(255, 255, 255, 0.8);
+    margin-bottom: 2px;
+    position: relative;
+    z-index: 1;
+}
+
+.turn-arrow {
+    font-size: 0.8rem;
+    color: #e74c3c;
+    animation: arrow-blink 1.5s infinite ease-in-out;
+    position: relative;
+    z-index: 1;
+}
+
+/* Colores específicos para cada tipo de turno con estilo más clásico */
+.player-turn {
+    border-color: #3498db;
+    background: linear-gradient(145deg, #ebf3fd, #dbeafe);
+}
+
+.player-turn .turn-text {
+    color: #1e40af;
+    text-shadow: 1px 1px 0 rgba(255, 255, 255, 0.9);
+}
+
+.ia-turn {
+    border-color: #e74c3c;
+    background: linear-gradient(145deg, #fef2f2, #fee2e2);
+}
+
+.ia-turn .turn-text {
+    color: #dc2626;
+    text-shadow: 1px 1px 0 rgba(255, 255, 255, 0.9);
+}
+
+.player1-turn {
+    border-color: #27ae60;
+    background: linear-gradient(145deg, #f0fdf4, #dcfce7);
+}
+
+.player1-turn .turn-text {
+    color: #15803d;
+    text-shadow: 1px 1px 0 rgba(255, 255, 255, 0.9);
+}
+
+.player2-turn {
+    border-color: #f39c12;
+    background: linear-gradient(145deg, #fffbeb, #fef3c7);
+}
+
+.player2-turn .turn-text {
+    color: #d97706;
+    text-shadow: 1px 1px 0 rgba(255, 255, 255, 0.9);
+}
+
+/* Animación más sutil para el estilo clásico */
+@keyframes arrow-blink {
+    0%, 50% { opacity: 1; }
+    51%, 100% { opacity: 0.3; }
+}
+
+/* Responsividad */
+@media (max-width: 768px) {
+    .turn-indicator {
+        font-size: 0.6rem;
+        padding: 6px 14px;
+        margin-bottom: 12px;
+        max-width: 300px;
+    }
+}
+
+@media (max-width: 480px) {
+    .turn-indicator {
+        font-size: 0.55rem;
+        padding: 5px 12px;
+        margin-bottom: 10px;
+        max-width: 250px;
+    }
+    
+    .turn-arrow {
+        font-size: 0.7rem;
+    }
+}

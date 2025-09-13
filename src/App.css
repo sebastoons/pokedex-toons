@@ -284,15 +284,6 @@ header {
 
 
 /* --- Estilos para el Botón y Menú Desplegable de Generaciones --- */
-.generation-filter-container {
-    position: relative;
-    display: block; /* Cambiado a block para que ocupe su propia línea si es necesario */
-    width: 100%; /* Asegura que ocupe todo el ancho disponible */
-    text-align: center; /* Centra el botón dentro del contenedor */
-    font-family: monospace;
-    font-weight: bold;
-}
-
 .generation-button {
     font-family: monospace;
     font-weight: bold;
@@ -597,8 +588,8 @@ header {
     cursor: pointer;
     transition: background-color 0.2s ease, transform 0.1s ease;
     display: inline-block;
-    margin-bottom: 1px;
-    margin-top: 10px;
+    margin-bottom: 15px;
+    margin-top: 0;
     font-family: 'Press Start 2P';
     text-shadow: 1px 1px 0px rgba(0,0,0,0.3);
     color: white;
@@ -954,6 +945,7 @@ header {
 
     .generation-button {
         font-size: 0.8em;
+        width: 65%
     }
     .generation-dropdown-menu {
         min-width: 150px;
@@ -1033,7 +1025,7 @@ header {
         flex-direction: row; /* Label e input/select en la misma fila */
         align-items: center; /* Alinea verticalmente */
         gap: 5px; /* Espacio entre label y input/select */
-        flex-basis: 20%; /* Intenta distribuir en 3 columnas flexibles */
+        flex-basis: 40%; /* Intenta distribuir en 3 columnas flexibles */
         max-width: 33%; /* Límite para que quepan 3 */
         flex-wrap: nowrap; /* Evita que se envuelvan si hay espacio */
     }

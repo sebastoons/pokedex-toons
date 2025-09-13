@@ -5,12 +5,11 @@
         "opponent-ui opponent-ui"
         "player-ui player-ui"
         "battle-log battle-controls";
-    grid-template-rows: 2fr 2fr 1.5fr; /* Modificado para dar más espacio a la fila inferior */
+    grid-template-rows: 2fr 2fr 1.5fr;
     grid-template-columns: 1fr 1fr;
     gap: 10px;
     height: 100vh;
     padding: 20px;
-    background: url('../../assets/images/battle-backgrounds.jpg') no-repeat center center/cover;
     box-sizing: border-box;
     position: relative;
     overflow: hidden;
@@ -22,6 +21,8 @@
     align-items: center; 
     width: 100%;
     flex-direction: row-reverse;
+    gap: 20px;
+    margin-top: 10px;
 }
 
 .loading-container {
@@ -77,43 +78,107 @@
     display: flex;
     flex-direction: column;
     height: 100vh;
-    background-size: cover;
-    background-position: center;
+    /* CAMBIADO: Fondo gris opaco en lugar de imagen */
+    background: linear-gradient(135deg, 
+        rgba(64, 75, 91, 0.95) 0%, 
+        rgba(44, 62, 80, 0.95) 25%, 
+        rgba(52, 73, 94, 0.95) 50%, 
+        rgba(44, 62, 80, 0.95) 75%, 
+        rgba(64, 75, 91, 0.95) 100%
+    );
+    /* Patrón sutil opcional */
+    background-image: 
+        radial-gradient(circle at 25% 25%, rgba(255, 255, 255, 0.1) 2px, transparent 2px),
+        radial-gradient(circle at 75% 75%, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+    background-size: 50px 50px, 30px 30px;
     overflow: hidden;
     position: relative;
 }
 
-/* --- INICIO DE MODIFICACIONES DE RESPONSIVIDAD --- */
+.battle-elements {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    padding: 15px 20px 20px 20px;
+    box-sizing: border-box;
+}
 
-/* Estilos para Tablet (hasta 768px) */
+/* Contenedor principal que incluye el indicador de turno */
+.battle-content {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    gap: 10px;
+}
+
+.turn-indicator-container {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    z-index: 10;
+}
+
+.battle-main-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+/* Responsividad mejorada */
 @media (max-width: 768px) {
     .battle-arena-container {
-        height: auto; /* Permite que el contenido determine la altura */
+        height: auto;
         min-height: 100vh;
     }
 
+    .battle-elements {
+        padding: 10px 15px 15px 15px;
+    }
+
     .combatants-container {
-        flex-direction: column; /* Apila los paneles verticalmente */
+        flex-direction: column;
         justify-content: center;
         align-items: center;
-        gap: 20px; /* Espacio entre los paneles */
+        gap: 15px;
+        margin-top: 5px;
+        margin-bottom: 15px;
+    }
+
+    .battle-main-content {
+        gap: 12px;
     }
 }
 
-/* Estilos para Celular (hasta 480px) */
 @media (max-width: 480px) {
     .battle-arena-container {
-        padding: 10px;
+        padding: 0;
+        /* Fondo más simple en móvil */
+        background: linear-gradient(135deg, 
+            rgba(52, 73, 94, 0.98) 0%, 
+            rgba(44, 62, 80, 0.98) 100%
+        );
+        background-image: none;
+    }
+    
+    .battle-elements {
+        padding: 8px 10px 10px 10px;
     }
 
     .combatants-container {
-        /* Los paneles se superponen un poco para ahorrar espacio */
-        padding-bottom: 30px; 
+        gap: 8px;
+        margin-top: 3px;
+        margin-bottom: 12px;
+    }
+    
+    .loading-container {
+        font-size: 1.5em;
+        padding: 20px;
+        text-align: center;
     }
 
-    .combatant-ui {
-        width: 90%; /* Ocupa casi todo el ancho */
-        max-width: none; /* Elimina el límite de ancho máximo */
-        max-height: 350px; /* Limita la altura máxima */
+    .battle-main-content {
+        gap: 10px;
     }
 }

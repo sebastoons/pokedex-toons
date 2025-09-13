@@ -1,282 +1,265 @@
 // src/utils/moveGenerationUtils.js
 
-// Base de datos de movimientos por tipo
-export const MOVES_BY_TYPE = {
+// Base de datos extensa de movimientos por tipo
+const movesByType = {
     normal: [
         { name: "Placaje", power: 40, damage_class: "physical" },
-        { name: "Hiperrayo", power: 90, damage_class: "special" },
+        { name: "Arañazo", power: 40, damage_class: "physical" },
         { name: "Ataque Rápido", power: 40, damage_class: "physical" },
-        { name: "Golpe Cabeza", power: 70, damage_class: "physical" },
-        { name: "Destructor", power: 90, damage_class: "physical" },
-        { name: "Ataque Cuerpo", power: 85, damage_class: "physical" }
+        { name: "Hiper Rayo", power: 150, damage_class: "special" },
+        { name: "Cuchillada", power: 70, damage_class: "physical" },
+        { name: "Golpe Cuerpo", power: 85, damage_class: "physical" },
+        { name: "Doble Filo", power: 120, damage_class: "physical" }
     ],
     fire: [
         { name: "Ascuas", power: 40, damage_class: "special" },
         { name: "Lanzallamas", power: 90, damage_class: "special" },
-        { name: "Rueda Fuego", power: 60, damage_class: "physical" },
-        { name: "Llamarada", power: 110, damage_class: "special" },
         { name: "Puño Fuego", power: 75, damage_class: "physical" },
-        { name: "Sofoco", power: 120, damage_class: "special" }
+        { name: "Llamarada", power: 110, damage_class: "special" },
+        { name: "Rueda Fuego", power: 60, damage_class: "physical" },
+        { name: "Sofoco", power: 120, damage_class: "special" },
+        { name: "Colmillo Ígneo", power: 65, damage_class: "physical" }
     ],
     water: [
         { name: "Pistola Agua", power: 40, damage_class: "special" },
         { name: "Surf", power: 90, damage_class: "special" },
         { name: "Hidrobomba", power: 110, damage_class: "special" },
-        { name: "Burbuja", power: 40, damage_class: "special" },
+        { name: "Cascada", power: 80, damage_class: "physical" },
+        { name: "Aqua Jet", power: 40, damage_class: "physical" },
         { name: "Rayo Burbuja", power: 65, damage_class: "special" },
-        { name: "Cascada", power: 80, damage_class: "physical" }
+        { name: "Buceo", power: 80, damage_class: "physical" }
     ],
     grass: [
-        { name: "Drenadoras", power: 40, damage_class: "special" },
         { name: "Hoja Afilada", power: 55, damage_class: "physical" },
         { name: "Rayo Solar", power: 120, damage_class: "special" },
         { name: "Látigo Cepa", power: 45, damage_class: "physical" },
         { name: "Bomba Germen", power: 80, damage_class: "special" },
-        { name: "Tormenta Floral", power: 90, damage_class: "special" }
+        { name: "Tormenta Hojas", power: 130, damage_class: "special" },
+        { name: "Danza Pétalo", power: 120, damage_class: "special" },
+        { name: "Energibola", power: 90, damage_class: "special" }
     ],
     electric: [
         { name: "Impactrueno", power: 40, damage_class: "special" },
         { name: "Rayo", power: 90, damage_class: "special" },
-        { name: "Puño Trueno", power: 75, damage_class: "physical" },
         { name: "Trueno", power: 110, damage_class: "special" },
+        { name: "Puño Trueno", power: 75, damage_class: "physical" },
         { name: "Chispa", power: 65, damage_class: "physical" },
+        { name: "Voltio Cruel", power: 120, damage_class: "physical" },
         { name: "Rayo Carga", power: 50, damage_class: "special" }
+    ],
+    psychic: [
+        { name: "Confusión", power: 50, damage_class: "special" },
+        { name: "Psíquico", power: 90, damage_class: "special" },
+        { name: "Psicorrayo", power: 65, damage_class: "special" },
+        { name: "Psicocorte", power: 70, damage_class: "physical" },
+        { name: "Psicocolmillo", power: 85, damage_class: "physical" },
+        { name: "Fuerza Mental", power: 80, damage_class: "special" },
+        { name: "Psiconda", power: 100, damage_class: "special" }
     ],
     ice: [
         { name: "Rayo Hielo", power: 90, damage_class: "special" },
         { name: "Ventisca", power: 110, damage_class: "special" },
         { name: "Puño Hielo", power: 75, damage_class: "physical" },
-        { name: "Nieve Polvo", power: 40, damage_class: "special" },
-        { name: "Carámbano", power: 60, damage_class: "physical" },
-        { name: "Vaho Gélido", power: 55, damage_class: "special" }
+        { name: "Colmillo Hielo", power: 65, damage_class: "physical" },
+        { name: "Granizo", power: 0, damage_class: "status" },
+        { name: "Viento Hielo", power: 55, damage_class: "special" },
+        { name: "Carámbano", power: 85, damage_class: "physical" }
     ],
     fighting: [
         { name: "Karate", power: 50, damage_class: "physical" },
         { name: "Patada Baja", power: 65, damage_class: "physical" },
-        { name: "Puño Dinámico", power: 100, damage_class: "physical" },
+        { name: "Puño Certero", power: 150, damage_class: "physical" },
+        { name: "Machada", power: 100, damage_class: "physical" },
         { name: "Patada Salto", power: 100, damage_class: "physical" },
-        { name: "Sumisión", power: 80, damage_class: "physical" },
-        { name: "Golpe Cruzado", power: 100, damage_class: "physical" }
+        { name: "Golpe Roca", power: 40, damage_class: "physical" },
+        { name: "Puño Dinámico", power: 100, damage_class: "physical" }
     ],
     poison: [
-        { name: "Picotazo Veneno", power: 35, damage_class: "physical" },
-        { name: "Bomba Lodo", power: 65, damage_class: "special" },
-        { name: "Polvo Veneno", power: 0, damage_class: "status" },
         { name: "Ácido", power: 40, damage_class: "special" },
-        { name: "Residuos", power: 65, damage_class: "special" },
-        { name: "Colmillo Veneno", power: 50, damage_class: "physical" }
+        { name: "Bomba Lodo", power: 90, damage_class: "special" },
+        { name: "Colmillo Veneno", power: 50, damage_class: "physical" },
+        { name: "Púas Tóxicas", power: 80, damage_class: "physical" },
+        { name: "Bomba Ácida", power: 120, damage_class: "special" },
+        { name: "Residuos", power: 120, damage_class: "special" },
+        { name: "Rayo Venenoso", power: 80, damage_class: "special" }
     ],
     ground: [
-        { name: "Hueso Palo", power: 65, damage_class: "physical" },
         { name: "Terremoto", power: 100, damage_class: "physical" },
         { name: "Excavar", power: 80, damage_class: "physical" },
-        { name: "Fisura", power: 0, damage_class: "physical" },
-        { name: "Lanza Hueso", power: 90, damage_class: "physical" },
-        { name: "Magnitud", power: 70, damage_class: "physical" }
+        { name: "Hueso Palo", power: 65, damage_class: "physical" },
+        { name: "Fisura", power: 150, damage_class: "physical" },
+        { name: "Bofetón Lodo", power: 20, damage_class: "special" },
+        { name: "Magnitud", power: 70, damage_class: "physical" },
+        { name: "Fuerza Telúrica", power: 90, damage_class: "physical" }
     ],
     flying: [
-        { name: "Picotazo", power: 35, damage_class: "physical" },
         { name: "Ataque Ala", power: 60, damage_class: "physical" },
+        { name: "Pájaro Osado", power: 120, damage_class: "physical" },
         { name: "Tornado", power: 40, damage_class: "special" },
-        { name: "Pico Taladro", power: 80, damage_class: "physical" },
-        { name: "Vuelo", power: 90, damage_class: "physical" },
-        { name: "Tajo Aéreo", power: 75, damage_class: "special" }
-    ],
-    psychic: [
-        { name: "Confusión", power: 50, damage_class: "special" },
-        { name: "Psicorrayo", power: 65, damage_class: "special" },
-        { name: "Psíquico", power: 90, damage_class: "special" },
-        { name: "Hipnosis", power: 0, damage_class: "status" },
-        { name: "Psiconda", power: 80, damage_class: "special" },
-        { name: "Premonición", power: 120, damage_class: "special" }
+        { name: "Picoteo", power: 35, damage_class: "physical" },
+        { name: "Tajo Aéreo", power: 75, damage_class: "special" },
+        { name: "Huracán", power: 110, damage_class: "special" },
+        { name: "Acróbata", power: 55, damage_class: "physical" }
     ],
     bug: [
-        { name: "Picadura", power: 35, damage_class: "physical" },
+        { name: "Picadura", power: 60, damage_class: "physical" },
         { name: "Pin Misil", power: 25, damage_class: "physical" },
-        { name: "Doble Bofetón", power: 15, damage_class: "physical" },
-        { name: "Zumbido", power: 90, damage_class: "special" },
+        { name: "Megacuerno", power: 120, damage_class: "physical" },
         { name: "Tijera X", power: 80, damage_class: "physical" },
-        { name: "Megacuerno", power: 120, damage_class: "physical" }
+        { name: "Zumbido", power: 90, damage_class: "special" },
+        { name: "Danza Aleteo", power: 0, damage_class: "status" },
+        { name: "Ataque Fury", power: 15, damage_class: "physical" }
     ],
     rock: [
         { name: "Lanzarrocas", power: 50, damage_class: "physical" },
         { name: "Avalancha", power: 75, damage_class: "physical" },
-        { name: "Poder Pasado", power: 60, damage_class: "special" },
-        { name: "Pedrada", power: 25, damage_class: "physical" },
+        { name: "Pedrada", power: 100, damage_class: "physical" },
+        { name: "Tumba Rocas", power: 60, damage_class: "physical" },
+        { name: "Cabezazo", power: 150, damage_class: "physical" },
         { name: "Roca Afilada", power: 100, damage_class: "physical" },
-        { name: "Romperrocas", power: 40, damage_class: "physical" }
+        { name: "Poder Pasado", power: 60, damage_class: "special" }
     ],
     ghost: [
         { name: "Lengüetazo", power: 30, damage_class: "physical" },
-        { name: "Rayo Confuso", power: 50, damage_class: "special" },
         { name: "Bola Sombra", power: 80, damage_class: "special" },
         { name: "Puño Sombra", power: 60, damage_class: "physical" },
+        { name: "Rayo Confuso", power: 0, damage_class: "status" },
+        { name: "Garra Sombría", power: 70, damage_class: "physical" },
         { name: "Pesadilla", power: 0, damage_class: "status" },
-        { name: "Garra Umbría", power: 70, damage_class: "physical" }
+        { name: "Golpe Fantasma", power: 90, damage_class: "physical" }
     ],
     dragon: [
         { name: "Furia Dragón", power: 40, damage_class: "special" },
         { name: "Pulso Dragón", power: 85, damage_class: "special" },
         { name: "Garra Dragón", power: 80, damage_class: "physical" },
         { name: "Cometa Draco", power: 130, damage_class: "special" },
-        { name: "Ascenso Draco", power: 120, damage_class: "physical" },
+        { name: "Cola Dragón", power: 60, damage_class: "physical" },
+        { name: "Ascenso Draco", power: 120, damage_class: "special" },
         { name: "Aliento Dragón", power: 60, damage_class: "special" }
     ],
     steel: [
         { name: "Garra Metal", power: 50, damage_class: "physical" },
-        { name: "Bala Bala", power: 25, damage_class: "physical" },
-        { name: "Cabezazo", power: 80, damage_class: "physical" },
+        { name: "Cabeza Hierro", power: 80, damage_class: "physical" },
         { name: "Bomba Imán", power: 60, damage_class: "physical" },
-        { name: "Represión Metal", power: 80, damage_class: "special" },
-        { name: "Cañón Flash", power: 80, damage_class: "special" }
+        { name: "Cañón Meteoro", power: 120, damage_class: "special" },
+        { name: "Corte Furia", power: 40, damage_class: "physical" },
+        { name: "Represalia", power: 50, damage_class: "physical" },
+        { name: "Cola Férrea", power: 100, damage_class: "physical" }
     ],
     dark: [
         { name: "Mordisco", power: 60, damage_class: "physical" },
         { name: "Triturar", power: 80, damage_class: "physical" },
-        { name: "Sorpresa", power: 70, damage_class: "physical" },
         { name: "Pulso Umbrío", power: 80, damage_class: "special" },
         { name: "Golpe Bajo", power: 70, damage_class: "physical" },
-        { name: "Juego Sucio", power: 95, damage_class: "physical" }
+        { name: "Juego Sucio", power: 95, damage_class: "physical" },
+        { name: "Noche Aciaga", power: 80, damage_class: "special" },
+        { name: "Payback", power: 50, damage_class: "physical" }
     ],
     fairy: [
-        { name: "Viento Feérico", power: 40, damage_class: "special" },
-        { name: "Carantoña", power: 90, damage_class: "physical" },
-        { name: "Beso Drenaje", power: 50, damage_class: "special" },
-        { name: "Luz Lunar", power: 0, damage_class: "status" },
+        { name: "Voz Cautivadora", power: 40, damage_class: "special" },
         { name: "Fuerza Lunar", power: 95, damage_class: "special" },
-        { name: "Vozarrón", power: 90, damage_class: "special" }
+        { name: "Carantoña", power: 90, damage_class: "physical" },
+        { name: "Brillo Mágico", power: 80, damage_class: "special" },
+        { name: "Beso Dulce", power: 50, damage_class: "special" },
+        { name: "Viento Feérico", power: 90, damage_class: "special" },
+        { name: "Campo de Niebla", power: 0, damage_class: "status" }
     ]
 };
 
-// Movimientos de estado/apoyo comunes
-export const STATUS_MOVES = [
-    { name: "Gruñido", power: 0, type: "normal", damage_class: "status" },
-    { name: "Látigo", power: 0, type: "normal", damage_class: "status" },
-    { name: "Danza Espada", power: 0, type: "normal", damage_class: "status" },
-    { name: "Endurecimiento", power: 0, type: "normal", damage_class: "status" }
+// Movimientos normales como fallback
+const normalFallbackMoves = [
+    { name: "Placaje", power: 40, damage_class: "physical" },
+    { name: "Arañazo", power: 40, damage_class: "physical" },
+    { name: "Ataque Rápido", power: 40, damage_class: "physical" },
+    { name: "Golpe Cuerpo", power: 85, damage_class: "physical" }
 ];
 
-/**
- * Genera movimientos basados en los tipos del Pokémon
- * @param {Array} pokemonTypes - Array de tipos del Pokémon (ej: ['grass', 'poison'])
- * @param {Object} stats - Estadísticas del Pokémon para determinar si es más físico o especial
- * @returns {Array} Array de 4 movimientos
- */
+// Función para generar movimientos según los tipos del Pokémon
 export const generateMovesByTypes = (pokemonTypes, stats = null) => {
+    const types = Array.isArray(pokemonTypes) ? pokemonTypes : [pokemonTypes];
     const moves = [];
-    
-    // Asegurar que tenemos los tipos como strings
-    const types = pokemonTypes.map(type => 
-        typeof type === 'string' ? type : type.type?.name || type.name
-    );
-    
-    // 1. Agregar 2 movimientos del tipo principal (el primero)
+
+    if (types.length === 0) {
+        return normalFallbackMoves.slice(0, 4);
+    }
+
+    // Tipo principal (primeros 2 movimientos)
     const primaryType = types[0];
-    if (MOVES_BY_TYPE[primaryType]) {
-        const primaryMoves = [...MOVES_BY_TYPE[primaryType]];
-        // Mezclar y tomar los 2 primeros
-        primaryMoves.sort(() => 0.5 - Math.random());
+    const primaryMoves = movesByType[primaryType] || normalFallbackMoves;
+    
+    // Agregar 2 movimientos del tipo principal
+    for (let i = 0; i < 2 && i < primaryMoves.length; i++) {
+        moves.push({
+            ...primaryMoves[i],
+            type: primaryType,
+            pp: 15
+        });
+    }
+
+    // Tipo secundario (1 movimiento)
+    if (types.length > 1) {
+        const secondaryType = types[1];
+        const secondaryMoves = movesByType[secondaryType] || normalFallbackMoves;
         
-        // Preferir movimientos con poder si tenemos estadísticas
-        if (stats) {
-            primaryMoves.sort((a, b) => {
-                if (stats.attack > stats['special-attack']) {
-                    // Preferir físicos
-                    if (a.damage_class === 'physical' && b.damage_class !== 'physical') return -1;
-                    if (b.damage_class === 'physical' && a.damage_class !== 'physical') return 1;
-                } else {
-                    // Preferir especiales
-                    if (a.damage_class === 'special' && b.damage_class !== 'special') return -1;
-                    if (b.damage_class === 'special' && a.damage_class !== 'special') return 1;
-                }
-                return b.power - a.power; // Por poder si son del mismo tipo
+        if (secondaryMoves.length > 0) {
+            moves.push({
+                ...secondaryMoves[0],
+                type: secondaryType,
+                pp: 10
             });
         }
-        
-        moves.push(
-            { ...primaryMoves[0], type: primaryType },
-            { ...primaryMoves[1], type: primaryType }
-        );
-    }
-    
-    // 2. Si tiene un segundo tipo, agregar 1 movimiento de ese tipo
-    if (types.length > 1 && types[1] !== types[0]) {
-        const secondaryType = types[1];
-        if (MOVES_BY_TYPE[secondaryType]) {
-            const secondaryMoves = [...MOVES_BY_TYPE[secondaryType]];
-            secondaryMoves.sort(() => 0.5 - Math.random());
-            moves.push({ ...secondaryMoves[0], type: secondaryType });
+    } else {
+        // Si solo tiene un tipo, agregar otro movimiento del tipo principal
+        if (primaryMoves.length > 2) {
+            moves.push({
+                ...primaryMoves[2],
+                type: primaryType,
+                pp: 10
+            });
         }
     }
-    
-    // 3. Agregar 1 movimiento Normal (siempre)
-    const normalMoves = [...MOVES_BY_TYPE.normal];
-    normalMoves.sort(() => 0.5 - Math.random());
-    moves.push({ ...normalMoves[0], type: 'normal' });
-    
-    // 4. Si aún faltan movimientos, llenar con movimientos del tipo principal o normal
+
+    // Movimiento normal (último slot)
+    const normalMoves = movesByType.normal;
+    if (normalMoves.length > 0) {
+        moves.push({
+            ...normalMoves[Math.floor(Math.random() * Math.min(3, normalMoves.length))],
+            type: 'normal',
+            pp: 20
+        });
+    }
+
+    // Completar con movimientos normales si faltan
     while (moves.length < 4) {
-        if (MOVES_BY_TYPE[primaryType] && Math.random() > 0.5) {
-            const extraMoves = MOVES_BY_TYPE[primaryType].filter(move => 
-                !moves.some(m => m.name === move.name)
-            );
-            if (extraMoves.length > 0) {
-                moves.push({ ...extraMoves[0], type: primaryType });
-                continue;
-            }
-        }
-        
-        // Fallback a movimientos normales
-        const extraNormalMoves = MOVES_BY_TYPE.normal.filter(move => 
-            !moves.some(m => m.name === move.name)
-        );
-        if (extraNormalMoves.length > 0) {
-            moves.push({ ...extraNormalMoves[0], type: 'normal' });
-        } else {
-            // Último recurso: movimiento básico
-            moves.push({ name: "Placaje", power: 40, type: "normal", damage_class: "physical" });
-        }
+        const fallback = normalFallbackMoves[moves.length % normalFallbackMoves.length];
+        moves.push({
+            ...fallback,
+            type: 'normal',
+            pp: 15
+        });
     }
-    
-    return moves.slice(0, 4); // Asegurar que solo devolvemos 4 movimientos
+
+    return moves.slice(0, 4);
 };
 
-/**
- * Obtiene un movimiento aleatorio de un tipo específico
- * @param {string} type - Tipo de movimiento deseado
- * @returns {Object} Movimiento con el tipo incluido
- */
-export const getRandomMoveByType = (type) => {
-    if (!MOVES_BY_TYPE[type]) {
-        return { name: "Placaje", power: 40, type: "normal", damage_class: "physical" };
-    }
-    
-    const moves = MOVES_BY_TYPE[type];
-    const randomMove = moves[Math.floor(Math.random() * moves.length)];
-    return { ...randomMove, type };
-};
-
-/**
- * Mejora los movimientos existentes de un Pokémon si no están optimizados por tipo
- * @param {Object} pokemon - Objeto Pokémon con tipos y movimientos existentes
- * @returns {Array} Array de movimientos mejorados
- */
+// Función mejorada para Pokémon con movimientos existentes
 export const improvePokemonMoves = (pokemon) => {
-    // Si el Pokémon ya tiene 4 movimientos que siguen el patrón de tipos, no hacer nada
-    const types = pokemon.types.map(t => typeof t === 'string' ? t : t.type?.name || t.name);
-    const primaryType = types[0];
-    const secondaryType = types[1];
-    
-    const currentMoves = pokemon.moves || [];
-    const primaryTypeMoves = currentMoves.filter(m => m.type === primaryType).length;
-    const secondaryTypeMoves = secondaryType ? currentMoves.filter(m => m.type === secondaryType).length : 0;
-    const normalMoves = currentMoves.filter(m => m.type === 'normal').length;
-    
-    // Si ya tiene la distribución correcta, mantener los movimientos actuales
-    if (primaryTypeMoves >= 2 && normalMoves >= 1 && (!secondaryType || secondaryTypeMoves >= 1)) {
-        return currentMoves.slice(0, 4);
+    if (!pokemon || !pokemon.types) {
+        return normalFallbackMoves.slice(0, 4);
     }
+
+    const types = pokemon.types.map(t => typeof t === 'string' ? t : t.type?.name || t.name);
     
-    // Si no, generar nuevos movimientos
-    return generateMovesByTypes(types, pokemon.stats);
+    // Generar movimientos basados en tipos
+    const generatedMoves = generateMovesByTypes(types, pokemon.stats);
+    
+    // Si el Pokémon ya tiene movimientos, mezclarlos con los generados
+    if (pokemon.moves && pokemon.moves.length > 0) {
+        const existingMoves = pokemon.moves.slice(0, 2); // Mantener algunos existentes
+        const newMoves = generatedMoves.slice(0, 4 - existingMoves.length);
+        
+        return [...existingMoves, ...newMoves].slice(0, 4);
+    }
+
+    return generatedMoves;
 };

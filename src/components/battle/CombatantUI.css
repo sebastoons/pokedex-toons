@@ -8,7 +8,7 @@
     max-width: 450px;
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
     display: flex;
-    flex-direction: column; /* Apila la información y la imagen verticalmente */
+    flex-direction: column;
 }
 
 .pokemon-data-panel {
@@ -16,7 +16,7 @@
     border-radius: 8px;
     padding: 10px;
     border: 2px solid #ccc;
-    margin-bottom: 8px; /* Espacio entre el panel y la imagen */
+    margin-bottom: 8px;
 }
 
 .panel-header {
@@ -98,26 +98,56 @@
     background-color: white;
     border: 3px solid #888;
     transition: all 0.2s ease;
+    position: relative;
+    overflow: hidden;
 }
+
 .pokemon-circle img {
     width: 100%;
     height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
 }
+
+/* Estados de los círculos mejorados */
 .pokemon-circle.active {
     border-color: #ffcb05;
+    background: linear-gradient(135deg, #fff3a0, #ffcb05);
     transform: scale(1.1);
+    box-shadow: 0 0 15px rgba(255, 203, 5, 0.6);
 }
+
+.pokemon-circle.alive {
+    border-color: #43ea7a;
+    background: linear-gradient(135deg, #a0ffc0, #43ea7a);
+}
+
 .pokemon-circle.fainted {
-    opacity: 0.5;
+    opacity: 0.4;
     filter: grayscale(100%);
+    border-color: #666;
+    background: #ccc;
 }
+
 .pokemon-circle.clickable {
     cursor: pointer;
     border-color: #43ea7a;
+    animation: pulse-green 2s infinite ease-in-out;
 }
+
 .pokemon-circle.clickable:hover {
-    transform: scale(1.2);
+    transform: scale(1.3);
     border-color: #2b9e5a;
+    box-shadow: 0 0 20px rgba(67, 234, 122, 0.8);
+}
+
+@keyframes pulse-green {
+    0%, 100% { 
+        box-shadow: 0 0 5px rgba(67, 234, 122, 0.3); 
+    }
+    50% { 
+        box-shadow: 0 0 15px rgba(67, 234, 122, 0.7); 
+    }
 }
 
 /* Contenedor de la imagen del Pokémon */
@@ -127,12 +157,13 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 250px; /* Altura fija para la imagen */
+    height: 250px;
+    overflow: hidden;
 }
 
 .pokemon-combatant-sprite {
-    width: 280px;
-    height: 280px;
+    max-width: 100%;
+    max-height: 100%;
     object-fit: contain;
     filter: drop-shadow(4px 4px 4px rgba(0, 0, 0, 0.3));
     transition: transform 0.3s ease;
@@ -154,21 +185,82 @@
     20%, 40%, 60%, 80% { transform: translateX(5px); }
 }
 
-/* --- INICIO DE LA MODIFICACIÓN --- */
-  /*
-    Aquí están las clases para la barra de vida.
-    Ahora puedes cambiar estos colores o añadirles estilos
-    sin tocar el código JavaScript.
-  */
-  
-  .combatant-hp-bar-fill.high-hp {
-    background: linear-gradient(to right, #43ea7a, #1a9e4a); /* Verde */
-  }
-  
-  .combatant-hp-bar-fill.medium-hp {
-    background: linear-gradient(to right, #feca57, #e5a933); /* Amarillo */
-  }
-  
-  .combatant-hp-bar-fill.low-hp {
-    background: linear-gradient(to right, #fe3261, #c81a42); /* Rojo */
-  }
+/* Clases para la barra de vida */
+.combatant-hp-bar-fill.high-hp {
+    background: linear-gradient(to right, #43ea7a, #1a9e4a);
+}
+
+.combatant-hp-bar-fill.medium-hp {
+    background: linear-gradient(to right, #feca57, #e5a933);
+}
+
+.combatant-hp-bar-fill.low-hp {
+    background: linear-gradient(to right, #fe3261, #c81a42);
+}
+
+/* Responsividad mejorada */
+@media (max-width: 768px) {
+    .combatant-ui {
+        width: 90%;
+        max-width: none;
+    }
+    
+    .pokemon-image-frame {
+        height: 200px;
+    }
+    
+    .pokemon-team-circles {
+        gap: 4px;
+    }
+    
+    .pokemon-circle {
+        width: 35px;
+        height: 35px;
+    }
+    
+    .combatant-name {
+        font-size: 0.75em;
+    }
+}
+
+@media (max-width: 480px) {
+    .combatant-ui {
+        width: 95%;
+        padding: 6px;
+    }
+    
+    .pokemon-data-panel {
+        padding: 8px;
+    }
+    
+    .pokemon-image-frame {
+        height: 130px; /* Reducido desde 150px */
+    }
+    
+    .pokemon-team-circles {
+        gap: 3px;
+        flex-wrap: wrap;
+    }
+    
+    .pokemon-circle {
+        width: 30px;
+        height: 30px;
+        border-width: 2px;
+    }
+    
+    .combatant-name {
+        font-size: 0.65em;
+    }
+    
+    .combatant-level {
+        font-size: 0.5rem;
+    }
+    
+    .hp-label {
+        font-size: 0.7rem;
+    }
+    
+    .combatant-hp-text {
+        font-size: 0.5em;
+    }
+}

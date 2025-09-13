@@ -17,17 +17,12 @@ export const CombatantUI = ({
 
   const hpPercentage = Math.max(0, (pokemon.currentHp / pokemon.maxHp) * 100);
 
-  // --- INICIO DE LA MODIFICACIÓN ---
-
-  // 1. Determinamos la clase CSS para la barra de vida en lugar de un color directo.
-  let hpBarClass = 'high-hp'; // Clase por defecto (verde)
+  let hpBarClass = 'high-hp';
   if (hpPercentage < 20) {
-    hpBarClass = 'low-hp'; // Clase para vida baja (rojo)
+    hpBarClass = 'low-hp';
   } else if (hpPercentage < 50) {
-    hpBarClass = 'medium-hp'; // Clase para vida media (amarillo)
+    hpBarClass = 'medium-hp';
   }
-
-  // --- FIN DE LA MODIFICACIÓN ---
 
   const manualImage = manualPokemonImages[pokemon.id];
   const fallbackImage = isOpponent 
@@ -45,7 +40,6 @@ export const CombatantUI = ({
         <div className="combatant-hp-bar-container">
           <div className="hp-label">HP</div>
           <div className="combatant-hp-bar-bg">
-            {/* 2. Aplicamos la nueva clase y quitamos el estilo 'background' en línea */}
             <div 
               className={`combatant-hp-bar-fill ${hpBarClass}`} 
               style={{ width: `${hpPercentage}%` }} 
@@ -58,14 +52,23 @@ export const CombatantUI = ({
           {team.map((p, index) => {
               const isFainted = p.currentHp <= 0;
               const isActive = p.id === pokemon.id;
-              const isClickable = !isOpponent && canSwitch && !isFainted && !isActive;
+              const isAlive = p.currentHp > 0 && !isActive;
+              const isClickable = canSwitch && !isFainted && !isActive;
+
+              let circleClasses = ['pokemon-circle'];
+              
+              if (isFainted) circleClasses.push('fainted');
+              else if (isActive) circleClasses.push('active');
+              else if (isAlive) circleClasses.push('alive');
+              
+              if (isClickable) circleClasses.push('clickable');
 
               return (
                   <div
                       key={p.id || index}
-                      className={`pokemon-circle ${isFainted ? 'fainted' : ''} ${isActive ? 'active' : ''} ${isClickable ? 'clickable' : ''}`}
-                      onClick={() => isClickable && onPokemonCircleClick(p)}
-                      title={p.name}
+                      className={circleClasses.join(' ')}
+                      onClick={() => isClickable && onPokemonCircleClick && onPokemonCircleClick(p)}
+                      title={`${p.name} - HP: ${p.currentHp}/${p.maxHp}`}
                   >
                       <img src={p.sprites?.front_default || p.imageUrl} alt={p.name} />
                   </div>
@@ -78,7 +81,7 @@ export const CombatantUI = ({
         <img
           src={imageUrl}
           alt={pokemon.name}
-          className={`pokemon-sprite ${isOpponent ? 'opponent-sprite' : 'player-sprite'} ${isAttacking ? 'attacking' : ''} ${isDamaged ? 'damaged' : ''}`}
+          className={`pokemon-combatant-sprite ${isOpponent ? 'opponent-sprite' : 'player-sprite'} ${isAttacking ? 'attacking' : ''} ${isDamaged ? 'damaged' : ''}`}
         />
       </div>
     </div>
