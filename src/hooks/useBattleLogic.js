@@ -138,7 +138,7 @@ export const useBattleLogic = () => {
     const handleSwitchPokemon = useCallback(async (newPokemon, isPlayer1 = true) => {
         if (animationBlocking || winner) return;
 
-        const currentTeam = isPlayer1 ? player1Team : player2Team;
+       // const currentTeam = isPlayer1 ? player1Team : player2Team;
         const activePokemon = isPlayer1 ? activePokemonP1 : activePokemonP2;
         const setActivePokemon = isPlayer1 ? setActivePokemonP1 : setActivePokemonP2;
 

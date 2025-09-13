@@ -25,7 +25,7 @@ const PokemonBattleArena = () => {
         animationBlocking,
         attackSoundRef, hitSoundRef, battleMusicRef, lowHpSoundRef, victorySoundRef,
         handleAttack,
-        handlePokemonCircleClick,
+        //handlePokemonCircleClick,//
         handleSwitchPokemon,
     } = useBattleLogic();
 
@@ -43,7 +43,7 @@ const PokemonBattleArena = () => {
     const activePokemonForControls = isPlayer1Turn ? activePokemonP1 : activePokemonP2;
     
     // Los controles siempre se muestran para mantener el layout estable
-    const controlsVisible = true;
+    //const controlsVisible = true;//
     const controlsActive = gameMode === 'vsIA' ? isPlayer1Turn : true;
 
     // Lógica de cambio de Pokémon
