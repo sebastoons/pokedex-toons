@@ -8,7 +8,7 @@ export const useBattleLogic = () => {
     const navigate = useNavigate();
     const location = useLocation();
 
-    // --- ESTADOS ---
+    // Estados
     const [player1Team, setPlayer1Team] = useState([]);
     const [player2Team, setPlayer2Team] = useState([]);
     const [activePokemonP1, setActivePokemonP1] = useState(null);
@@ -25,12 +25,25 @@ export const useBattleLogic = () => {
     const [pokemonP2Damaged, setPokemonP2Damaged] = useState(false);
     const [animationBlocking, setAnimationBlocking] = useState(false);
 
-    // --- REFERENCIAS DE AUDIO ---
+    // Referencias de audio
     const attackSoundRef = useRef(null);
     const hitSoundRef = useRef(null);
     const battleMusicRef = useRef(null);
     const lowHpSoundRef = useRef(null);
     const victorySoundRef = useRef(null);
+    
+    // Referencias para acceder a los valores actuales sin dependencias
+    const player1TeamRef = useRef(player1Team);
+    const player2TeamRef = useRef(player2Team);
+    
+    // Actualizar las referencias cuando cambien los estados
+    useEffect(() => {
+        player1TeamRef.current = player1Team;
+    }, [player1Team]);
+    
+    useEffect(() => {
+        player2TeamRef.current = player2Team;
+    }, [player2Team]);
 
     const addLog = useCallback((message) => {
         setBattleLog(prev => [...prev, message].slice(-15));
@@ -57,14 +70,36 @@ export const useBattleLogic = () => {
             stopSound(lowHpSoundRef);
         }
     }, [activePokemonP1, lowHpSoundRef]);
+
+    // --- FUNCIÓN PARA CAMBIO AUTOMÁTICO CUANDO SOLO QUEDA 1 POKÉMON ---
+    const autoSwitchLastPokemon = useCallback(async (isPlayer1) => {
+        const team = isPlayer1 ? player1TeamRef.current : player2TeamRef.current;
+        const alivePokemon = team.filter(p => p.currentHp > 0);
+        
+        if (alivePokemon.length === 1) {
+            const lastPokemon = alivePokemon[0];
+            const setActivePokemon = isPlayer1 ? setActivePokemonP1 : setActivePokemonP2;
+            
+            setAnimationBlocking(true);
+            setAwaitingSwitch(null);
+            addLog(`¡Adelante, ${lastPokemon.name.toUpperCase()}! ¡Es tu último Pokémon!`);
+            await new Promise(resolve => setTimeout(resolve, 1000));
+            
+            setActivePokemon(lastPokemon);
+            setIsPlayer1Turn(isPlayer1);
+            setAnimationBlocking(false);
+            return true;
+        }
+        return false;
+    }, [addLog]);
     
-    // --- Lógica de Ataque ---
+    // Lógica de Ataque
     const handleAttackAction = useCallback(async (move) => {
         if (animationBlocking || winner || awaitingSwitch) return;
 
         if (!move) {
             console.error("Se intentó usar un movimiento inválido (undefined).");
-            // CORREGIDO: No cambiar el turno aquí, solo retornar
+            if (!isPlayer1Turn) setIsPlayer1Turn(true);
             return;
         }
 
@@ -106,22 +141,21 @@ export const useBattleLogic = () => {
 
         if (newHp === 0) {
             addLog(`${defender.name.toUpperCase()} se ha debilitado!`);
-            
-            // CORREGIDO: Verificar equipos actualizados
-            const updatedP1Team = isPlayer1Turn ? player1Team.map(p => p.id === defender.id ? {...p, currentHp: newHp} : p) : player1Team;
-            const updatedP2Team = isPlayer1Turn ? player2Team : player2Team.map(p => p.id === defender.id ? {...p, currentHp: newHp} : p);
-            
-            const p1HasPokemonLeft = updatedP1Team.some(p => p.currentHp > 0);
-            const p2HasPokemonLeft = updatedP2Team.some(p => p.currentHp > 0);
+            // Usamos las referencias para acceder a los valores actuales
+            const remainingTeam = isPlayer1Turn ? player2TeamRef.current : player1TeamRef.current;
+            const alivePokemon = remainingTeam.filter(p => p.currentHp > 0);
 
-            if (isPlayer1Turn && p2HasPokemonLeft) {
-                // Player 2 necesita cambio forzado
-                setAwaitingSwitch('player2');
-            } else if (!isPlayer1Turn && p1HasPokemonLeft) {
-                // Player 1 necesita cambio forzado
-                setAwaitingSwitch('player1');
+            if (alivePokemon.length > 0) {
+                // Si solo queda 1 Pokémon, cambiarlo automáticamente
+                if (alivePokemon.length === 1) {
+                    const switchedSuccessfully = await autoSwitchLastPokemon(!isPlayer1Turn);
+                    if (!switchedSuccessfully) {
+                        setAwaitingSwitch(isPlayer1Turn ? 'player2' : 'player1');
+                    }
+                } else {
+                    setAwaitingSwitch(isPlayer1Turn ? 'player2' : 'player1');
+                }
             } else {
-                // No hay más Pokémon, alguien gana
                 setWinner(isPlayer1Turn ? 'player1' : 'player2');
             }
         } else {
@@ -131,40 +165,19 @@ export const useBattleLogic = () => {
         setAnimationBlocking(false);
     }, [
         animationBlocking, winner, awaitingSwitch, activePokemonP1, activePokemonP2, addLog,
-        player1Team, player2Team, attackSoundRef, hitSoundRef, isPlayer1Turn
+        attackSoundRef, hitSoundRef, isPlayer1Turn, autoSwitchLastPokemon
     ]);
 
-    // --- Lógica de Cambio (CORREGIDA) ---
+    // Lógica de Cambio de Pokémon (MEJORADA)
     const handleSwitchPokemon = useCallback(async (newPokemon, isPlayer1 = true) => {
         if (animationBlocking || winner) return;
 
-       // const currentTeam = isPlayer1 ? player1Team : player2Team;
         const activePokemon = isPlayer1 ? activePokemonP1 : activePokemonP2;
         const setActivePokemon = isPlayer1 ? setActivePokemonP1 : setActivePokemonP2;
 
         if (!newPokemon || newPokemon.id === activePokemon?.id || newPokemon.currentHp <= 0) {
-            console.log('Cambio inválido:', {
-                newPokemon: newPokemon?.name,
-                sameAsCurrent: newPokemon?.id === activePokemon?.id,
-                isFainted: newPokemon?.currentHp <= 0
-            });
             return;
         }
-
-        // CORREGIDO: Verificación de permisos de cambio más flexible
-        const canSwitch = isPlayer1 
-            ? (isPlayer1Turn || awaitingSwitch === 'player1')
-            : (gameMode === '1vs1' && (!isPlayer1Turn || awaitingSwitch === 'player2')) || (gameMode === 'vsIA' && awaitingSwitch === 'player2');
-
-        console.log('Switch attempt:', {
-            player: isPlayer1 ? 'P1' : 'P2',
-            canSwitch,
-            isPlayer1Turn,
-            awaitingSwitch,
-            gameMode
-        });
-
-        if (!canSwitch) return;
         
         const wasAwaitingSwitch = awaitingSwitch;
         setAnimationBlocking(true);
@@ -172,78 +185,77 @@ export const useBattleLogic = () => {
         
         if (activePokemon) {
             addLog(`${activePokemon.name.toUpperCase()} regresa.`);
+            await new Promise(resolve => setTimeout(resolve, 500));
         }
-        await new Promise(resolve => setTimeout(resolve, 500));
         
         setActivePokemon(newPokemon);
         addLog(`¡Adelante, ${newPokemon.name.toUpperCase()}!`);
         await new Promise(resolve => setTimeout(resolve, 500));
         
-        // CORREGIDO: Lógica de turnos mejorada
+        // CORRECCIÓN: Manejo mejorado de turnos
         if (!wasAwaitingSwitch) {
-            // Cambio voluntario - cambiar turno
+            // Cambio voluntario durante el turno
             setIsPlayer1Turn(prev => !prev);
         } else {
-            // Cambio forzado - el turno va al jugador que NO hizo el cambio
+            // Cambio forzado después de que un Pokémon se debilite
             if (wasAwaitingSwitch === 'player1') {
-                setIsPlayer1Turn(false); // Turno para player2
+                setIsPlayer1Turn(true);
             } else if (wasAwaitingSwitch === 'player2') {
-                setIsPlayer1Turn(true); // Turno para player1
+                setIsPlayer1Turn(false);
             }
         }
         
         setAnimationBlocking(false);
     }, [
-        animationBlocking, winner, player1Team, player2Team, 
-        activePokemonP1, activePokemonP2, addLog, awaitingSwitch, 
-        isPlayer1Turn, gameMode
+        animationBlocking, winner, activePokemonP1, activePokemonP2,
+        addLog, awaitingSwitch
     ]);
     
-    const handlePokemonCircleClick = (pokemon) => {
-        console.log('Circle click for P1:', pokemon?.name);
-        if (!pokemon || (!isPlayer1Turn && awaitingSwitch !== 'player1')) return;
-        handleSwitchPokemon(pokemon, true);
-    };
+    // CORRECCIÓN: Función para manejar clicks en círculos de Pokémon
+    const handlePokemonCircleClick = useCallback((pokemon, isPlayer1 = true) => {
+        // Verificar si es el turno correcto o si está esperando un cambio
+        const canSwitch = (isPlayer1 && (isPlayer1Turn || awaitingSwitch === 'player1')) ||
+                         (!isPlayer1 && (!isPlayer1Turn || awaitingSwitch === 'player2'));
+        
+        if (!pokemon || !canSwitch) return;
+        
+        handleSwitchPokemon(pokemon, isPlayer1);
+    }, [isPlayer1Turn, awaitingSwitch, handleSwitchPokemon]);
 
-    // --- Lógica de la IA mejorada ---
-
-    // 1. TURNO DE ATAQUE DE LA IA
+    // TURNO DE ATAQUE DE LA IA (más rápido)
     useEffect(() => {
         if (winner || isPlayer1Turn || animationBlocking || awaitingSwitch || gameMode !== 'vsIA') return;
 
         const iaTurnTimeout = setTimeout(() => {
-            if (activePokemonP2 && activePokemonP2.moves && activePokemonP2.moves.length > 0) {
-                const availableMoves = activePokemonP2.moves.filter(move => move && move.name);
-                if (availableMoves.length > 0) {
-                    const chosenMove = availableMoves[Math.floor(Math.random() * availableMoves.length)];
-                    handleAttackAction(chosenMove);
-                }
+            if (activePokemonP2 && activePokemonP2.moves.length > 0) {
+                const chosenMove = activePokemonP2.moves[Math.floor(Math.random() * activePokemonP2.moves.length)];
+                handleAttackAction(chosenMove);
             }
         }, 800);
 
         return () => clearTimeout(iaTurnTimeout);
     }, [isPlayer1Turn, winner, animationBlocking, awaitingSwitch, gameMode, activePokemonP2, handleAttackAction]);
 
-    // 2. CAMBIO FORZADO DE LA IA (CORREGIDO)
+    // CAMBIO FORZADO DE LA IA
     useEffect(() => {
         if (awaitingSwitch === 'player2' && gameMode === 'vsIA' && !winner) {
-            const availablePokemon = player2Team.filter(p => p.currentHp > 0 && p.id !== activePokemonP2?.id);
-            console.log('IA needs to switch. Available Pokemon:', availablePokemon.map(p => p.name));
-            
+            const availablePokemon = player2Team.filter(p => p.currentHp > 0);
             if (availablePokemon.length > 0) {
-                const nextPokemon = availablePokemon[0];
-                
-                const switchTimeout = setTimeout(() => {
-                    console.log('IA switching to:', nextPokemon.name);
-                    handleSwitchPokemon(nextPokemon, false);
-                }, 1500);
-
-                return () => clearTimeout(switchTimeout);
+                // Si solo queda 1 Pokémon, usar cambio automático
+                if (availablePokemon.length === 1) {
+                    autoSwitchLastPokemon(false);
+                } else {
+                    const nextPokemon = availablePokemon[0];
+                    const switchTimeout = setTimeout(() => {
+                        handleSwitchPokemon(nextPokemon, false);
+                    }, 1500);
+                    return () => clearTimeout(switchTimeout);
+                }
             }
         }
-    }, [awaitingSwitch, gameMode, player2Team, winner, activePokemonP2, handleSwitchPokemon]);
+    }, [awaitingSwitch, gameMode, player2Team, winner, handleSwitchPokemon, autoSwitchLastPokemon]);
 
-    // --- useEffect de Setup y Fin de Batalla ---
+    // useEffect de Setup y Fin de Batalla
     useEffect(() => {
         const setupBattle = async () => {
             setLoading(true);

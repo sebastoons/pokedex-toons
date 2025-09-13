@@ -4,13 +4,13 @@ import { useBattleLogic } from '../../hooks/useBattleLogic';
 import { CombatantUI } from './CombatantUI';
 import { BattleControls } from './BattleControls';
 import { BattleEndModal } from './BattleEndModal';
-import { TurnIndicator } from './TurnIndicator';
 
 import './PokemonBattleArena.css';
 import './CombatantUI.css';
 import './BattleControls.css';
-import './BattleEndModal.css';
-import './TurnIndicator.css';
+import './BattleEndModal.css'; 
+
+import battleBg from '../../assets/images/battle-backgrounds.jpg'; 
 
 const PokemonBattleArena = () => {
     const navigate = useNavigate();
@@ -25,13 +25,13 @@ const PokemonBattleArena = () => {
         animationBlocking,
         attackSoundRef, hitSoundRef, battleMusicRef, lowHpSoundRef, victorySoundRef,
         handleAttack,
-        //handlePokemonCircleClick,//
+        handlePokemonCircleClick,
         handleSwitchPokemon,
     } = useBattleLogic();
 
     if (loading || !activePokemonP1 || !activePokemonP2) {
         return (
-            <div className="battle-arena-container">
+            <div className="battle-arena-container" style={{ backgroundImage: `url(${battleBg})` }}>
                 <div className="loading-container">
                     <p>Cargando batalla...</p>
                 </div>
@@ -39,39 +39,38 @@ const PokemonBattleArena = () => {
         );
     }
 
-    // Lógica de controles más estable
+    // Determina qué Pokémon está activo para mostrar sus controles
     const activePokemonForControls = isPlayer1Turn ? activePokemonP1 : activePokemonP2;
-    
-    // Los controles siempre se muestran para mantener el layout estable
-    //const controlsVisible = true;//
-    const controlsActive = gameMode === 'vsIA' ? isPlayer1Turn : true;
 
-    // Lógica de cambio de Pokémon
-    const canPlayer1Switch = !animationBlocking && !winner && 
-        (isPlayer1Turn || awaitingSwitch === 'player1') &&
-        player1Team.filter(p => p.currentHp > 0).length > 1;
+    // Determina si los controles deben estar visibles y activos
+    const showControls = gameMode === 'vsIA' ? isPlayer1Turn : true;
 
-    const canPlayer2Switch = !animationBlocking && !winner && 
-        ((gameMode === '1vs1' && !isPlayer1Turn) || awaitingSwitch === 'player2') &&
-        player2Team.filter(p => p.currentHp > 0).length > 1;
+    // Define qué jugador puede cambiar de pokémon
+    const canPlayer1Switch = (isPlayer1Turn || awaitingSwitch === 'player1') && !animationBlocking && !winner;
+    const canPlayer2Switch = (!isPlayer1Turn || awaitingSwitch === 'player2') && !animationBlocking && !winner;
 
-    // Funciones de click para cada jugador
-    const handlePlayer1CircleClick = (pokemon) => {
-        console.log('Player 1 trying to switch to:', pokemon.name, 'canSwitch:', canPlayer1Switch);
-        if (canPlayer1Switch) {
+    // Función helper para manejar clicks del Jugador 1
+    const handlePlayer1Click = (pokemon) => {
+        if (gameMode === 'vsIA') {
+            // En modo vsIA, usar función directa
             handleSwitchPokemon(pokemon, true);
+        } else {
+            // En modo vsPlayer, usar función con validación de turnos
+            handlePokemonCircleClick(pokemon, true);
         }
     };
 
-    const handlePlayer2CircleClick = (pokemon) => {
-        console.log('Player 2 trying to switch to:', pokemon.name, 'canSwitch:', canPlayer2Switch);
-        if (canPlayer2Switch) {
-            handleSwitchPokemon(pokemon, false);
+    // Función helper para manejar clicks del Jugador 2
+    const handlePlayer2Click = (pokemon) => {
+        if (gameMode === 'vsPlayer') {
+            // Solo en modo vsPlayer el Jugador 2 puede cambiar
+            handlePokemonCircleClick(pokemon, false);
         }
+        // En modo vsIA, el Jugador 2 es IA y no hace nada
     };
 
     return (
-        <div className="battle-arena-container">
+        <div className="battle-arena-container" style={{ backgroundImage: `url(${battleBg})` }}>
             <audio ref={attackSoundRef} src="/sounds/attack.mp3" preload="auto" />
             <audio ref={hitSoundRef} src="/sounds/hit.mp3" preload="auto" />
             <audio ref={battleMusicRef} src="/sounds/battle-music.mp3" preload="auto" />
@@ -79,55 +78,43 @@ const PokemonBattleArena = () => {
             <audio ref={victorySoundRef} src="/sounds/victory.mp3" preload="auto" />
 
             <div className="battle-elements">
-                <div className="battle-content">
-                    {/* Indicador de turno */}
-                    <div className="turn-indicator-container">
-                        <TurnIndicator 
-                            isPlayer1Turn={isPlayer1Turn}
-                            gameMode={gameMode}
-                            winner={winner}
-                        />
-                    </div>
+                <div className="combatants-container">
+                    {/* Panel del Oponente (Jugador 2) */}
+                    <CombatantUI
+                        pokemon={activePokemonP2}
+                        team={player2Team}
+                        isOpponent={true}
+                        isAttacking={pokemonP2Attacking}
+                        isDamaged={pokemonP1Damaged}
+                        onPokemonCircleClick={handlePlayer2Click}
+                        canSwitch={canPlayer2Switch && gameMode === 'vsPlayer'}
+                    />
 
-                    {/* Contenido principal de la batalla */}
-                    <div className="battle-main-content">
-                        {/* Contenedor de combatientes */}
-                        <div className="combatants-container">
-                            <CombatantUI
-                                pokemon={activePokemonP2}
-                                team={player2Team}
-                                isOpponent={true}
-                                isAttacking={pokemonP2Attacking}
-                                isDamaged={pokemonP1Damaged}
-                                onPokemonCircleClick={handlePlayer2CircleClick}
-                                canSwitch={canPlayer2Switch}
-                            />
-
-                            <CombatantUI
-                                pokemon={activePokemonP1}
-                                team={player1Team}
-                                isOpponent={false}
-                                isAttacking={pokemonP1Attacking}
-                                isDamaged={pokemonP2Damaged}
-                                onPokemonCircleClick={handlePlayer1CircleClick}
-                                canSwitch={canPlayer1Switch}
-                            />
-                        </div>
-
-                        {/* Controles siempre visibles para mantener layout estable */}
-                        <BattleControls
-                            activePokemon={activePokemonForControls}
-                            battleLog={battleLog}
-                            isPlayersTurn={isPlayer1Turn}
-                            awaitingPlayerSwitch={awaitingSwitch === 'player1' || awaitingSwitch === 'player2'}
-                            animationBlocking={animationBlocking}
-                            onAttack={handleAttack}
-                            battleEnded={!!winner}
-                            gameMode={gameMode}
-                            controlsActive={controlsActive}
-                        />
-                    </div>
+                    {/* Panel del Jugador 1 */}
+                    <CombatantUI
+                        pokemon={activePokemonP1}
+                        team={player1Team}
+                        isOpponent={false}
+                        isAttacking={pokemonP1Attacking}
+                        isDamaged={pokemonP2Damaged}
+                        onPokemonCircleClick={handlePlayer1Click}
+                        canSwitch={canPlayer1Switch}
+                    />
                 </div>
+
+                {/* Controles y Log de Batalla */}
+                {showControls && (
+                    <BattleControls
+                        activePokemon={activePokemonForControls}
+                        battleLog={battleLog}
+                        isPlayersTurn={isPlayer1Turn}
+                        awaitingPlayerSwitch={awaitingSwitch === 'player1' || awaitingSwitch === 'player2'}
+                        animationBlocking={animationBlocking}
+                        onAttack={handleAttack}
+                        battleEnded={!!winner}
+                        gameMode={gameMode}
+                    />
+                )}
             </div>
 
             {winner && (

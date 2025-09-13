@@ -30,7 +30,7 @@
   margin-top: 10px;
   margin-bottom: 15px;
   font-family: 'Press Start 2P', cursive; /* Estilo de letra retro */
-  font-size: 0.8em;
+  font-size: 0.65em;
   
 }
 
@@ -46,11 +46,11 @@
 .modal-content button {
   background-color: #ca5338; /* Rojo Pokémon */
   color: white;
-  padding: 8px 15px;
+  padding: 6px 14px;
   border: none;
   border-radius: 8px;
   cursor: pointer;
-  font-size: 0.9em;
+  font-size: 0.65em;
   font-weight: bold;
   margin-top: 10px;
   transition: background-color 0.2s, transform 0.2s;
