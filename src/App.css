@@ -130,9 +130,9 @@ header {
 .battle-button {
     /* Estilos base para móviles pequeños (Mobile-First: por defecto para < 376px) */
     display: inline-block; /* Permite paddings y márgenes, y que el texto no se rompa */
-    padding: 9px 18px; /* Padding para un buen tamaño táctil en móvil */
+    padding: 6px 18px; /* Padding para un buen tamaño táctil en móvil */
     margin-top: 20px; /* Espacio superior para separarlo del contenido de arriba */
-    font-size: 0.9em; /* Tamaño de fuente para móvil (ej. 16px por defecto) */
+    font-size: 0.85em; /* Tamaño de fuente para móvil (ej. 16px por defecto) */
     color: #ffffff;
     background-color: #e32f2f; /* Un verde vibrante (ej. del logotipo de 'GO') */
     border: none;
@@ -147,6 +147,7 @@ header {
     -webkit-tap-highlight-color: transparent; /* Elimina el resaltado azul en móviles al tocar */
     white-space: nowrap; /* Evita que el texto del botón se divida en varias líneas */
     font-family: monospace;
+    font-weight: bold;
 }
 
 /* Estado al pasar el ratón (hover) y al enfocar (focus) */
@@ -1632,19 +1633,22 @@ header {
 /* --- ESTRUCTURA GENERAL Y TÍTULO PRINCIPAL --- */
 
 .move-list-view {
-  max-width: 900px;
-  margin: 20px auto;
-  padding: 20px;
-  text-align: center;
+    max-width: 900px;
+    margin: 20px auto;
+    padding: 20px;
+    text-align: center;
+    background-color: #2c3e50;
+    border: 3px solid #44596f;
+    border-radius: 10px;
 }
 
 .move-list-view h2 {
-  font-family: monospace;
-  font-size: 1.7em;
-  color: #ffffff;
+  font-family: 'Press Start 2P';
+  font-size: 0.9em;
+  color: #f1c40f;
   margin-bottom: 25px;
   text-transform: uppercase;
-  text-shadow: 1px 1px 2px rgb(0 0 0 / 50%);
+  text-shadow: 2px 2px 4px #000;
 }
 
 
@@ -1690,14 +1694,16 @@ header {
 /* --- ESTILOS PARA SUBTÍTULOS (Encabezados <th>) --- */
 
 .move-table th {
-  padding: 12px 15px;
-  text-align: left;
-  border-bottom: 3px solid #ddd;
-  background-color: #ececec;
-  font-family: 'press start 2p';
-  font-weight: bolder;
-  color: #333;
-  font-size: 0.6em;
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 3px solid #ddd;
+    background-color: #28333e;
+    font-family: 'press start 2p';
+    font-weight: bolder;
+    color: #ffffffff;
+    font-size: 0.45em;
+    letter-spacing: 1px;
+    border: 3px solid #44596f;
 }
 
 /* Alineación específica para los SUBTÍTULOS de las columnas de números */
@@ -1711,12 +1717,16 @@ header {
 /* --- ESTILOS PARA CONTENIDO (Celdas <td>) --- */
 
 .move-table td {
-  padding: 8px 12px;
-  text-align: left;
-  border-bottom: 1px solid #f0f0f0;
-  color: #000000;
-  font-size: 1em;
-  font-family: monospace;
+    padding: 4px 10px;
+    text-align: left;
+    border-bottom: 1px solid #f0f0f0;
+    color: #dedede;
+    font-size: 0.85em;
+    font-family: monospace;
+    background-color: #28333e;
+    margin-left: 5px;
+    align-content: center;
+    border: 3px solid #44596f;
 }
 
 /* Estilo para las filas pares (efecto cebra) */
@@ -1731,9 +1741,9 @@ header {
 
 /* Estilo específico para el CONTENIDO de la columna de descripción */
 .move-table td.description-col {
-  font-size: 0.9em;
-  color: #555;
-  min-width: 250px;
+  font-size: 0.8em;
+  color: #dedede;
+  min-width: 10px;
 }
 
 /* Alineación específica para el CONTENIDO de las columnas de números */
