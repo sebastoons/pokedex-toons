@@ -78,19 +78,8 @@
     display: flex;
     flex-direction: column;
     height: 100vh;
-    /* CAMBIADO: Fondo gris opaco en lugar de imagen */
-    background: linear-gradient(135deg, 
-        rgba(64, 75, 91, 0.95) 0%, 
-        rgba(44, 62, 80, 0.95) 25%, 
-        rgba(52, 73, 94, 0.95) 50%, 
-        rgba(44, 62, 80, 0.95) 75%, 
-        rgba(64, 75, 91, 0.95) 100%
-    );
-    /* Patrón sutil opcional */
-    background-image: 
-        radial-gradient(circle at 25% 25%, rgba(255, 255, 255, 0.1) 2px, transparent 2px),
-        radial-gradient(circle at 75% 75%, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
-    background-size: 50px 50px, 30px 30px;
+    /* Fondo sólido de batalla estilo Pokémon clásico */
+    background-color: #2c5f2d; /* Verde batalla oscuro */
     overflow: hidden;
     position: relative;
 }
@@ -154,12 +143,8 @@
 @media (max-width: 480px) {
     .battle-arena-container {
         padding: 0;
-        /* Fondo más simple en móvil */
-        background: linear-gradient(135deg, 
-            rgba(52, 73, 94, 0.98) 0%, 
-            rgba(44, 62, 80, 0.98) 100%
-        );
-        background-image: none;
+        /* Mantener el mismo color sólido en móviles */
+        background-color: #2c5f2d;
     }
     
     .battle-elements {

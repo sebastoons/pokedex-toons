@@ -10,8 +10,6 @@ import './CombatantUI.css';
 import './BattleControls.css';
 import './BattleEndModal.css'; 
 
-import battleBg from '../../assets/images/battle-backgrounds.jpg'; 
-
 const PokemonBattleArena = () => {
     const navigate = useNavigate();
 
@@ -23,7 +21,7 @@ const PokemonBattleArena = () => {
         pokemonP1Attacking, pokemonP2Attacking,
         pokemonP1Damaged, pokemonP2Damaged,
         animationBlocking,
-        attackSoundRef, hitSoundRef, battleMusicRef, lowHpSoundRef, victorySoundRef,
+        attackSoundRef, hitSoundRef, battleMusicRef, lowHpSoundRef, victorySoundRef, defeatSoundRef,
         handleAttack,
         handlePokemonCircleClick,
         handleSwitchPokemon,
@@ -31,7 +29,7 @@ const PokemonBattleArena = () => {
 
     if (loading || !activePokemonP1 || !activePokemonP2) {
         return (
-            <div className="battle-arena-container" style={{ backgroundImage: `url(${battleBg})` }}>
+            <div className="battle-arena-container">
                 <div className="loading-container">
                     <p>Cargando batalla...</p>
                 </div>
@@ -70,12 +68,14 @@ const PokemonBattleArena = () => {
     };
 
     return (
-        <div className="battle-arena-container" style={{ backgroundImage: `url(${battleBg})` }}>
+        <div className="battle-arena-container">
+            {/* Referencias de audio ampliadas */}
             <audio ref={attackSoundRef} src="/sounds/attack.mp3" preload="auto" />
             <audio ref={hitSoundRef} src="/sounds/hit.mp3" preload="auto" />
             <audio ref={battleMusicRef} src="/sounds/battle-music.mp3" preload="auto" />
             <audio ref={lowHpSoundRef} src="/sounds/low-hp.mp3" preload="auto" />
             <audio ref={victorySoundRef} src="/sounds/victory.mp3" preload="auto" />
+            <audio ref={defeatSoundRef} src="/sounds/defeat.mp3" preload="auto" />
 
             <div className="battle-elements">
                 <div className="combatants-container">

@@ -59,7 +59,7 @@ export const BattleControls = ({
                 >
                   <span className="move-name">{move.name}</span>
                   <span className="move-power">
-                    {move.power > 0 ? move.power : move.damage_class === 'status' ? 'EST' : '-'}
+                    {move.power > 0 ? move.power : move.damage_class === 'status' ? 'apoyo' : '-'}
                   </span>
                 </button>
               );
