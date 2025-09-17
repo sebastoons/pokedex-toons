@@ -131,8 +131,7 @@ header {
     /* Estilos base para móviles pequeños (Mobile-First: por defecto para < 376px) */
     display: inline-block; /* Permite paddings y márgenes, y que el texto no se rompa */
     padding: 6px 18px; /* Padding para un buen tamaño táctil en móvil */
-    margin-top: 20px; /* Espacio superior para separarlo del contenido de arriba */
-    font-size: 0.85em; /* Tamaño de fuente para móvil (ej. 16px por defecto) */
+    font-size: 0.75em; /* Tamaño de fuente para móvil (ej. 16px por defecto) */
     color: #ffffff;
     background-color: #e32f2f; /* Un verde vibrante (ej. del logotipo de 'GO') */
     border: none;
@@ -946,7 +945,7 @@ header {
 
     .generation-button {
         font-size: 0.8em;
-        width: 65%
+        width: 80%;
     }
     .generation-dropdown-menu {
         min-width: 150px;
@@ -985,7 +984,7 @@ header {
         padding: 5px 10px;
     }
     .battle-button {
-        padding: 5px 14px;
+        padding: 4px 12px;
         margin-top: 5px;
         font-size: 0.75em;
         border-radius: 7px;
@@ -1184,7 +1183,6 @@ header {
         padding: 5px 10px;
     }
     .battle-button {
-        margin-top: 10px;
         border-radius: 8px;
         box-shadow: 0 5px 10px rgba(0, 0, 0, 0.25);
     }

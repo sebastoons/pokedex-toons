@@ -1079,8 +1079,24 @@ const manualPokemonImages = {
     1071: '/imgmanual/1071.png',
     1072: '/imgmanual/1072.png',
     1073: '/imgmanual/1073.png',
-
-   
+    1074: '/imgmanual/1074.png',
+    1075: '/imgmanual/1075.png',
+    1076: '/imgmanual/1076.png',
+    1077: '/imgmanual/1077.png',
+    1078: '/imgmanual/1078.png',
+    1079: '/imgmanual/1079.png',
+    1080: '/imgmanual/1080.png',
+    1081: '/imgmanual/1081.png',
+    1082: '/imgmanual/1082.png',
+    1083: '/imgmanual/1083.png',
+    1084: '/imgmanual/1084.png',
+    1085: '/imgmanual/1085.png',
+    1086: '/imgmanual/1086.png',
+    1087: '/imgmanual/1087.png',
+    1088: '/imgmanual/1088.png',
+    1089: '/imgmanual/1089.png',
+    1090: '/imgmanual/1090.png',
+    1091: '/imgmanual/1091.png',
 };
 
 export default manualPokemonImages;

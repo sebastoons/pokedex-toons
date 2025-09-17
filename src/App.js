@@ -63,7 +63,7 @@ function App() {
     const [isGenMenuOpen, setIsGenMenuOpen] = useState(false);
     const [showWelcome, setShowWelcome] = useState(true);
     const [showUpdate, setShowUpdate] = useState(false);
-    const LATEST_UPDATE_VERSION = "1.2.3";
+    const LATEST_UPDATE_VERSION = "1.2.4";
     const [isMuted, setIsMuted] = useState(false);
     const audioRef = useRef(null);
 

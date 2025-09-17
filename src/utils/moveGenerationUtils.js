@@ -3,9 +3,9 @@
 // Base de datos extensa de movimientos por tipo
 const movesByType = {
     normal: [
-        { name: "Placaje", power: 40, damage_class: "physical" },
-        { name: "Arañazo", power: 40, damage_class: "physical" },
-        { name: "Ataque Rápido", power: 40, damage_class: "physical" },
+        { name: "Megapuño", power: 80, damage_class: "physical" },
+        { name: "Cabezazo", power: 80, damage_class: "physical" },
+        { name: "Megapatada", power: 100, damage_class: "physical" },
         { name: "Hiper Rayo", power: 150, damage_class: "special" },
         { name: "Cuchillada", power: 70, damage_class: "physical" },
         { name: "Golpe Cuerpo", power: 85, damage_class: "physical" },
@@ -30,9 +30,9 @@ const movesByType = {
         { name: "Buceo", power: 80, damage_class: "physical" }
     ],
     grass: [
-        { name: "Hoja Afilada", power: 55, damage_class: "physical" },
+        { name: "Planta Feroz", power: 150, damage_class: "special" },
         { name: "Rayo Solar", power: 120, damage_class: "special" },
-        { name: "Látigo Cepa", power: 45, damage_class: "physical" },
+        { name: "Gigadrenado", power: 75, damage_class: "special" },
         { name: "Bomba Germen", power: 80, damage_class: "special" },
         { name: "Tormenta Hojas", power: 130, damage_class: "special" },
         { name: "Danza Pétalo", power: 120, damage_class: "special" },

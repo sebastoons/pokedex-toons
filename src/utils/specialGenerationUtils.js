@@ -72,14 +72,14 @@ const typeData = {
   },
   bug: {
     abilities: [
-      { name: "Pararrayos", description: "Atrae y anula los movimientos de tipo Eléctrico, aumentando el Ataque Especial." },
-      { name: "Electricidad Estática", description: "Puede paralizar al contacto." }
+      { name: "Ojo compuesto", description: "Aumenta la precisión de sus movimientos." },
+      { name: "Robustez", description: "El Pokémon no puede debilitarse de un solo golpe cuando tiene los PS al máximo. También evita los movimientos fulminantes." }
     ],
     moves: [
-      { id: "thunder-shock", name: "Impactrueno", type: "bug" },
-      { id: "thunderbolt", name: "Rayo", type: "bug" },
-      { id: "volt-switch", name: "Voltiocambio", type: "bug" },
-      { id: "wild-charge", name: "Voltio Cruel", type: "bug" }
+      { id: "Leech-Life", name: "Chupavidas", type: "bug" },
+      { id: "Megahorn", name: "Megacuerno", type: "bug" },
+      { id: "Bug-Bite", name: "Picadura", type: "bug" },
+      { id: "Bug-Buzz", name: "Zumbido", type: "bug" }
     ]
   },
   poison: {
@@ -185,10 +185,14 @@ const typeData = {
         { name: "Defensa Hoja", description: "Evita problemas de estado si hace sol." }
     ],
     moves: [
-        { id: "vine-whip", name: "Látigo Cepa", type: "grass" },
+        { id: "Frenzy Plant", name: "Planta Feroz", type: "grass" },
         { id: "razor-leaf", name: "Hoja Afilada", type: "grass" },
         { id: "solar-beam", name: "Rayo Solar", type: "grass" },
-        { id: "giga-drain", name: "Gigadrenado", type: "grass" }
+        { id: "giga-drain", name: "Gigadrenado", type: "grass" },
+        { id: "petal-dance", name: "Danza Pétalo", type: "grass" },
+        { id: "Seed-Bomb", name: "Bomba Germen", type: "grass" },
+        { id: "Leaf-Blade", name: "Hoja Aguda", type: "grass" },
+        { id: "Energy-Ball", name: "Energibola", type: "grass" }
     ]
   },
   fire: {

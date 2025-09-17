@@ -52,6 +52,22 @@ const TeamPreview = ({ team, teamSize, onRemove }) => (
     </div>
 );
 
+// FUNCIÓN HELPER PARA OBTENER LOS TIPOS DE UN POKÉMON
+const getPokemonTypes = (pokemon) => {
+    // Si el pokemon tiene una propiedad 'types' que es un array de strings
+    if (pokemon.types && Array.isArray(pokemon.types)) {
+        // Verificar si son strings directamente o objetos con estructura de API
+        if (typeof pokemon.types[0] === 'string') {
+            return pokemon.types; // ['fire', 'flying']
+        } else if (pokemon.types[0]?.type?.name) {
+            return pokemon.types.map(t => t.type.name); // [{ type: { name: 'fire' } }]
+        }
+    }
+    
+    // Fallback: retornar un array con 'normal' si no se encuentran tipos
+    return ['normal'];
+};
+
 function PokemonBattleSelector({ pokemonList }) {
     const navigate = useNavigate();
     const location = useLocation();
@@ -180,37 +196,42 @@ function PokemonBattleSelector({ pokemonList }) {
             </div>
             
             <div className="available-pokemon-grid">
-                {availablePokemon.map(pokemon => (
-                    <div
-                        key={pokemon.id}
-                        className={`pokemon-grid-item ${currentTeam.some(p => p.id === pokemon.id) ? 'selected-in-slot' : ''}`}
-                        onClick={() => handleSelectPokemon(pokemon)}
-                        title={`${pokemon.name} - Click para seleccionar`}
-                    >
-                        <img 
-                            src={getPokemonImageUrl(pokemon)} 
-                            alt={pokemon.name} 
-                            className="pokemon-grid-image" 
-                        />
-                        <span className="pokemon-grid-name">
-                            #{formatPokemonId(pokemon.id)} {pokemon.name}
-                        </span>
-                        <div className="pokemon-grid-types-container">
-                             {pokemon.types.map((typeName, typeIndex) => {
-                                const typeInfo = getTypeInfo(typeName);
-                                return (
-                                    <span 
-                                        key={typeIndex} 
-                                        className="pokemon-type-badge pokemon-type-badge-small" 
-                                        style={{ backgroundColor: typeInfo.color }}
-                                    >
-                                        {typeInfo.name}
-                                    </span>
-                                );
-                             })}
+                {availablePokemon.map(pokemon => {
+                    // OBTENER LOS TIPOS USANDO NUESTRA FUNCIÓN HELPER
+                    const pokemonTypes = getPokemonTypes(pokemon);
+                    
+                    return (
+                        <div
+                            key={pokemon.id}
+                            className={`pokemon-grid-item ${currentTeam.some(p => p.id === pokemon.id) ? 'selected-in-slot' : ''}`}
+                            onClick={() => handleSelectPokemon(pokemon)}
+                            title={`${pokemon.name} - Click para seleccionar`}
+                        >
+                            <img 
+                                src={getPokemonImageUrl(pokemon)} 
+                                alt={pokemon.name} 
+                                className="pokemon-grid-image" 
+                            />
+                            <span className="pokemon-grid-name">
+                                #{formatPokemonId(pokemon.id)} {pokemon.name}
+                            </span>
+                            <div className="pokemon-grid-types-container">
+                                {pokemonTypes.map((typeName, typeIndex) => {
+                                    const typeInfo = getTypeInfo(typeName);
+                                    return (
+                                        <span 
+                                            key={typeIndex} 
+                                            className="pokemon-type-badge pokemon-type-badge-small" 
+                                            style={{ backgroundColor: typeInfo.color }}
+                                        >
+                                            {typeInfo.name}
+                                        </span>
+                                    );
+                                })}
+                            </div>
                         </div>
-                    </div>
-                ))}
+                    );
+                })}
             </div>
         </div>
     );
