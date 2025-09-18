@@ -118,13 +118,15 @@ header {
     font-weight: bold;
     color: #2c3e50;
     text-shadow: 1px 1px 0px rgba(255,255,255,0.5);
-    font-family: monospace;
+    font-family: 'press start 2p', cursive;
+    text-transform: uppercase;
 }
 
 .welcome-message p {
     font-size: 0.7em;
     margin-bottom: 0;
     font-family: monospace;
+    text-transform: uppercase;
 }
 
 .battle-button {
@@ -209,11 +211,13 @@ header {
     font-weight: bold;
     margin-right: 0; /* No margin a la derecha si está en columna */
     margin-bottom: 5px; /* Espacio debajo de la etiqueta */
-    font-size: 0.9em;
+    font-size: 0.85em;
     color: #34495e;
     flex-shrink: 0;
     width: 100%; /* Asegura que la etiqueta ocupe su propio ancho */
     text-align: center; /* Centrar el texto de la etiqueta si se desea */
+    font-family: monospace;
+    text-transform: uppercase;
 }
 
 .controls-container input,
@@ -606,25 +610,6 @@ header {
 
 /* ========================================= */
 /* Estilos para PokemonBattleArena.js */
-/* ========================================= */
-
-/* Contenedor principal de la arena de batalla */
-.battle-arena-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: calc(100% - 16px); /* Ocupa casi todo el ancho, dejando un pequeño margen lateral */
-    max-width: 100%; /* Asegura que nunca desborde el padre */
-    margin: 8px auto; /* Margen superior/inferior pequeño, centrado horizontal */
-    padding: 10px; /* Padding reducido para móviles */
-    background: linear-gradient(to top, #c0392b 0%, #e74c3c 100%); /* Color de la consola */
-    border-radius: 8px; /* Menos redondeado */
-    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
-    position: relative;
-    min-height: auto; /* Permitir que la altura se ajuste al contenido */
-    font-size: 0.9em; /* Tamaño de fuente base más pequeño para móvil */
-    box-sizing: border-box; /* Incluir padding y borde en el ancho/alto */
-}
 
 .battle-arena-container h1 {
     color: #3f51b5;
@@ -932,10 +917,10 @@ header {
     }
 
     .welcome-message h2 {
-        font-size: 1.1em;
+        font-size: 0.7em;
     }
     .welcome-message p {
-        font-size: 0.75em;
+        font-size: 0.65em;
     }
 
     .controls-container {
@@ -1006,7 +991,7 @@ header {
         max-width: 200px; /* Logo más grande */
     }
     .welcome-message h2 {
-        font-size: 1.3em;
+        font-size: 0.8em;
     }
     .welcome-message p {
         font-size: 0.8em;

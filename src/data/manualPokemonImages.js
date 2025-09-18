@@ -1097,6 +1097,13 @@ const manualPokemonImages = {
     1089: '/imgmanual/1089.png',
     1090: '/imgmanual/1090.png',
     1091: '/imgmanual/1091.png',
+    1092: '/imgmanual/1092.png',
+    1093: '/imgmanual/1093.png',
+    1094: '/imgmanual/1094.png',
+    1095: '/imgmanual/1095.png',
+    1096: '/imgmanual/1096.png',
+    1097: '/imgmanual/1097.png',
+    1098: '/imgmanual/1098.png',
 };
 
 export default manualPokemonImages;
