@@ -1062,7 +1062,7 @@ export const generacionEspecial = [
     weight: 52,
     description: "Squeeky es un Pokémon nervioso que reacciona con rapidez a cualquier sonido. Su cola rosada vibra cuando detecta peligro, y sus grandes orejas le permiten escuchar frecuencias que otros Pokémon no perciben. Aunque es tímido, puede escapar de situaciones complicadas con gran velocidad.",
     evolutionLine: [{id: 1102, name: "Squeeky", sprite: "/img-special/1102.png"},
-                    {id: 1102, name: "Musquash", sprite: "/img-special/1098.png",details:{trigger:{name:'level-up'}, min_level: 25 }}
+                    {id: 1103, name: "Musquash", sprite: "/img-special/1103.png",details:{trigger:{name:'level-up'}, min_level: 25 }}
     ],
   },
   {
