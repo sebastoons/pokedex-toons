@@ -1,9 +1,13 @@
+// src/components/battle/PokemonBattleArena.js
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useBattleLogic } from '../../hooks/useBattleLogic';
 import { CombatantUI } from './CombatantUI';
 import { BattleControls } from './BattleControls';
 import { BattleEndModal } from './BattleEndModal';
+
+// *** NUEVO: Importar el tracker de analytics ***
+import analyticsTracker from '../../utils/analyticsTracker';
 
 import './PokemonBattleArena.css';
 import './CombatantUI.css';
@@ -26,6 +30,21 @@ const PokemonBattleArena = () => {
         handlePokemonCircleClick,
         handleSwitchPokemon,
     } = useBattleLogic();
+
+    // *** NUEVO: Trackear inicio de batalla cuando se carga el componente ***
+    React.useEffect(() => {
+        if (!loading && activePokemonP1 && activePokemonP2) {
+            // Track inicio de batalla solo una vez
+            analyticsTracker.trackBattleStart(gameMode);
+        }
+    }, [loading, activePokemonP1, activePokemonP2, gameMode]);
+
+    // *** NUEVO: Trackear fin de batalla cuando hay un ganador ***
+    React.useEffect(() => {
+        if (winner) {
+            analyticsTracker.trackEvent('Batalla Completada', `Ganador: ${winner}`);
+        }
+    }, [winner]);
 
     if (loading || !activePokemonP1 || !activePokemonP2) {
         return (
@@ -65,6 +84,17 @@ const PokemonBattleArena = () => {
             handlePokemonCircleClick(pokemon, false);
         }
         // En modo vsIA, el Jugador 2 es IA y no hace nada
+    };
+
+    // *** NUEVO: Función para manejar el reinicio/salida con tracking ***
+    const handleRestart = () => {
+        analyticsTracker.trackEvent('Batalla', 'Usuario reinició desde modal de fin');
+        navigate('/');
+    };
+
+    const handleGoHome = () => {
+        analyticsTracker.trackEvent('Batalla', 'Usuario volvió a inicio desde modal de fin');
+        navigate('/');
     };
 
     return (
@@ -120,8 +150,8 @@ const PokemonBattleArena = () => {
             {winner && (
                 <BattleEndModal
                     winner={winner}
-                    onRestart={() => navigate('/')}
-                    onGoHome={() => navigate('/')}
+                    onRestart={handleRestart}
+                    onGoHome={handleGoHome}
                 />
             )}
         </div>

@@ -1774,3 +1774,52 @@ header {
   color: rgba(255, 255, 255, 50%);
   z-index: 10; /* Para que esté por encima de la lista de Pokémon si se superpone */
 }
+
+/* Añade esto al FINAL de tu src/App.css */
+
+/* Asegurar que el contenedor principal no tape la versión */
+.pokedex-container {
+  position: relative;
+  min-height: 100vh;
+  padding-bottom: 60px; /* Espacio para la versión */
+}
+
+/* Asegurar espacio para el número de versión */
+.pokemon-list {
+  margin-bottom: 60px;
+  padding-bottom: 20px;
+}
+
+/* Por si hay algún footer o elemento que esté interfiriendo */
+footer,
+.app-footer,
+.pokemon-detail-view {
+  margin-bottom: 60px !important;
+}
+
+/* Asegurar que modales no tapen la versión */
+.modal-overlay {
+  z-index: 99998 !important;
+}
+
+/* Botón de mute no debe tapar la versión */
+.mute-button-main {
+  bottom: 60px !important; /* Moverlo más arriba */
+}
+
+/* Opcional: Animación de entrada para la versión */
+@keyframes slideInFromRight {
+  from {
+    opacity: 0;
+    transform: translateX(50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Aplicar animación al elemento de versión cuando cargue */
+div[style*="position: fixed"][style*="bottom: 10px"][style*="right: 10px"] {
+  animation: slideInFromRight 0.5s ease-out;
+}

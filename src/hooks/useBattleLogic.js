@@ -1,8 +1,12 @@
+// src/hooks/useBattleLogic.js
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { fetchPokemonDetailsByIds } from '../services/pokemonService';
 import { calculateDamage } from '../utils/battleUtils';
 import { playSound, stopSound } from '../utils/audioUtils';
+
+// *** NUEVO: Importar el tracker de analytics ***
+import analyticsTracker from '../utils/analyticsTracker';
 
 export const useBattleLogic = () => {
     const navigate = useNavigate();
@@ -88,6 +92,11 @@ export const useBattleLogic = () => {
             setActivePokemon(lastPokemon);
             setIsPlayer1Turn(isPlayer1);
             setAnimationBlocking(false);
+            
+            // *** NUEVO: Track cambio automático al último Pokémon ***
+            const playerLabel = isPlayer1 ? 'Jugador 1' : 'Jugador 2';
+            analyticsTracker.trackEvent('Cambio Automático', `${playerLabel} cambió a su último Pokémon: ${lastPokemon.name}`);
+            
             return true;
         }
         return false;
@@ -109,6 +118,12 @@ export const useBattleLogic = () => {
         const defender = isPlayer1Turn ? activePokemonP2 : activePokemonP1;
         
         addLog(`${attacker.name.toUpperCase()} usó ${move.name.toUpperCase()}!`);
+        
+        // *** NUEVO: Track ataque usado ***
+        const attackerLabel = isPlayer1Turn ? 'Jugador 1' : (gameMode === 'vsIA' ? 'IA' : 'Jugador 2');
+        analyticsTracker.trackEvent('Ataque en Batalla', 
+            `${attackerLabel} - ${attacker.name} usó ${move.name}`
+        );
         
         const setAttackerAttacking = isPlayer1Turn ? setPokemonP1Attacking : setPokemonP2Attacking;
         setAttackerAttacking(true);
@@ -141,6 +156,13 @@ export const useBattleLogic = () => {
 
         if (newHp === 0) {
             addLog(`${defender.name.toUpperCase()} se ha debilitado!`);
+            
+            // *** NUEVO: Track Pokémon derrotado ***
+            const defenderLabel = isPlayer1Turn ? (gameMode === 'vsIA' ? 'IA' : 'Jugador 2') : 'Jugador 1';
+            analyticsTracker.trackEvent('Pokémon Derrotado', 
+                `${defender.name} de ${defenderLabel} fue derrotado por ${attacker.name}`
+            );
+            
             // Usamos las referencias para acceder a los valores actuales
             const remainingTeam = isPlayer1Turn ? player2TeamRef.current : player1TeamRef.current;
             const alivePokemon = remainingTeam.filter(p => p.currentHp > 0);
@@ -165,7 +187,7 @@ export const useBattleLogic = () => {
         setAnimationBlocking(false);
     }, [
         animationBlocking, winner, awaitingSwitch, activePokemonP1, activePokemonP2, addLog,
-        attackSoundRef, hitSoundRef, isPlayer1Turn, autoSwitchLastPokemon
+        attackSoundRef, hitSoundRef, isPlayer1Turn, autoSwitchLastPokemon, gameMode
     ]);
 
     // Lógica de Cambio de Pokémon (MEJORADA)
@@ -192,6 +214,13 @@ export const useBattleLogic = () => {
         addLog(`¡Adelante, ${newPokemon.name.toUpperCase()}!`);
         await new Promise(resolve => setTimeout(resolve, 500));
         
+        // *** NUEVO: Track cambio de Pokémon ***
+        const playerLabel = isPlayer1 ? 'Jugador 1' : (gameMode === 'vsIA' ? 'IA' : 'Jugador 2');
+        const switchType = wasAwaitingSwitch ? 'forzado' : 'voluntario';
+        analyticsTracker.trackEvent('Cambio de Pokémon', 
+            `${playerLabel} cambió a ${newPokemon.name} (${switchType})`
+        );
+        
         // CORRECCIÓN: Manejo mejorado de turnos
         if (!wasAwaitingSwitch) {
             // Cambio voluntario durante el turno
@@ -208,7 +237,7 @@ export const useBattleLogic = () => {
         setAnimationBlocking(false);
     }, [
         animationBlocking, winner, activePokemonP1, activePokemonP2,
-        addLog, awaitingSwitch
+        addLog, awaitingSwitch, gameMode
     ]);
     
     // CORRECCIÓN: Función para manejar clicks en círculos de Pokémon
@@ -293,11 +322,21 @@ export const useBattleLogic = () => {
                 addLog(`¡La batalla ha comenzado!`);
                 addLog(`${p1TeamWithHp[0].name.toUpperCase()} vs ${p2TeamWithHp[0].name.toUpperCase()}`);
                 playSound(battleMusicRef, 0.3, true);
+                
+                // *** NUEVO: Track inicio de batalla con detalles de equipos ***
+                const p1Names = p1TeamWithHp.map(p => p.name).join(', ');
+                const p2Names = p2TeamWithHp.map(p => p.name).join(', ');
+                analyticsTracker.trackEvent('Batalla Iniciada - Detalle', 
+                    `Modo: ${mode} | P1: [${p1Names}] vs P2: [${p2Names}]`
+                );
 
             } catch (error) {
                 console.error("Error al preparar la batalla:", error);
                 addLog("Error al cargar los datos de la batalla. Vuelve a intentarlo.");
                 setWinner('draw');
+                
+                // *** NUEVO: Track error en batalla ***
+                analyticsTracker.trackEvent('Error en Batalla', error.message);
             } finally {
                 setLoading(false);
             }
@@ -321,6 +360,16 @@ export const useBattleLogic = () => {
             setWinner(finalWinner);
             stopSound(battleMusicRef);
             stopSound(lowHpSoundRef);
+            
+            // *** NUEVO: Track fin de batalla con estadísticas ***
+            const winnerLabel = finalWinner === 'player1' ? 'Jugador 1' : (gameMode === 'vsIA' ? 'IA' : 'Jugador 2');
+            const p1Remaining = player1Team.filter(p => p.currentHp > 0).length;
+            const p2Remaining = player2Team.filter(p => p.currentHp > 0).length;
+            
+            analyticsTracker.trackEvent('Batalla Finalizada', 
+                `Ganador: ${winnerLabel} | Pokémon restantes - P1: ${p1Remaining}, P2: ${p2Remaining}`
+            );
+            
             if (finalWinner === 'player1') {
                 addLog("¡Felicidades! ¡Has ganado la batalla!");
                 playSound(victorySoundRef, 0.7);
@@ -328,7 +377,7 @@ export const useBattleLogic = () => {
                 addLog("¡Oh no! Has perdido la batalla...");
             }
         }
-    }, [player1Team, player2Team, activePokemonP1, loading, winner, addLog, manageLowHpSound, battleMusicRef, lowHpSoundRef, victorySoundRef, checkBattleEndConditions]);
+    }, [player1Team, player2Team, activePokemonP1, loading, winner, addLog, manageLowHpSound, battleMusicRef, lowHpSoundRef, victorySoundRef, checkBattleEndConditions, gameMode]);
 
     return {
         loading, winner, battleLog, gameMode,

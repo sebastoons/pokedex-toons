@@ -1,6 +1,6 @@
 // src/App.js
 import React, { useState, useEffect, useMemo, useRef } from 'react';
-import { Routes, Route, Link, } from 'react-router-dom';
+import { Routes, Route, Link } from 'react-router-dom';
 import ReactGA from 'react-ga4';
 
 // Componentes
@@ -12,9 +12,13 @@ import MachineList from './components/MachineList';
 import WelcomeModal from './components/WelcomeModal';
 import UpdateModal from './components/UpdateModal';
 import BattleModeSelector from './components/BattleModeSelector';
+import AnalyticsDashboard from './components/AnalyticsDashboard';
 
 import { generacionEspecial } from './data/generacionEspecial';
-import  manualPokemonImages  from './data/manualPokemonImages';
+import manualPokemonImages from './data/manualPokemonImages';
+
+// Analytics Tracker
+import analyticsTracker from './utils/analyticsTracker';
 
 // Constantes
 const ALL_POKEMON_GENERATIONS = [
@@ -29,6 +33,7 @@ const ALL_POKEMON_GENERATIONS = [
     { id: 9, limit: 120, offset: 905, name: 'Generación 9' },
     { id: 'special', name: 'Generación Especial' },
 ];
+
 const ALL_POKEMON_TYPES = [
     { value: 'normal', display: 'Normal', color: '#A8A77A' },
     { value: 'fire', display: 'Fuego', color: '#EE8130' },
@@ -67,6 +72,10 @@ function App() {
     const [isMuted, setIsMuted] = useState(false);
     const audioRef = useRef(null);
 
+    useEffect(() => {
+        analyticsTracker.trackPageVisit();
+    }, []);
+
     const toggleMute = () => {
         const newMutedState = !isMuted;
         setIsMuted(newMutedState);
@@ -74,6 +83,7 @@ function App() {
             audioRef.current.muted = newMutedState;
         }
     };
+
     const handleWelcomeClose = () => {
         setShowWelcome(false);
         if (audioRef.current) {
@@ -85,6 +95,7 @@ function App() {
             setShowUpdate(true);
         }
     };
+
     const handleUpdateClose = () => {
         setShowUpdate(false);
         localStorage.setItem('lastUpdateSeen', LATEST_UPDATE_VERSION);
@@ -108,14 +119,12 @@ function App() {
                             const detailResponse = await fetch(pokemon.url);
                             if (!detailResponse.ok) return null;
                             const detailData = await detailResponse.json();
-                            // --- CORRECCIÓN AQUÍ ---
-                            // Ahora asignamos la imagen local a cada Pokémon de la API
                             return {
                                 name: detailData.name,
                                 url: pokemon.url,
                                 id: detailData.id,
                                 types: detailData.types.map(typeInfo => typeInfo.type.name),
-                                imageUrl: manualPokemonImages[detailData.id] || null // Asigna la imagen de tu archivo
+                                imageUrl: manualPokemonImages[detailData.id] || null
                             };
                         } catch (detailErr) { return null; }
                     });
@@ -130,7 +139,7 @@ function App() {
                   id: p.id,
                   name: p.name.toLowerCase(),
                   types: p.types,
-                  imageUrl: p.imageUrl, // Aseguramos que los especiales también tengan la imagen
+                  imageUrl: p.imageUrl,
                   isSpecial: true
                 }));
                 
@@ -173,12 +182,34 @@ function App() {
         return currentList;
     }, [pokemonList, searchTerm, selectedType, selectedGeneration]);
 
-    const handleSearchChange = (event) => setSearchTerm(event.target.value);
-    const handleTypeChange = (event) => setSelectedType(event.target.value);
+    const handleSearchChange = (event) => {
+        const value = event.target.value;
+        setSearchTerm(value);
+        if (value.length > 2) {
+            analyticsTracker.trackSearch(value);
+        }
+    };
+
+    const handleTypeChange = (event) => {
+        const value = event.target.value;
+        setSelectedType(value);
+        if (value) {
+            const typeInfo = ALL_POKEMON_TYPES.find(t => t.value === value);
+            if (typeInfo) {
+                analyticsTracker.trackTypeFilter(typeInfo.display);
+            }
+        }
+    };
+
     const handleGenerationSelect = (genId) => {
         setSelectedGeneration(genId.toString());
         setIsGenMenuOpen(false);
+        const gen = ALL_POKEMON_GENERATIONS.find(g => g.id.toString() === genId.toString());
+        if (gen) {
+            analyticsTracker.trackGenerationSelection(genId, gen.name);
+        }
     };
+
     const toggleGenMenu = () => setIsGenMenuOpen(!isGenMenuOpen);
 
     if (loading) return <div className="pokedex-container"><div className="loading">Cargando Pokedex...</div></div>;
@@ -190,12 +221,14 @@ function App() {
           <button onClick={toggleMute} className="mute-button-main">{isMuted ? '🔊' : '🔇'}</button>
           {showWelcome && <WelcomeModal onClose={handleWelcomeClose} />}
           {showUpdate && <UpdateModal onClose={handleUpdateClose} />}
+          
           <header>
               <Link to="/" style={{ textDecoration: 'none', color: 'inherit' }}>
                   <img src="/logo.png" alt="Mi Pokedex Logo" className="pokedex-logo" />
                   <span style={{ textAlign: 'right', display: 'block', marginLeft: '150px', marginTop: '5px',fontWeight: 'bold',fontSize: '0.9em',fontFamily: 'monospace', color: '#ebebebff' }}>By Toons ♥ </span>
               </Link>
           </header>
+
           <Routes>
               <Route path="/" element={
                   <>
@@ -221,9 +254,46 @@ function App() {
               <Route path="/battle-selector" element={<PokemonBattleSelector pokemonList={pokemonList} />} />
               <Route path="/battle/arena" element={<PokemonBattleArena pokemonList={pokemonList} />} />
               <Route path="/moves" element={<MachineList />} />
+              <Route path="/analytics" element={<AnalyticsDashboard />} />
               <Route path="*" element={<div className="error">Página no encontrada</div>} />
           </Routes>
-          <div className="app-version">v{LATEST_UPDATE_VERSION}</div>
+
+          {/* Versión sin contenedor - solo números discretos */}
+          <div style={{ 
+            position: 'absolute',
+            bottom: '10px', 
+            right: '10px', 
+            fontSize: '13px',
+            color: '#afafaf',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '2px',
+            zIndex: 100,
+            fontFamily: 'monospace'
+          }}>
+            <span style={{ userSelect: 'none' }}>
+              v{LATEST_UPDATE_VERSION.substring(0, LATEST_UPDATE_VERSION.lastIndexOf('.'))}
+            </span>
+            <Link
+                to="/analytics"
+                style={{
+                    color: '#afafaf',
+                    textDecoration: 'none',
+                    transition: 'color 0.3s ease',
+                    cursor: 'pointer',
+                    display: 'inline-block'
+                }}
+                onMouseOver={(e) => {
+                    e.currentTarget.style.color = '#afafaf';
+                }}
+                onMouseOut={(e) => {
+                    e.currentTarget.style.color = '#afafaf';
+                }}
+                title="Dashboard de Analytics"
+          >
+                .{LATEST_UPDATE_VERSION.substring(LATEST_UPDATE_VERSION.lastIndexOf('.') + 1)}
+            </Link>
+         </div>
       </div>
     );
 }
