@@ -756,7 +756,7 @@ export const generacionEspecial = [
     types: ["rock"],
     imageUrl: "/img-special/1080.png",
     stats: { hp: 100, attack: 90, defense: 110, 'special-attack': 80, 'special-defense': 95, speed: 60 },
-    height: 18,
+    height: 20,
     weight: 1200,
     description: "Fortemuro es un Pokémon que condensa especias tóxicas en su núcleo. Su cuerpo de vidrio reforzado contiene ajíes fermentados que liberan gases abrasivos. Aunque parece agotado, su poder se activa cuando se siente acorralado, liberando una nube picante que paraliza a sus enemigos.",
     evolutionLine: [{id: 1078, name: "Flamín", sprite: "/img-special/1078.png"},
