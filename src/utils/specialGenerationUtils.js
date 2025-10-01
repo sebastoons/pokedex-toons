@@ -14,36 +14,44 @@ const typeData = {
   },
   dragon: {
     abilities: [
-      { name: "Fuerza mental", description: "Gracias a su profunda concentración, no se amedrenta ante los ataques de otros Pokémon ni sufre los efectos de intimidación." }
+      { name: "Fuerza mental", description: "Gracias a su profunda concentración, no se amedrenta ante los ataques de otros Pokémon ni sufre los efectos de intimidación." },
+      { name: "Intimidación", description: "Al entrar en combate, amilana al rival de tal manera que reduce su ataque." }
     ],
     moves: [
       { id: "Dragon-Rage", name: "Furia dragón", type: "dragon" },
       { id: "Outrage", name: "Rayo", type: "dragon" },
       { id: "Draco-Meteor", name: "Cometa draco", type: "dragon" },
-      { id: "Dragon-Rush", name: "Carga dragón", type: "dragon" }
+      { id: "Dragon-Rush", name: "Carga dragón", type: "dragon" },
+      { id: "Dragon-Breath", name: "Dragoaliento", type: "dragon" },
+      { id: "Dragon-Claw", name: "Garra dragón", type: "dragon" },
+      { id: "Dragon-Pulse", name: "Pulso dragón", type: "dragon" }
     ]
   },
   dark: {
     abilities: [
-      { name: "Pararrayos", description: "Atrae y anula los movimientos de tipo Eléctrico, aumentando el Ataque Especial." }
+      { name: "Tumbos", description: "Aumenta su evasión si está confuso." },
+      { name: "Espíritu vital", description: "Su determinación le impide quedarse dormido." },
     ],
     moves: [
-      { id: "thunder-shock", name: "Impactrueno", type: "dark" },
-      { id: "thunderbolt", name: "Rayo", type: "dark" },
-      { id: "volt-switch", name: "Voltiocambio", type: "dark" },
-      { id: "wild-charge", name: "Voltio Cruel", type: "dark" }
+      { id: "Bite", name: "Mordisco", type: "dark" },
+      { id: "Crunch", name: "Triturar", type: "dark" },
+      { id: "Dark-Pulse", name: "Pulso Umbrío", type: "dark" },
+      { id: "Night-Slash", name: "Tajo Umbrío", type: "dark" },
+      { id: "Pursuit", name: "Persecución", type: "dark" }
     ]
   },
   rock: {
     abilities: [
-      { name: "Pararrayos", description: "Atrae y anula los movimientos de tipo Eléctrico, aumentando el Ataque Especial." },
-      { name: "Electricidad Estática", description: "Puede paralizar al contacto." }
+      { name: "Robustez", description: "El Pokémon no puede debilitarse de un solo golpe cuando tiene los PS al máximo. También evita los movimientos fulminantes." },
+      { name: "Cuerpo puro", description: "Evita que se reduzcan sus características a causa de movimientos o habilidades de otros Pokémon." }
     ],
     moves: [
-      { id: "thunder-shock", name: "Impactrueno", type: "rock" },
-      { id: "thunderbolt", name: "Rayo", type: "rock" },
-      { id: "volt-switch", name: "Voltiocambio", type: "rock" },
-      { id: "wild-charge", name: "Voltio Cruel", type: "rock" }
+      { id: "Rock-Slide", name: "Avalancha", type: "rock" },
+      { id: "Rock-Throw", name: "Lanzarrocas", type: "rock" },
+      { id: "Ancient-Power", name: "Poder pasado", type: "rock" },
+      { id: "Stone-Edge", name: "Roca afilada", type: "rock" },
+      { id: "Rock-Wrecker", name: "Romperrocas", type: "rock" },
+      { id: "Rock-Tomb", name: "Tumba Rocas", type: "rock" }
     ]
   },
   ghost: {
