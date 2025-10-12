@@ -224,7 +224,7 @@ function App() {
           
           <header>
               <Link to="/" style={{ textDecoration: 'none', color: 'inherit' }}>
-                  <img src="/logo.png" alt="Mi Pokedex Logo" className="pokedex-logo" />
+                  <img src="/logo.svg" alt="Mi Pokedex Logo" className="pokedex-logo" />
                   <span style={{ textAlign: 'right', display: 'block', marginLeft: '150px', marginTop: '5px',fontWeight: 'bold',fontSize: '0.9em',fontFamily: 'monospace', color: '#ebebebff' }}>By Toons ♥ </span>
               </Link>
           </header>
