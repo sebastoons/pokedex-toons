@@ -20,7 +20,7 @@ const UpdateModal = ({ onClose }) => {
   return (
     <div className="modal-overlay">
       <div className="modal-content update-modal">
-        <img src="/logo.png" alt="Pokedex Logo" className="update-logo" />
+        <img src="/logo.svg" alt="Pokedex Logo" className="update-logo" />
         <h2>¡Novedades en la Pokédex!</h2>
         <div className="update-info">
           <h4>Versión {updateDetails.version} - {updateDetails.date}</h4>
