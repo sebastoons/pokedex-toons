@@ -74,7 +74,7 @@ body::before {
 
 /* --- Header y Logo (Dentro del Pokedex Container) --- */
 header {
-    margin-bottom: 20px;
+    margin-bottom: 0px;
     padding-bottom: 15px;
     border-bottom: 5px solid #e74c3c;
     position: relative;
@@ -1780,7 +1780,7 @@ header {
 /* Asegurar que el contenedor principal no tape la versión */
 .pokedex-container {
   position: relative;
-  min-height: 100vh;
+  min-height: 60vh;
   padding-bottom: 60px; /* Espacio para la versión */
 }
 
