@@ -1,5 +1,5 @@
 // src/App.js
-import React, { useState, useEffect, useMemo, useRef } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Routes, Route, Link } from 'react-router-dom';
 import ReactGA from 'react-ga4';
 
@@ -8,7 +8,6 @@ import PokemonCard from './components/PokemonCard';
 import PokemonDetail from './components/PokemonDetail';
 import PokemonBattleSelector from './components/PokemonBattleSelector';
 import PokemonBattleArena from './components/battle/PokemonBattleArena';
-import MachineList from './components/MachineList';
 import WelcomeModal from './components/WelcomeModal';
 import UpdateModal from './components/UpdateModal';
 import BattleModeSelector from './components/BattleModeSelector';
@@ -69,27 +68,13 @@ function App() {
     const [showWelcome, setShowWelcome] = useState(true);
     const [showUpdate, setShowUpdate] = useState(false);
     const LATEST_UPDATE_VERSION = "1.2.4";
-    const [isMuted, setIsMuted] = useState(false);
-    const audioRef = useRef(null);
 
     useEffect(() => {
         analyticsTracker.trackPageVisit();
     }, []);
 
-    const toggleMute = () => {
-        const newMutedState = !isMuted;
-        setIsMuted(newMutedState);
-        if (audioRef.current) {
-            audioRef.current.muted = newMutedState;
-        }
-    };
-
     const handleWelcomeClose = () => {
         setShowWelcome(false);
-        if (audioRef.current) {
-            audioRef.current.loop = true;
-            audioRef.current.play().catch(e => console.log("Audio play failed"));
-        }
         const lastSeenVersion = localStorage.getItem('lastUpdateSeen');
         if (lastSeenVersion !== LATEST_UPDATE_VERSION) {
             setShowUpdate(true);
@@ -110,15 +95,23 @@ function App() {
                 const results = listData.results;
                 const pokemonWithDetails = [];
                 const chunkSize = 30;
-                const delayMs = 100;
+                const delayMs = 50; // Reducido para cargar más rápido
 
                 for (let i = 0; i < results.length; i += chunkSize) {
                     const chunk = results.slice(i, i + chunkSize);
                     const chunkPromises = chunk.map(async (pokemon) => {
                         try {
+                            // Optimización: Usamos datos básicos si falla el detalle
+                            const idFromUrl = pokemon.url.split('/')[6];
                             const detailResponse = await fetch(pokemon.url);
-                            if (!detailResponse.ok) return null;
-                            const detailData = await detailResponse.json();
+                            
+                            let detailData;
+                            if (detailResponse.ok) {
+                                detailData = await detailResponse.json();
+                            } else {
+                                detailData = { id: idFromUrl, name: pokemon.name, types: [{type: {name: 'normal'}}] };
+                            }
+
                             return {
                                 name: detailData.name,
                                 url: pokemon.url,
@@ -130,6 +123,10 @@ function App() {
                     });
                     const resolvedChunk = await Promise.all(chunkPromises);
                     pokemonWithDetails.push(...resolvedChunk.filter(Boolean));
+                    
+                    // Solo cargamos el primer chunk obligatoriamente, el resto en background
+                    if (i === 0) setPokemonList([...pokemonWithDetails]); 
+                    
                     if (i + chunkSize < results.length) {
                         await new Promise(resolve => setTimeout(resolve, delayMs));
                     }
@@ -143,7 +140,12 @@ function App() {
                   isSpecial: true
                 }));
                 
-                setPokemonList([...pokemonWithDetails, ...specialPokemonFormatted]);
+                // Actualización final con todos
+                setPokemonList(prev => {
+                    // Evitar duplicados si el render es rápido
+                    const combined = [...pokemonWithDetails, ...specialPokemonFormatted];
+                    return combined;
+                });
 
             } catch (err) {
                 setError(err);
@@ -212,13 +214,11 @@ function App() {
 
     const toggleGenMenu = () => setIsGenMenuOpen(!isGenMenuOpen);
 
-    if (loading) return <div className="pokedex-container"><div className="loading">Cargando Pokedex...</div></div>;
+    if (loading && pokemonList.length === 0) return <div className="pokedex-container"><div className="loading">Cargando Pokedex Toons...</div></div>;
     if (error) return <div className="pokedex-container"><div className="error">Error: {error.message}</div></div>;
 
     return (
       <div className="pokedex-container">
-          <audio ref={audioRef} src="/sounds/app_load.mp3" preload="auto" />
-          <button onClick={toggleMute} className="mute-button-main">{isMuted ? '🔊' : '🔇'}</button>
           {showWelcome && <WelcomeModal onClose={handleWelcomeClose} />}
           {showUpdate && <UpdateModal onClose={handleUpdateClose} />}
           
@@ -244,7 +244,7 @@ function App() {
                               {isGenMenuOpen && (<ul className="generation-dropdown-menu">{ALL_POKEMON_GENERATIONS.map(gen => (<li key={gen.id} onClick={() => handleGenerationSelect(gen.id)} className={selectedGeneration === gen.id.toString() ? 'active' : ''}>{gen.name}</li>))}</ul>)}
                           </div>
                           <Link to="/battle" className="battle-button">Ir a Batalla</Link>
-                          <Link to="/moves" className="battle-button">MT/MO</Link>
+                          {/* Botón MT/MO Eliminado */}
                       </div>
                       <div className="pokemon-list">{filteredPokemon.length > 0 ? (filteredPokemon.map(pokemon => <PokemonCard key={pokemon.id} pokemon={pokemon} />)) : (<div className="no-results">No se encontraron Pokémon.</div>)}</div>
                   </>
@@ -253,12 +253,10 @@ function App() {
               <Route path="/battle" element={<BattleModeSelector />} />
               <Route path="/battle-selector" element={<PokemonBattleSelector pokemonList={pokemonList} />} />
               <Route path="/battle/arena" element={<PokemonBattleArena pokemonList={pokemonList} />} />
-              <Route path="/moves" element={<MachineList />} />
               <Route path="/analytics" element={<AnalyticsDashboard />} />
               <Route path="*" element={<div className="error">Página no encontrada</div>} />
           </Routes>
 
-          {/* Versión sin contenedor - solo números discretos */}
           <div style={{ 
             position: 'absolute',
             bottom: '10px', 

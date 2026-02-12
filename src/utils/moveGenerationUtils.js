@@ -263,3 +263,10 @@ export const improvePokemonMoves = (pokemon) => {
 
     return generatedMoves;
 };
+
+// Agrega esta exportación para usarla en el selector
+export const getMovesByType = (type) => {
+    // Convierte el tipo a minúsculas para coincidir con las claves del objeto
+    const typeKey = type.toLowerCase();
+    return movesByType[typeKey] || movesByType['normal']; // Fallback a normal si no existe
+};
