@@ -18,7 +18,6 @@ const ALL_POKEMON_GENERATIONS = [
     { id: 'special', name: 'Generación Especial' },
 ];
 
-// Base de datos de movimientos interna
 const MOVES_DATABASE = {
     normal: [
         { name: "Placaje", power: 40, accuracy: 100, type: "normal" },
@@ -121,7 +120,6 @@ const MOVES_DATABASE = {
     ]
 };
 
-// Modificado: Ahora devuelve un array vacío si no encuentra, para facilitar la combinación
 const getMovesForType = (type) => {
     return MOVES_DATABASE[type] || [];
 };
@@ -177,12 +175,12 @@ function PokemonBattleSelector({ pokemonList }) {
 
     const [player1Team, setPlayer1Team] = useState([]);
     const [player2Team, setPlayer2Team] = useState([]);
-    const [currentPlayer, setCurrentPlayer] = useState(1);
+    // CORRECCIÓN: Eliminado setCurrentPlayer porque no se usaba
+    const [currentPlayer] = useState(1);
     const [teamSize] = useState(3);
     const [isConfiguringMoves, setIsConfiguringMoves] = useState(false);
     const [selectedMovesP1, setSelectedMovesP1] = useState({});
     
-    // Estado para Generaciones
     const [selectedGeneration, setSelectedGeneration] = useState('all');
     const [isGenMenuOpen, setIsGenMenuOpen] = useState(false);
     
@@ -209,11 +207,9 @@ function PokemonBattleSelector({ pokemonList }) {
             return;
         }
         
-        // Asignar movimientos por defecto basados en su tipo principal + normal
         const pTypes = getPokemonTypes(pokemon);
         const typeMoves = getMovesForType(pTypes[0]);
         const normalMoves = MOVES_DATABASE['normal'];
-        // Mezclamos un poco de todo para el default
         const defaultMoves = [...typeMoves.slice(0, 3), ...normalMoves.slice(0,1)].slice(0, 4);
         
         if (currentPlayer === 1) {
@@ -282,7 +278,6 @@ function PokemonBattleSelector({ pokemonList }) {
 
     const toggleGenMenu = () => setIsGenMenuOpen(!isGenMenuOpen);
 
-    // --- VISTA DE CONFIGURACIÓN DE MOVIMIENTOS ---
     if (isConfiguringMoves) {
         return (
             <div className="battle-selector-container">
@@ -290,22 +285,16 @@ function PokemonBattleSelector({ pokemonList }) {
                 <div className="team-config-grid" style={{ display: 'flex', flexWrap: 'wrap', gap: '20px', justifyContent: 'center', marginTop: '20px' }}>
                     {player1Team.map(poke => {
                         const types = getPokemonTypes(poke);
-                        
-                        // LÓGICA MEJORADA: Obtener movimientos de TODOS los tipos del Pokémon + NORMAL
                         let pool = [];
-                        // 1. Movimientos por cada tipo del pokemon
                         types.forEach(t => {
                             pool = [...pool, ...getMovesForType(t)];
                         });
-                        // 2. Agregar siempre movimientos tipo Normal
                         pool = [...pool, ...MOVES_DATABASE['normal']];
                         
-                        // 3. Eliminar duplicados por nombre
                         const availableMoves = pool.filter((move, index, self) =>
                             index === self.findIndex((m) => m.name === move.name)
                         );
 
-                        // Color del borde basado en el primer tipo
                         const mainType = types[0];
 
                         return (
@@ -320,7 +309,6 @@ function PokemonBattleSelector({ pokemonList }) {
                                     <img src={getPokemonImageUrl(poke)} alt={poke.name} style={{width: '60px', height: '60px'}} />
                                     <div style={{marginLeft: '10px'}}>
                                         <h3 style={{margin: 0, color: 'white', textTransform: 'capitalize'}}>{poke.name}</h3>
-                                        {/* LÓGICA MEJORADA: Mostrar TODOS los tipos como badges */}
                                         <div style={{display: 'flex', gap: '5px', marginTop: '5px'}}>
                                             {types.map(t => (
                                                 <span key={t} className={`type-badge type-${t}`} style={{fontSize: '0.8em', padding: '2px 6px', borderRadius: '4px', textTransform: 'uppercase', color: '#fff', textShadow: '1px 1px 2px black'}}>
@@ -359,7 +347,6 @@ function PokemonBattleSelector({ pokemonList }) {
         );
     }
 
-    // --- VISTA DE SELECCIÓN NORMAL ---
     return (
         <div className="battle-selector-container">
             <Link to="/battle" className="back-to-pokedex-top">

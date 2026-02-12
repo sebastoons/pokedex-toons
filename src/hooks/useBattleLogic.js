@@ -5,10 +5,6 @@ import { fetchPokemonDetailsByIds } from '../services/pokemonService';
 import { calculateDamage } from '../utils/battleUtils';
 import analyticsTracker from '../utils/analyticsTracker';
 
-// Función auxiliar simple para evitar errores si audioUtils no existe
-const playSound = (ref) => { if(ref && ref.current) console.log("Sonido placeholder"); };
-const stopSound = (ref) => { if(ref && ref.current) console.log("Stop placeholder"); };
-
 export const useBattleLogic = () => {
     const navigate = useNavigate();
     const location = useLocation();
@@ -276,7 +272,6 @@ export const useBattleLogic = () => {
                     ...p, 
                     currentHp: p.hp, 
                     maxHp: p.hp,
-                    // Si hay movimientos personalizados para este ID, úsalos; si no, usa los por defecto
                     moves: customMovesP1[p.id] || p.moves 
                 }));
                 
