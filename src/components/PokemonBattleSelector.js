@@ -28,95 +28,95 @@ const MOVES_DATABASE = {
         { name: "Rapidez", power: 60, accuracy: Infinity, type: "normal" }
     ],
     fire: [
-        { name: "Ascuas", power: 40, accuracy: 100, type: "fire" },
-        { name: "Lanzallamas", power: 90, accuracy: 100, type: "fire" },
-        { name: "Llamarada", power: 110, accuracy: 85, type: "fire" },
-        { name: "Puño Fuego", power: 75, accuracy: 100, type: "fire" }
+        { name: "Ascuas", power: 40, accuracy: 100, type: "fuego" },
+        { name: "Lanzallamas", power: 90, accuracy: 100, type: "fuego" },
+        { name: "Llamarada", power: 110, accuracy: 85, type: "fuego" },
+        { name: "Puño Fuego", power: 75, accuracy: 100, type: "fuego" }
     ],
     water: [
-        { name: "Pistola Agua", power: 40, accuracy: 100, type: "water" },
-        { name: "Surf", power: 90, accuracy: 100, type: "water" },
-        { name: "Hidrobomba", power: 110, accuracy: 80, type: "water" },
-        { name: "Rayo Burbuja", power: 65, accuracy: 100, type: "water" }
+        { name: "Pistola Agua", power: 40, accuracy: 100, type: "agua" },
+        { name: "Surf", power: 90, accuracy: 100, type: "agua" },
+        { name: "Hidrobomba", power: 110, accuracy: 80, type: "agua" },
+        { name: "Rayo Burbuja", power: 65, accuracy: 100, type: "agua" }
     ],
     grass: [
-        { name: "Látigo Cepa", power: 45, accuracy: 100, type: "grass" },
-        { name: "Hoja Afilada", power: 55, accuracy: 95, type: "grass" },
-        { name: "Rayo Solar", power: 120, accuracy: 100, type: "grass" },
-        { name: "Gigadrenado", power: 75, accuracy: 100, type: "grass" }
+        { name: "Látigo Cepa", power: 45, accuracy: 100, type: "planta" },
+        { name: "Hoja Afilada", power: 55, accuracy: 95, type: "planta" },
+        { name: "Rayo Solar", power: 120, accuracy: 100, type: "planta" },
+        { name: "Gigadrenado", power: 75, accuracy: 100, type: "planta" }
     ],
     electric: [
-        { name: "Impactrueno", power: 40, accuracy: 100, type: "electric" },
-        { name: "Rayo", power: 90, accuracy: 100, type: "electric" },
-        { name: "Trueno", power: 110, accuracy: 70, type: "electric" },
-        { name: "Puño Trueno", power: 75, accuracy: 100, type: "electric" }
+        { name: "Impactrueno", power: 40, accuracy: 100, type: "eléctrico" },
+        { name: "Rayo", power: 90, accuracy: 100, type: "eléctrico" },
+        { name: "Trueno", power: 110, accuracy: 70, type: "eléctrico" },
+        { name: "Puño Trueno", power: 75, accuracy: 100, type: "eléctrico" }
     ],
     ice: [
-        { name: "Rayo Hielo", power: 90, accuracy: 100, type: "ice" },
-        { name: "Ventisca", power: 110, accuracy: 70, type: "ice" },
-        { name: "Puño Hielo", power: 75, accuracy: 100, type: "ice" }
+        { name: "Rayo Hielo", power: 90, accuracy: 100, type: "hielo" },
+        { name: "Ventisca", power: 110, accuracy: 70, type: "hielo" },
+        { name: "Puño Hielo", power: 75, accuracy: 100, type: "hielo" }
     ],
     fighting: [
-        { name: "Golpe Karate", power: 50, accuracy: 100, type: "fighting" },
-        { name: "Sumisión", power: 80, accuracy: 80, type: "fighting" },
-        { name: "A Bocajarro", power: 120, accuracy: 100, type: "fighting" }
+        { name: "Golpe Karate", power: 50, accuracy: 100, type: "lucha" },
+        { name: "Sumisión", power: 80, accuracy: 80, type: "lucha" },
+        { name: "A Bocajarro", power: 120, accuracy: 100, type: "lucha" }
     ],
     poison: [
-        { name: "Ácido", power: 40, accuracy: 100, type: "poison" },
-        { name: "Bomba Lodo", power: 90, accuracy: 100, type: "poison" },
-        { name: "Puya Nociva", power: 80, accuracy: 100, type: "poison" }
+        { name: "Ácido", power: 40, accuracy: 100, type: "veneno" },
+        { name: "Bomba Lodo", power: 90, accuracy: 100, type: "veneno" },
+        { name: "Puya Nociva", power: 80, accuracy: 100, type: "veneno" }
     ],
     ground: [
-        { name: "Terremoto", power: 100, accuracy: 100, type: "ground" },
-        { name: "Excavar", power: 80, accuracy: 100, type: "ground" },
-        { name: "Disparo Lodo", power: 55, accuracy: 95, type: "ground" }
+        { name: "Terremoto", power: 100, accuracy: 100, type: "tierra" },
+        { name: "Excavar", power: 80, accuracy: 100, type: "tierra" },
+        { name: "Disparo Lodo", power: 55, accuracy: 95, type: "tierra" }
     ],
     flying: [
-        { name: "Vuelo", power: 90, accuracy: 95, type: "flying" },
-        { name: "Picotazo", power: 35, accuracy: 100, type: "flying" },
-        { name: "Golpe Aéreo", power: 60, accuracy: Infinity, type: "flying" }
+        { name: "Vuelo", power: 90, accuracy: 95, type: "volador" },
+        { name: "Picotazo", power: 35, accuracy: 100, type: "volador" },
+        { name: "Golpe Aéreo", power: 60, accuracy: Infinity, type: "volador" }
     ],
     psychic: [
-        { name: "Psíquico", power: 90, accuracy: 100, type: "psychic" },
-        { name: "Confusión", power: 50, accuracy: 100, type: "psychic" },
-        { name: "Premonición", power: 120, accuracy: 100, type: "psychic" },
-        { name: "Cabezazo Zen", power: 80, accuracy: 90, type: "psychic" }
+        { name: "Psíquico", power: 90, accuracy: 100, type: "psíquico" },
+        { name: "Confusión", power: 50, accuracy: 100, type: "psíquico" },
+        { name: "Premonición", power: 120, accuracy: 100, type: "psíquico" },
+        { name: "Cabezazo Zen", power: 80, accuracy: 90, type: "psíquico" }
     ],
     bug: [
-        { name: "Picadura", power: 60, accuracy: 100, type: "bug" },
-        { name: "Zumbido", power: 90, accuracy: 100, type: "bug" },
-        { name: "Tijera X", power: 80, accuracy: 100, type: "bug" }
+        { name: "Picadura", power: 60, accuracy: 100, type: "bicho" },
+        { name: "Zumbido", power: 90, accuracy: 100, type: "bicho" },
+        { name: "Tijera X", power: 80, accuracy: 100, type: "bicho" }
     ],
     rock: [
-        { name: "Lanzarrocas", power: 50, accuracy: 90, type: "rock" },
-        { name: "Avalancha", power: 75, accuracy: 90, type: "rock" },
-        { name: "Roca Afilada", power: 100, accuracy: 80, type: "rock" }
+        { name: "Lanzarrocas", power: 50, accuracy: 90, type: "roca" },
+        { name: "Avalancha", power: 75, accuracy: 90, type: "roca" },
+        { name: "Roca Afilada", power: 100, accuracy: 80, type: "roca" }
     ],
     ghost: [
-        { name: "Lengüetazo", power: 30, accuracy: 100, type: "ghost" },
-        { name: "Bola Sombra", power: 80, accuracy: 100, type: "ghost" },
-        { name: "Garra Umbría", power: 70, accuracy: 100, type: "ghost" }
+        { name: "Lengüetazo", power: 30, accuracy: 100, type: "fantasma" },
+        { name: "Bola Sombra", power: 80, accuracy: 100, type: "fantasma" },
+        { name: "Garra Umbría", power: 70, accuracy: 100, type: "fantasma" }
     ],
     dragon: [
-        { name: "Garra Dragón", power: 80, accuracy: 100, type: "dragon" },
-        { name: "Pulso Dragón", power: 85, accuracy: 100, type: "dragon" },
-        { name: "Cometa Draco", power: 130, accuracy: 90, type: "dragon" }
+        { name: "Garra Dragón", power: 80, accuracy: 100, type: "dragón" },
+        { name: "Pulso Dragón", power: 85, accuracy: 100, type: "dragón" },
+        { name: "Cometa Draco", power: 130, accuracy: 90, type: "dragón" }
     ],
     dark: [
-        { name: "Mordisco", power: 60, accuracy: 100, type: "dark" },
-        { name: "Triturar", power: 80, accuracy: 100, type: "dark" },
-        { name: "Pulso Umbrío", power: 80, accuracy: 100, type: "dark" }
+        { name: "Mordisco", power: 60, accuracy: 100, type: "siniestro" },
+        { name: "Triturar", power: 80, accuracy: 100, type: "siniestro" },
+        { name: "Pulso Umbrío", power: 80, accuracy: 100, type: "siniestro" }
     ],
     steel: [
-        { name: "Garra Metal", power: 50, accuracy: 95, type: "steel" },
-        { name: "Foco Resplandor", power: 80, accuracy: 100, type: "steel" },
-        { name: "Cabeza de Hierro", power: 80, accuracy: 100, type: "steel" },
-        { name: "Puño Meteoro", power: 90, accuracy: 90, type: "steel" }
+        { name: "Garra Metal", power: 50, accuracy: 95, type: "acero" },
+        { name: "Foco Resplandor", power: 80, accuracy: 100, type: "acero" },
+        { name: "Cabeza de Hierro", power: 80, accuracy: 100, type: "acero" },
+        { name: "Puño Meteoro", power: 90, accuracy: 90, type: "acero" }
     ],
     fairy: [
-        { name: "Viento Feérico", power: 40, accuracy: 100, type: "fairy" },
-        { name: "Brillo Mágico", power: 80, accuracy: 100, type: "fairy" },
-        { name: "Fuerza Lunar", power: 95, accuracy: 100, type: "fairy" }
+        { name: "Viento Feérico", power: 40, accuracy: 100, type: "hada" },
+        { name: "Brillo Mágico", power: 80, accuracy: 100, type: "hada" },
+        { name: "Fuerza Lunar", power: 95, accuracy: 100, type: "hada" }
     ]
 };
 
@@ -323,7 +323,7 @@ function PokemonBattleSelector({ pokemonList }) {
                                     <div key={idx} style={{marginBottom: '8px'}}>
                                         <label style={{color: '#aaa', fontSize: '12px'}}>Técnica {idx + 1}</label>
                                         <select 
-                                            style={{width: '100%', padding: '5px', borderRadius: '5px', background: '#333', color: 'white', border: '1px solid #555'}}
+                                            style={{width: '100%', padding: '5px', borderRadius: '5px', background: '#333', color: 'white', border: '1px solid #555', textTransform: 'uppercase'}}
                                             value={move?.name || ''}
                                             onChange={(e) => handleMoveChange(poke.id, idx, e.target.value, availableMoves)}
                                         >
@@ -340,7 +340,7 @@ function PokemonBattleSelector({ pokemonList }) {
                     })}
                 </div>
                 <div style={{marginTop: '30px', display: 'flex', gap: '20px', justifyContent: 'center'}}>
-                    <button onClick={() => setIsConfiguringMoves(false)} className="back-btn" style={{padding: '10px 20px', fontSize: '1.2em', cursor: 'pointer'}}>Volver</button>
+                    <button onClick={() => setIsConfiguringMoves(false)} className="back-btn" style={{padding: '8px 20px', fontSize: '1em', cursor: 'pointer', textTransform: 'uppercase', fontFamily: 'Press Start 2P', background: 'linear-gradient(135deg, #3a47c2, #5b68dd)', fontWeight: 'bold', borderRadius: '30px', marginTop: '20px', marginBottom: '20px', boxShadow: '0 8px 25px rgba(76, 175, 80, 0.3)'}}>Volver</button>
                     <button onClick={handleStartBattle} className="start-battle-button" style={{padding: '10px 20px', fontSize: '1.2em', cursor: 'pointer'}}>¡LUCHAR!</button>
                 </div>
             </div>
