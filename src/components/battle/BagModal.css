@@ -1,0 +1,170 @@
+/* BagModal.css */
+.bag-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.65);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 500;
+    backdrop-filter: blur(3px);
+}
+
+.bag-modal {
+    background: linear-gradient(145deg, #2a1f14, #3d2c1a);
+    border: 2px solid rgba(255, 190, 80, 0.4);
+    border-radius: 14px;
+    padding: 18px;
+    width: 280px;
+    max-width: 92vw;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.05);
+}
+
+.bag-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid rgba(255,190,80,0.25);
+}
+
+.bag-title {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 0.65em;
+    color: #f5d080;
+    letter-spacing: 1px;
+}
+
+.bag-close {
+    background: none;
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 50%;
+    color: #aaa;
+    width: 22px;
+    height: 22px;
+    cursor: pointer;
+    font-size: 0.7em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+}
+
+.bag-close:hover {
+    background: rgba(255,255,255,0.1);
+    color: white;
+}
+
+.bag-pokemon-info {
+    font-family: monospace;
+    font-size: 0.75em;
+    color: #ccc;
+    text-align: center;
+    margin-bottom: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.bag-pokemon-hp {
+    color: #7fd17f;
+}
+
+.bag-items-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
+.bag-item-btn {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: left;
+    color: white;
+    width: 100%;
+}
+
+.bag-item-btn:hover:not(.disabled) {
+    background: rgba(255,190,80,0.12);
+    border-color: rgba(255,190,80,0.4);
+    transform: translateX(2px);
+}
+
+.bag-item-btn.disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+
+.bag-item-icon {
+    font-size: 1.4em;
+    flex-shrink: 0;
+}
+
+.bag-item-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.bag-item-name {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 0.5em;
+    color: #f5d080;
+    letter-spacing: 0.5px;
+}
+
+.bag-item-desc {
+    font-family: monospace;
+    font-size: 0.72em;
+    color: #aaa;
+    text-transform: uppercase;
+}
+
+.bag-item-right {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 3px;
+}
+
+.bag-item-count {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 0.55em;
+    color: #7fd17f;
+    letter-spacing: 0.5px;
+}
+
+.bag-item-count.empty {
+    color: #e74c3c;
+}
+
+.bag-item-reason {
+    font-family: monospace;
+    font-size: 0.6em;
+    color: #888;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+.bag-footer {
+    text-align: center;
+    padding-top: 10px;
+    border-top: 1px solid rgba(255,255,255,0.08);
+}
+
+.bag-turn-note {
+    font-family: monospace;
+    font-size: 0.65em;
+    color: #f5a623;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
