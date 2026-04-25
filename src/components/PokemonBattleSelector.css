@@ -389,6 +389,237 @@
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
 }
 
+/* ===== PANTALLA DE CONFIGURACIÓN DE MOVIMIENTOS ===== */
+.team-config-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+    width: 100%;
+    max-width: 1100px;
+    margin-top: 20px;
+    padding: 0 10px;
+    box-sizing: border-box;
+}
+
+.poke-config-card {
+    background: rgba(10, 10, 20, 0.88);
+    border: 3px solid #888;
+    border-radius: 16px;
+    padding: 16px;
+    width: 300px;
+    flex-shrink: 0;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.5);
+}
+
+.poke-config-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 14px;
+}
+
+.poke-config-sprite {
+    width: 64px;
+    height: 64px;
+    object-fit: contain;
+    filter: drop-shadow(0 2px 6px rgba(0,0,0,0.6));
+}
+
+.poke-config-name {
+    margin: 0 0 4px 0;
+    color: white;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 0.65em;
+    text-transform: capitalize;
+    text-shadow: 1px 1px 4px rgba(0,0,0,0.8);
+}
+
+.poke-config-moves {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.config-actions {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    margin-top: 30px;
+    margin-bottom: 20px;
+}
+
+.back-btn {
+    padding: 10px 24px;
+    font-size: 0.75em;
+    cursor: pointer;
+    text-transform: uppercase;
+    font-family: 'Press Start 2P', monospace;
+    background: linear-gradient(135deg, #3a47c2, #5b68dd);
+    color: white;
+    font-weight: bold;
+    border-radius: 30px;
+    border: none;
+    box-shadow: 0 6px 20px rgba(58,71,194,0.4);
+    transition: all 0.2s ease;
+}
+
+.back-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 28px rgba(58,71,194,0.5);
+}
+
+/* ===== MOVE PICKER ===== */
+.move-picker-wrapper {
+    position: relative;
+}
+
+.move-picker-slot {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 10px;
+    border: 2px solid #888;
+    border-radius: 10px;
+    cursor: pointer;
+    background: rgba(255,255,255,0.04);
+    transition: filter 0.15s ease;
+    user-select: none;
+}
+
+.move-picker-slot:hover {
+    filter: brightness(1.15);
+}
+
+.move-slot-number {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 0.45em;
+    color: rgba(255,255,255,0.5);
+    min-width: 16px;
+}
+
+.move-slot-type-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.move-slot-name {
+    flex: 1;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 0.48em;
+    color: white;
+    text-transform: uppercase;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.move-slot-meta {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    flex-shrink: 0;
+}
+
+.move-slot-type-label {
+    font-family: monospace;
+    font-size: 0.65em;
+    padding: 2px 6px;
+    border-radius: 5px;
+    color: white;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.6);
+    text-transform: uppercase;
+    font-weight: bold;
+    white-space: nowrap;
+}
+
+.move-slot-power {
+    font-family: monospace;
+    font-size: 0.65em;
+    color: rgba(255,255,255,0.55);
+    white-space: nowrap;
+}
+
+.move-slot-arrow {
+    font-size: 0.6em;
+    color: rgba(255,255,255,0.5);
+    flex-shrink: 0;
+}
+
+/* ===== DROPDOWN DEL PICKER ===== */
+.move-picker-dropdown {
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
+    right: 0;
+    background: #1a1a2e;
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 10px;
+    z-index: 200;
+    max-height: 280px;
+    overflow-y: auto;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.7);
+}
+
+.move-picker-dropdown::-webkit-scrollbar {
+    width: 4px;
+}
+.move-picker-dropdown::-webkit-scrollbar-track {
+    background: rgba(255,255,255,0.05);
+}
+.move-picker-dropdown::-webkit-scrollbar-thumb {
+    background: rgba(255,255,255,0.2);
+    border-radius: 2px;
+}
+
+.move-group-header {
+    padding: 5px 10px;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 0.45em;
+    color: white;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.6);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    position: sticky;
+    top: 0;
+}
+
+.move-option {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 7px 10px 7px 14px;
+    cursor: pointer;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    transition: background 0.1s ease;
+    background: transparent;
+}
+
+.move-option:hover {
+    background: rgba(255,255,255,0.08);
+}
+
+.move-option.selected {
+    background: rgba(255,255,255,0.12);
+}
+
+.move-option-name {
+    font-family: monospace;
+    font-size: 0.8em;
+    color: white;
+    text-transform: uppercase;
+}
+
+.move-option-power {
+    font-family: monospace;
+    font-size: 0.75em;
+    font-weight: bold;
+    opacity: 0.85;
+}
+
+/* ===== MEDIA QUERIES ===== */
 /* --- MEDIA QUERIES --- */
 
 /* Tablets */
