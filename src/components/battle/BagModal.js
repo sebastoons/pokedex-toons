@@ -16,14 +16,14 @@ const ITEMS = [
         }
     },
     {
-        id: 'antidote',
-        name: 'Antídoto',
-        description: 'Cura el veneno',
-        icon: '🧪',
-        checkDisabled: (bag, pokemon) => bag.antidote <= 0 || pokemon?.status !== 'poisoned',
+        id: 'fullRestore',
+        name: 'Cura Total',
+        description: 'Cura cualquier estado',
+        icon: '✨',
+        checkDisabled: (bag, pokemon) => bag.fullRestore <= 0 || !pokemon?.status,
         disabledReason: (bag, pokemon) => {
-            if (bag.antidote <= 0) return 'Sin existencias';
-            if (pokemon?.status !== 'poisoned') return 'No envenenado';
+            if (bag.fullRestore <= 0) return 'Sin existencias';
+            if (!pokemon?.status) return 'Sin estado';
             return '';
         }
     },

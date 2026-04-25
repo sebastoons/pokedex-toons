@@ -18,11 +18,12 @@
 .combatants-container {
     display: flex;
     justify-content: space-around;
-    align-items: center; 
+    align-items: center;
     width: 100%;
     flex-direction: row-reverse;
     gap: 20px;
     margin-top: 10px;
+    flex-shrink: 0; /* Mantiene tamaño estable durante animaciones */
 }
 
 .loading-container {
@@ -137,22 +138,37 @@
     transform: scale(1.2);
 }
 
+/* ===== SELECTOR DE TEMA (oculto, se mantiene para data-theme) ===== */
+.theme-selector { display: none; }
+
 /* ===== MENSAJE FLOTANTE DE EFECTIVIDAD ===== */
 .floating-effectiveness {
     position: absolute;
     left: 50%;
-    top: 38%;
+    top: 36%;
     transform: translateX(-50%);
     font-family: 'Press Start 2P', monospace;
-    font-size: 0.65em;
-    padding: 6px 14px;
-    border-radius: 8px;
+    font-size: 0.55em;
+    padding: 5px 10px;
+    border-radius: 6px;
     pointer-events: none;
     z-index: 50;
     white-space: nowrap;
+    max-width: 80vw;
+    overflow: hidden;
+    text-overflow: ellipsis;
     text-align: center;
-    letter-spacing: 0.5px;
-    box-shadow: 0 4px 16px rgba(0,0,0,0.5);
+    letter-spacing: 0.3px;
+    box-shadow: 0 3px 12px rgba(0,0,0,0.5);
+}
+
+@media (max-width: 480px) {
+    .floating-effectiveness {
+        font-size: 0.42em;
+        padding: 4px 8px;
+        top: 33%;
+        max-width: 70vw;
+    }
 }
 
 .float-super {

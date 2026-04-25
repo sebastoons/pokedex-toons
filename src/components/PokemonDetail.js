@@ -34,6 +34,7 @@ function PokemonDetail() {
   const [error, setError] = useState(null);
 
   useEffect(() => {
+    window.scrollTo(0, 0);
     const fetchAllPokemonDetails = async () => {
       setLoading(true);
       setError(null);

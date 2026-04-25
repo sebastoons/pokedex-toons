@@ -15,12 +15,6 @@ import './BattleControls.css';
 import './BattleEndModal.css';
 import './BagModal.css';
 
-const THEMES = [
-    { id: 'default',    label: 'Pokébola',   color: '#e74c3c' },
-    { id: 'great-ball', label: 'Súper Bola',  color: '#3498db' },
-    { id: 'ultra-ball', label: 'Ultra Bola',  color: '#f1c40f' },
-];
-
 const FLOATING_MSG_CLASSES = {
     super:    'float-super',
     noeffect: 'float-noeffect',
@@ -30,7 +24,7 @@ const FLOATING_MSG_CLASSES = {
 const PokemonBattleArena = () => {
     const navigate = useNavigate();
     const [showBag, setShowBag] = useState(false);
-    const [theme, setTheme] = useState('default');
+    const theme = 'default';
 
     const {
         loading, winner, battleLog, gameMode,
@@ -69,7 +63,6 @@ const PokemonBattleArena = () => {
     }
 
     const activePokemonForControls = isPlayer1Turn ? activePokemonP1 : activePokemonP2;
-    const showControls = gameMode === 'vsIA' ? isPlayer1Turn : true;
     const canPlayer1Switch = (isPlayer1Turn || awaitingSwitch === 'player1') && !animationBlocking && !winner;
     const canPlayer2Switch = (!isPlayer1Turn || awaitingSwitch === 'player2') && !animationBlocking && !winner;
 
@@ -98,20 +91,6 @@ const PokemonBattleArena = () => {
 
     return (
         <div className="battle-arena-container" data-theme={theme}>
-
-            {/* Selector de tema */}
-            <div className="theme-selector">
-                {THEMES.map(t => (
-                    <button
-                        key={t.id}
-                        className={`theme-btn ${theme === t.id ? 'active' : ''}`}
-                        style={{ '--theme-color': t.color }}
-                        onClick={() => setTheme(t.id)}
-                        title={t.label}
-                    />
-                ))}
-            </div>
-
             <div className="battle-elements">
                 <div className="combatants-container">
                     <CombatantUI
@@ -150,21 +129,19 @@ const PokemonBattleArena = () => {
                     )}
                 </AnimatePresence>
 
-                {showControls && (
-                    <BattleControls
-                        activePokemon={activePokemonForControls}
-                        defenderTypes={defenderTypes}
-                        battleLog={battleLog}
-                        isPlayersTurn={isPlayer1Turn}
-                        awaitingPlayerSwitch={awaitingSwitch === 'player1' || awaitingSwitch === 'player2'}
-                        animationBlocking={animationBlocking}
-                        onAttack={handleAttack}
-                        onOpenBag={() => setShowBag(true)}
-                        bag={bag}
-                        battleEnded={!!winner}
-                        gameMode={gameMode}
-                    />
-                )}
+                <BattleControls
+                    activePokemon={activePokemonForControls}
+                    defenderTypes={defenderTypes}
+                    battleLog={battleLog}
+                    isPlayersTurn={isPlayer1Turn}
+                    awaitingPlayerSwitch={awaitingSwitch === 'player1' || awaitingSwitch === 'player2'}
+                    animationBlocking={animationBlocking}
+                    onAttack={handleAttack}
+                    onOpenBag={() => setShowBag(true)}
+                    bag={bag}
+                    battleEnded={!!winner}
+                    gameMode={gameMode}
+                />
             </div>
 
             {/* Mochila */}
