@@ -171,8 +171,118 @@
     grid-template-columns: 1fr 1fr;
     grid-template-rows: 1fr 1fr;
     gap: 8px;
-    height: 100%;
+    height: calc(100% - 28px);
 }
+
+/* Footer del botón de movimiento */
+.move-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    gap: 4px;
+}
+
+/* Icono de efectividad en botones de movimiento */
+.move-eff-icon {
+    font-size: 0.55rem;
+    font-family: 'Press Start 2P', monospace;
+    font-weight: bold;
+    padding: 1px 3px;
+    border-radius: 3px;
+    line-height: 1;
+}
+
+.move-eff-icon.eff-super {
+    color: #7fff7f;
+    text-shadow: 0 0 4px rgba(0,255,0,0.6);
+}
+
+.move-eff-icon.eff-resist {
+    color: #ffb0b0;
+    text-shadow: 0 0 4px rgba(255,80,80,0.5);
+}
+
+.move-eff-icon.eff-immune {
+    color: #aaa;
+}
+
+/* Botón de mochila */
+.bag-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    width: 100%;
+    height: 22px;
+    margin-top: 4px;
+    background: linear-gradient(135deg, #4a3728, #6b4c3b);
+    border: 1px solid rgba(255,200,100,0.4);
+    border-radius: 6px;
+    color: #f5d080;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 0.38rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    position: relative;
+    letter-spacing: 0.5px;
+}
+
+.bag-button:hover:not(:disabled) {
+    background: linear-gradient(135deg, #6b4c3b, #8a6040);
+    border-color: rgba(255,200,100,0.7);
+    transform: translateY(-1px);
+}
+
+.bag-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.bag-count {
+    background: #e74c3c;
+    color: white;
+    border-radius: 50%;
+    width: 12px;
+    height: 12px;
+    font-size: 0.35rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: monospace;
+}
+
+/* Estilos de ia-waiting-message */
+.ia-waiting-message {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    gap: 8px;
+}
+
+.waiting-text {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 0.55em;
+    color: #ccc;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.waiting-dots {
+    display: flex;
+    gap: 6px;
+}
+
+.waiting-dots span {
+    font-size: 1.2em;
+    color: #aaa;
+    animation: waiting-pulse 1.4s infinite ease-in-out;
+}
+
+.waiting-dots span:nth-child(2) { animation-delay: 0.2s; }
+.waiting-dots span:nth-child(3) { animation-delay: 0.4s; }
 
 /* Estilos para Tablet (hasta 768px) */
 @media (max-width: 768px) {

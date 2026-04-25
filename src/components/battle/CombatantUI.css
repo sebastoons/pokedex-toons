@@ -26,6 +26,44 @@
     color: #333;
 }
 
+.panel-header-right {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+/* Badges de estado */
+.status-badge {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 0.45em;
+    padding: 2px 5px;
+    border-radius: 4px;
+    font-weight: bold;
+    letter-spacing: 0.5px;
+    border: 1px solid rgba(0,0,0,0.3);
+    animation: status-pulse 2s infinite ease-in-out;
+}
+
+.status-poisoned {
+    background-color: #A33EA1;
+    color: white;
+}
+
+.status-paralyzed {
+    background-color: #F7D02C;
+    color: #333;
+}
+
+.status-burned {
+    background-color: #EE8130;
+    color: white;
+}
+
+@keyframes status-pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.65; }
+}
+
 .combatant-name {
     font-size: 0.85em;
     font-weight: bold;

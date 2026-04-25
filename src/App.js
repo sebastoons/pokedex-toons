@@ -1,6 +1,7 @@
 // src/App.js
 import React, { useState, useEffect, useMemo } from 'react';
-import { Routes, Route, Link } from 'react-router-dom';
+import { Routes, Route, Link, useLocation } from 'react-router-dom';
+import { AnimatePresence, motion } from 'framer-motion';
 import ReactGA from 'react-ga4';
 
 // Componentes
@@ -57,7 +58,14 @@ const ALL_POKEMON_TYPES = [
 const GA_MEASUREMENT_ID = "G-KPGB8SXW4B"; 
 ReactGA.initialize(GA_MEASUREMENT_ID);
 
+const pageVariants = {
+    initial: { opacity: 0, y: 8 },
+    animate: { opacity: 1, y: 0, transition: { duration: 0.22, ease: 'easeOut' } },
+    exit:    { opacity: 0, y: -8, transition: { duration: 0.15, ease: 'easeIn' } },
+};
+
 function App() {
+    const location = useLocation();
     const [pokemonList, setPokemonList] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -229,8 +237,10 @@ function App() {
               </Link>
           </header>
 
-          <Routes>
+          <AnimatePresence mode="wait">
+          <Routes location={location} key={location.pathname}>
               <Route path="/" element={
+                  <motion.div variants={pageVariants} initial="initial" animate="animate" exit="exit">
                   <>
                       <div className="welcome-message">
                           <h2>Busca tu Pokémon</h2>
@@ -244,18 +254,19 @@ function App() {
                               {isGenMenuOpen && (<ul className="generation-dropdown-menu">{ALL_POKEMON_GENERATIONS.map(gen => (<li key={gen.id} onClick={() => handleGenerationSelect(gen.id)} className={selectedGeneration === gen.id.toString() ? 'active' : ''}>{gen.name}</li>))}</ul>)}
                           </div>
                           <Link to="/battle" className="battle-button">Ir a Batalla</Link>
-                          {/* Botón MT/MO Eliminado */}
                       </div>
                       <div className="pokemon-list">{filteredPokemon.length > 0 ? (filteredPokemon.map(pokemon => <PokemonCard key={pokemon.id} pokemon={pokemon} />)) : (<div className="no-results">No se encontraron Pokémon.</div>)}</div>
                   </>
+                  </motion.div>
               } />
-              <Route path="/pokemon/:pokemonId" element={<PokemonDetail />} />
-              <Route path="/battle" element={<BattleModeSelector />} />
-              <Route path="/battle-selector" element={<PokemonBattleSelector pokemonList={pokemonList} />} />
+              <Route path="/pokemon/:pokemonId" element={<motion.div variants={pageVariants} initial="initial" animate="animate" exit="exit"><PokemonDetail /></motion.div>} />
+              <Route path="/battle" element={<motion.div variants={pageVariants} initial="initial" animate="animate" exit="exit"><BattleModeSelector /></motion.div>} />
+              <Route path="/battle-selector" element={<motion.div variants={pageVariants} initial="initial" animate="animate" exit="exit"><PokemonBattleSelector pokemonList={pokemonList} /></motion.div>} />
               <Route path="/battle/arena" element={<PokemonBattleArena pokemonList={pokemonList} />} />
-              <Route path="/analytics" element={<AnalyticsDashboard />} />
+              <Route path="/analytics" element={<motion.div variants={pageVariants} initial="initial" animate="animate" exit="exit"><AnalyticsDashboard /></motion.div>} />
               <Route path="*" element={<div className="error">Página no encontrada</div>} />
           </Routes>
+          </AnimatePresence>
 
           <div style={{ 
             position: 'absolute',
