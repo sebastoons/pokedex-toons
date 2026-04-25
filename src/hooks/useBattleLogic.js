@@ -40,7 +40,7 @@ export const useBattleLogic = () => {
     const [pokemonP1Damaged, setPokemonP1Damaged] = useState(false);
     const [pokemonP2Damaged, setPokemonP2Damaged] = useState(false);
     const [animationBlocking, setAnimationBlocking] = useState(false);
-    const [bag, setBag] = useState({ potions: 2, antidote: 1 });
+    const [bag, setBag] = useState({ potions: 3, fullRestore: 1 });
     const [floatingMsg, setFloatingMsg] = useState(null);
 
     const player1TeamRef = useRef(player1Team);
@@ -300,14 +300,14 @@ export const useBattleLogic = () => {
             addLog(`¡Poción usada! ${activePokemonP1.name.toUpperCase()} recuperó ${healAmount} PS.`);
             setBag(prev => ({ ...prev, potions: prev.potions - 1 }));
 
-        } else if (itemType === 'antidote') {
-            if (bag.antidote <= 0) {
-                addLog('¡No tienes más Antídotos!');
+        } else if (itemType === 'fullRestore') {
+            if (bag.fullRestore <= 0) {
+                addLog('¡No tienes más Curas Totales!');
                 setAnimationBlocking(false);
                 return;
             }
-            if (activePokemonP1.status !== 'poisoned') {
-                addLog(`${activePokemonP1.name.toUpperCase()} no está envenenado.`);
+            if (!activePokemonP1.status) {
+                addLog(`${activePokemonP1.name.toUpperCase()} no tiene ningún estado alterado.`);
                 setAnimationBlocking(false);
                 return;
             }
@@ -315,8 +315,8 @@ export const useBattleLogic = () => {
                 p.id === activePokemonP1.id ? { ...p, status: null } : p
             ));
             setActivePokemonP1(prev => ({ ...prev, status: null }));
-            addLog(`¡Antídoto usado! ${activePokemonP1.name.toUpperCase()} se curó del veneno.`);
-            setBag(prev => ({ ...prev, antidote: prev.antidote - 1 }));
+            addLog(`¡Cura Total usada! ${activePokemonP1.name.toUpperCase()} se curó de su estado.`);
+            setBag(prev => ({ ...prev, fullRestore: prev.fullRestore - 1 }));
         }
 
         await new Promise(resolve => setTimeout(resolve, 500));
@@ -403,7 +403,7 @@ export const useBattleLogic = () => {
                 setPlayer2Team(p2TeamWithHp);
                 setActivePokemonP1(p1TeamWithHp[0]);
                 setActivePokemonP2(p2TeamWithHp[0]);
-                setBag({ potions: 2, antidote: 1 });
+                setBag({ potions: 3, fullRestore: 1 });
 
                 addLog(`¡La batalla ha comenzado!`);
                 addLog(`${p1TeamWithHp[0].name.toUpperCase()} vs ${p2TeamWithHp[0].name.toUpperCase()}`);
