@@ -1,33 +1,34 @@
 // src/components/battle/BattleEndModal.js
 import React from 'react';
-import './BattleEndModal.css'; // Importa su propio CSS
+import { useNavigate } from 'react-router-dom';
+import './BattleEndModal.css';
 
-export const BattleEndModal = ({ winner, onRestart, onGoHome }) => {
-    let message = "";
-    let emoji = "";
+export const BattleEndModal = ({ winner }) => {
+    const navigate = useNavigate();
+    const isVictory = winner === 'player1';
+    const isDraw = winner === 'draw';
 
-    if (winner === 'player1') {
-        message = "¡Felicidades! ¡Has ganado la batalla!";
-        emoji = "🎉";
-    } else if (winner === 'player2') {
-        message = "¡Oh no! Has perdido la batalla...";
-        emoji = "😭";
-    } else {
-        message = "La batalla ha terminado."; // En caso de 'draw' o error
-        emoji = "🏁";
-    }
+    const title = isVictory ? '¡VICTORIA!' : isDraw ? 'FIN' : '¡DERROTA!';
+    const sub   = isVictory ? '¡Eres el Campeón Pokémon!' : isDraw ? 'La batalla terminó.' : '¡Tus Pokémon se debilitaron!';
+    const icon  = isVictory ? '🏆' : isDraw ? '🏁' : '💀';
+    const stars = isVictory ? ['★','★','★'] : isDraw ? ['★','★','☆'] : ['☆','☆','☆'];
 
     return (
-        <div className="modal-overlay">
-            <div className="modal-content">
-                <span className="modal-emoji">{emoji}</span>
-                <h2>{message}</h2>
-                <div className="modal-actions">
-                    <button onClick={onRestart} className="modal-button restart-button">
-                        Reiniciar Batalla
+        <div className={`end-overlay ${isVictory ? 'end-win' : isDraw ? 'end-draw' : 'end-lose'}`}>
+            <div className="end-box">
+                <div className="end-shine" />
+                <div className="end-icon">{icon}</div>
+                <h2 className="end-title">{title}</h2>
+                <p className="end-sub">{sub}</p>
+                <div className="end-stars">
+                    {stars.map((s, i) => <span key={i} className="end-star">{s}</span>)}
+                </div>
+                <div className="end-actions">
+                    <button className="end-btn end-btn-home" onClick={() => navigate('/')}>
+                        🏠 Inicio
                     </button>
-                    <button onClick={onGoHome} className="modal-button home-button">
-                        Volver al Selector
+                    <button className="end-btn end-btn-mode" onClick={() => navigate('/battle')}>
+                        ⚔ Elegir Modo
                     </button>
                 </div>
             </div>

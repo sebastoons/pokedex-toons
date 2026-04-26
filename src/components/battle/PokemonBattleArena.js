@@ -1,6 +1,5 @@
 // src/components/battle/PokemonBattleArena.js
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useBattleLogic } from '../../hooks/useBattleLogic';
 import PokeBallSpinner from '../PokeBallSpinner';
@@ -17,15 +16,21 @@ import './BattleEndModal.css';
 import './BagModal.css';
 
 const FLOATING_MSG_CLASSES = {
-    super:     'float-super',
-    noeffect:  'float-noeffect',
-    resistant: 'float-resistant',
+    super: 'float-super', noeffect: 'float-noeffect', resistant: 'float-resistant',
+};
+
+const TYPE_PARTICLE_COLORS = {
+    fire: '#FF6B35', water: '#4FC3F7', electric: '#FFD54F', grass: '#69F0AE',
+    ice: '#80DEEA', fighting: '#EF5350', poison: '#CE93D8', ground: '#FFA726',
+    flying: '#B39DDB', psychic: '#F48FB1', bug: '#C5E1A5', rock: '#BCAAA4',
+    ghost: '#7E57C2', dragon: '#5C6BC0', dark: '#78909C', steel: '#B0BEC5',
+    fairy: '#F8BBD0', normal: '#E0E0E0',
 };
 
 const PokemonBattleArena = () => {
-    const navigate = useNavigate();
     const [showBag, setShowBag] = useState(false);
-    const theme = 'default';
+    const [particles, setParticles] = useState([]);
+    const particleIdRef = useRef(0);
 
     const {
         loading, winner, battleLog, gameMode,
@@ -34,20 +39,44 @@ const PokemonBattleArena = () => {
         isPlayer1Turn, awaitingSwitch,
         pokemonP1Attacking, pokemonP2Attacking,
         pokemonP1Damaged, pokemonP2Damaged,
-        animationBlocking, bag, floatingMsg,
-        handleAttack,
-        handlePokemonCircleClick,
-        handleSwitchPokemon,
-        handleUseItem,
+        animationBlocking, bag, floatingMsg, lastAttack,
+        handleAttack, handlePokemonCircleClick, handleSwitchPokemon, handleUseItem,
     } = useBattleLogic();
 
-    React.useEffect(() => {
-        if (!loading && activePokemonP1 && activePokemonP2) {
+    // Partículas de ataque
+    const spawnParticles = useCallback((side, moveType) => {
+        const color = TYPE_PARTICLE_COLORS[moveType] || '#fff';
+        const baseX = side === 'p1' ? 75 : 25;
+        const baseY = 40;
+        const count = 12;
+        const newParticles = Array.from({ length: count }, (_, i) => {
+            const angle = (i / count) * Math.PI * 2;
+            const dist = 35 + Math.random() * 30;
+            return {
+                id: ++particleIdRef.current,
+                x: baseX, y: baseY,
+                dx: Math.cos(angle) * dist,
+                dy: Math.sin(angle) * dist * 0.55,
+                color,
+                size: 5 + Math.random() * 7,
+            };
+        });
+        setParticles(prev => [...prev, ...newParticles]);
+        setTimeout(() => {
+            setParticles(prev => prev.filter(p => !newParticles.some(np => np.id === p.id)));
+        }, 700);
+    }, []);
+
+    useEffect(() => {
+        if (lastAttack) spawnParticles(lastAttack.side, lastAttack.moveType);
+    }, [lastAttack, spawnParticles]);
+
+    useEffect(() => {
+        if (!loading && activePokemonP1 && activePokemonP2)
             analyticsTracker.trackBattleStart(gameMode);
-        }
     }, [loading, activePokemonP1, activePokemonP2, gameMode]);
 
-    React.useEffect(() => {
+    useEffect(() => {
         if (winner) analyticsTracker.trackEvent('Batalla Completada', `Ganador: ${winner}`);
     }, [winner]);
 
@@ -64,55 +93,49 @@ const PokemonBattleArena = () => {
     const activePokemonForControls = isPlayer1Turn ? activePokemonP1 : activePokemonP2;
     const canPlayer1Switch = (isPlayer1Turn || awaitingSwitch === 'player1') && !animationBlocking && !winner;
     const canPlayer2Switch = (!isPlayer1Turn || awaitingSwitch === 'player2') && !animationBlocking && !winner;
+    const defenderTypes = isPlayer1Turn ? activePokemonP2?.types : activePokemonP1?.types;
+    const floatClass = floatingMsg ? (FLOATING_MSG_CLASSES[floatingMsg.type] || 'float-neutral') : '';
 
     const handlePlayer1Click = (pokemon) => {
         if (gameMode === 'vsIA') handleSwitchPokemon(pokemon, true);
         else handlePokemonCircleClick(pokemon, true);
     };
-
     const handlePlayer2Click = (pokemon) => {
         if (gameMode === 'vsPlayer') handlePokemonCircleClick(pokemon, false);
     };
 
-    const handleRestart = () => {
-        analyticsTracker.trackEvent('Batalla', 'Usuario reinició desde modal de fin');
-        navigate('/');
-    };
-
-    const handleGoHome = () => {
-        analyticsTracker.trackEvent('Batalla', 'Usuario volvió a inicio desde modal de fin');
-        navigate('/');
-    };
-
-    const defenderTypes = isPlayer1Turn ? activePokemonP2?.types : activePokemonP1?.types;
-    const floatClass = floatingMsg ? (FLOATING_MSG_CLASSES[floatingMsg.type] || 'float-neutral') : '';
-
     return (
-        <div className="battle-arena-container" data-theme={theme}>
+        <div className="battle-arena-container">
             <div className="battle-elements">
-
-                {/* Área de combatientes + mensaje de efectividad centrado */}
                 <div className="combatants-container">
                     <CombatantUI
-                        pokemon={activePokemonP2}
-                        team={player2Team}
-                        isOpponent={true}
-                        isAttacking={pokemonP2Attacking}
-                        isDamaged={pokemonP1Damaged}
+                        pokemon={activePokemonP2} team={player2Team} isOpponent={true}
+                        isAttacking={pokemonP2Attacking} isDamaged={pokemonP1Damaged}
                         onPokemonCircleClick={handlePlayer2Click}
                         canSwitch={canPlayer2Switch && gameMode === 'vsPlayer'}
                     />
                     <CombatantUI
-                        pokemon={activePokemonP1}
-                        team={player1Team}
-                        isOpponent={false}
-                        isAttacking={pokemonP1Attacking}
-                        isDamaged={pokemonP2Damaged}
+                        pokemon={activePokemonP1} team={player1Team} isOpponent={false}
+                        isAttacking={pokemonP1Attacking} isDamaged={pokemonP2Damaged}
                         onPokemonCircleClick={handlePlayer1Click}
                         canSwitch={canPlayer1Switch}
                     />
 
-                    {/* Mensaje flotante centrado entre los Pokémon */}
+                    {/* Partículas */}
+                    {particles.map(p => (
+                        <div
+                            key={p.id}
+                            className="battle-particle"
+                            style={{
+                                left: `${p.x}%`, top: `${p.y}%`,
+                                width: p.size, height: p.size,
+                                backgroundColor: p.color,
+                                boxShadow: `0 0 6px ${p.color}`,
+                                '--pdx': `${p.dx}px`, '--pdy': `${p.dy}px`,
+                            }}
+                        />
+                    ))}
+
                     <AnimatePresence>
                         {floatingMsg && (
                             <motion.div
@@ -147,20 +170,12 @@ const PokemonBattleArena = () => {
 
             {showBag && (
                 <BagModal
-                    bag={bag}
-                    activePokemon={activePokemonP1}
-                    onUseItem={handleUseItem}
-                    onClose={() => setShowBag(false)}
+                    bag={bag} activePokemon={activePokemonP1}
+                    onUseItem={handleUseItem} onClose={() => setShowBag(false)}
                 />
             )}
 
-            {winner && (
-                <BattleEndModal
-                    winner={winner}
-                    onRestart={handleRestart}
-                    onGoHome={handleGoHome}
-                />
-            )}
+            {winner && <BattleEndModal winner={winner} />}
         </div>
     );
 };
