@@ -17,11 +17,11 @@ const getEffectivenessIcon = (moveType, defenderTypes) => {
     return null;
 };
 
-export const BattleControls = ({
+export const BattleControls = React.memo(function BattleControls({
     activePokemon, defenderTypes, battleLog, isPlayersTurn,
     awaitingPlayerSwitch, animationBlocking, onAttack, onOpenBag,
     bag, battleEnded, gameMode, controlsActive = true
-}) => {
+}) {
     if (!activePokemon) return null;
 
     const controlsDisabled = !controlsActive || animationBlocking || battleEnded || awaitingPlayerSwitch ||
@@ -107,4 +107,4 @@ export const BattleControls = ({
             </div>
         </div>
     );
-};
+});

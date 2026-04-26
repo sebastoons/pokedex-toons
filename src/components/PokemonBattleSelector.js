@@ -211,7 +211,7 @@ const TypeBadge = ({ typeName }) => {
     );
 };
 
-const TeamPreview = ({ team, teamSize, onRemove }) => (
+const TeamPreview = React.memo(({ team, teamSize, onRemove }) => (
     <div className="team-preview-container">
         {Array.from({ length: teamSize }).map((_, i) => {
             const pokemon = team[i];
@@ -229,7 +229,21 @@ const TeamPreview = ({ team, teamSize, onRemove }) => (
             );
         })}
     </div>
-);
+));
+
+const PokemonCard = React.memo(({ pokemon, isSelected, types, onSelect }) => (
+    <div
+        className={`pokemon-grid-item ${isSelected ? 'selected-in-slot' : ''}`}
+        onClick={() => !isSelected && onSelect(pokemon)}
+        style={{ opacity: isSelected ? 0.5 : 1, cursor: isSelected ? 'default' : 'pointer' }}
+    >
+        <img src={getPokemonImageUrl(pokemon)} alt={pokemon.name} className="pokemon-grid-image" loading="lazy" />
+        <span className="pokemon-grid-name">#{formatPokemonId(pokemon.id)} {pokemon.name}</span>
+        <div className="pokemon-grid-types-container">
+            {types.map(t => <TypeBadge key={t} typeName={t} />)}
+        </div>
+    </div>
+));
 
 const buildMovePool = (types) => {
     let pool = [];
@@ -364,26 +378,23 @@ function PokemonBattleSelector({ pokemonList }) {
         return () => obs.disconnect();
     }, [loadMore]);
 
-    const handleSelectPokemon = (pokemon) => {
-        if (currentTeam.length >= teamSize) { alert(`¡Ya has seleccionado ${teamSize} Pokémon!`); return; }
-        if (currentTeam.some(p => p.id === pokemon.id)) { alert("¡Ya has seleccionado este Pokémon!"); return; }
-        const pool = buildMovePool(getPokemonTypes(pokemon));
-        if (currentPlayer === 1) setSelectedMovesP1(prev => ({ ...prev, [pokemon.id]: pool.slice(0, 4) }));
-        const newTeam = [...currentTeam, pokemon];
-        setCurrentTeam(newTeam);
-        if (newTeam.length === teamSize) {
-            setTimeout(() => continueRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' }), 80);
-        }
-    };
+    const handleSelectPokemon = useCallback((pokemon) => {
+        setCurrentTeam(prev => {
+            if (prev.length >= teamSize) { alert(`¡Ya has seleccionado ${teamSize} Pokémon!`); return prev; }
+            if (prev.some(p => p.id === pokemon.id)) { alert("¡Ya has seleccionado este Pokémon!"); return prev; }
+            const pool = buildMovePool(getPokemonTypes(pokemon));
+            setSelectedMovesP1(m => ({ ...m, [pokemon.id]: pool.slice(0, 4) }));
+            const next = [...prev, pokemon];
+            if (next.length === teamSize)
+                setTimeout(() => continueRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' }), 80);
+            return next;
+        });
+    }, [teamSize, setCurrentTeam]);
 
-    const handleRemovePokemon = (pokemonId) => {
-        setCurrentTeam(currentTeam.filter(p => p.id !== pokemonId));
-        if (currentPlayer === 1) {
-            const m = { ...selectedMovesP1 };
-            delete m[pokemonId];
-            setSelectedMovesP1(m);
-        }
-    };
+    const handleRemovePokemon = useCallback((pokemonId) => {
+        setCurrentTeam(prev => prev.filter(p => p.id !== pokemonId));
+        setSelectedMovesP1(m => { const n = { ...m }; delete n[pokemonId]; return n; });
+    }, [setCurrentTeam]);
 
     useEffect(() => {
         if (!isConfiguringMoves || player1Team.length === 0) return;
@@ -542,19 +553,15 @@ function PokemonBattleSelector({ pokemonList }) {
                 </div>
             </div>
             <div className="available-pokemon-grid">
-                {visiblePokemon.map(pokemon => {
-                    const types = getPokemonTypes(pokemon);
-                    const isSelected = currentTeam.some(p => p.id === pokemon.id);
-                    return (
-                        <div key={pokemon.id} className={`pokemon-grid-item ${isSelected ? 'selected-in-slot' : ''}`} onClick={() => !isSelected && handleSelectPokemon(pokemon)} style={{ opacity: isSelected ? 0.5 : 1, cursor: isSelected ? 'default' : 'pointer' }}>
-                            <img src={getPokemonImageUrl(pokemon)} alt={pokemon.name} className="pokemon-grid-image" loading="lazy" />
-                            <span className="pokemon-grid-name">#{formatPokemonId(pokemon.id)} {pokemon.name}</span>
-                            <div className="pokemon-grid-types-container">
-                                {types.map(t => <TypeBadge key={t} typeName={t} />)}
-                            </div>
-                        </div>
-                    );
-                })}
+                {visiblePokemon.map(pokemon => (
+                    <PokemonCard
+                        key={pokemon.id}
+                        pokemon={pokemon}
+                        isSelected={currentTeam.some(p => p.id === pokemon.id)}
+                        types={getPokemonTypes(pokemon)}
+                        onSelect={handleSelectPokemon}
+                    />
+                ))}
             </div>
             {visibleCount < availablePokemon.length && (
                 <div ref={sentinelRef} style={{ height: '40px', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
