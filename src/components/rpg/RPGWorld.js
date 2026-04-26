@@ -45,9 +45,11 @@ const WILD_POKEMON = [
 ];
 
 const CHARS = {
-  red:   { shirt: '#C62828', pants: '#1A237E', cap: '#B71C1C', skin: '#FFCC80' },
-  blue:  { shirt: '#0D47A1', pants: '#263238', cap: '#01579B', skin: '#FFCC80' },
-  green: { shirt: '#1B5E20', pants: '#BF360C', cap: '#33691E', skin: '#FFCC80' },
+  red:     { label: 'ROJO',    shirt: '#CC2222', pants: '#1A237E', cap: '#AA1111', capBrim: '#881111', hair: '#222',    skin: '#FFCC80', scarf: null },
+  leaf:    { label: 'LEAF',    shirt: '#FFFFFF', pants: '#2E7D32', cap: '#FFFFFF', capBrim: '#E0E0E0', hair: '#8B4513', skin: '#FFCC80', scarf: '#4CAF50' },
+  brendan: { label: 'BRENDAN', shirt: '#FFFFFF', pants: '#C62828', cap: '#FFFFFF', capBrim: '#E0E0E0', hair: '#111',    skin: '#FFCC80', scarf: null },
+  may:     { label: 'MAY',     shirt: '#F44336', pants: '#1565C0', cap: null,      capBrim: null,      hair: '#8B4513', skin: '#FFCC80', scarf: null },
+  ethan:   { label: 'ETHAN',   shirt: '#E65100', pants: '#37474F', cap: '#BF360C', capBrim: '#8D2A0A', hair: '#222',    skin: '#FFCC80', scarf: null },
 };
 
 // GBA Pokemon-style tile renderer
@@ -181,19 +183,46 @@ function drawPlayer(ctx, sx, sy, dir, c) {
   ctx.fillRect(px + TS * .18, py + TS * .3, TS * .64, TS * .27);
   ctx.fillRect(px + TS * .04, py + TS * .32, TS * .16, TS * .23);
   ctx.fillRect(px + TS * .8,  py + TS * .32, TS * .16, TS * .23);
+  // Scarf (optional)
+  if (c.scarf) {
+    ctx.fillStyle = c.scarf;
+    ctx.fillRect(px + TS * .28, py + TS * .28, TS * .44, TS * .07);
+  }
   // Hands
   ctx.fillStyle = c.skin;
   ctx.beginPath(); ctx.arc(px + TS * .1, py + TS * .56, TS * .08, 0, Math.PI * 2); ctx.fill();
   ctx.beginPath(); ctx.arc(px + TS * .9, py + TS * .56, TS * .08, 0, Math.PI * 2); ctx.fill();
   // Head
+  ctx.fillStyle = c.skin;
   ctx.beginPath(); ctx.arc(sx, py + TS * .21, TS * .19, 0, Math.PI * 2); ctx.fill();
-  // Cap
-  ctx.fillStyle = c.cap;
-  ctx.fillRect(px + TS * .26, py + TS * .05, TS * .48, TS * .14);
-  ctx.fillRect(px + TS * .14, py + TS * .1,  TS * .18, TS * .08);
+  // Hair (drawn before cap so cap covers top)
+  ctx.fillStyle = c.hair;
+  if (c.cap) {
+    // Only show hair below cap on sides
+    ctx.fillRect(px + TS * .22, py + TS * .16, TS * .1, TS * .1);
+    ctx.fillRect(px + TS * .68, py + TS * .16, TS * .1, TS * .1);
+  } else {
+    // May: full hair visible (bandana instead of cap)
+    ctx.beginPath(); ctx.arc(sx, py + TS * .17, TS * .19, Math.PI, Math.PI * 2); ctx.fill();
+    ctx.fillRect(px + TS * .18, py + TS * .06, TS * .64, TS * .12);
+    // Bandana strip
+    ctx.fillStyle = c.shirt;
+    ctx.fillRect(px + TS * .18, py + TS * .10, TS * .64, TS * .05);
+  }
+  // Cap (if character has one)
+  if (c.cap) {
+    ctx.fillStyle = c.cap;
+    ctx.fillRect(px + TS * .26, py + TS * .04, TS * .48, TS * .13);
+    // Cap brim
+    ctx.fillStyle = c.capBrim || c.cap;
+    ctx.fillRect(px + TS * .12, py + TS * .12, TS * .22, TS * .07);
+    // Cap top button
+    ctx.fillStyle = c.capBrim || c.cap;
+    ctx.fillRect(px + TS * .45, py + TS * .02, TS * .1, TS * .04);
+  }
   // Eyes
   if (dir !== 'up') {
-    const ey = py + TS * .21;
+    const ey = py + TS * .22;
     const ex = dir === 'left' ? -TS * .06 : dir === 'right' ? TS * .06 : 0;
     ctx.fillStyle = '#222';
     ctx.beginPath(); ctx.arc(sx + ex - TS * .07, ey, TS * .04, 0, Math.PI * 2); ctx.fill();
@@ -330,8 +359,8 @@ export default function RPGWorld() {
             {Object.keys(CHARS).map(key => (
               <button key={key} className="rpg-char-btn" onClick={() => setCharColor(key)}>
                 <CharPreview color={key} />
-                <span className="rpg-char-label" style={{ color: CHARS[key].shirt }}>
-                  {key === 'red' ? 'ROJO' : key === 'blue' ? 'AZUL' : 'VERDE'}
+                <span className="rpg-char-label" style={{ color: CHARS[key].cap || CHARS[key].shirt }}>
+                  {CHARS[key].label}
                 </span>
               </button>
             ))}

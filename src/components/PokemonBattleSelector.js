@@ -41,12 +41,16 @@ const TYPE_DISPLAY = {
 
 const MOVES_DATABASE = {
     normal: [
-        { name: "Placaje",      power: 40,  accuracy: 100,      type: "normal" },
-        { name: "Arañazo",      power: 40,  accuracy: 100,      type: "normal" },
-        { name: "Corte",        power: 50,  accuracy: 95,       type: "normal" },
-        { name: "Golpe Cuerpo", power: 85,  accuracy: 100,      type: "normal" },
-        { name: "Hiperrayo",    power: 150, accuracy: 90,       type: "normal" },
-        { name: "Rapidez",      power: 60,  accuracy: Infinity, type: "normal" },
+        { name: "Placaje",       power: 40,  accuracy: 100,      type: "normal" },
+        { name: "Arañazo",       power: 40,  accuracy: 100,      type: "normal" },
+        { name: "Corte",         power: 50,  accuracy: 95,       type: "normal" },
+        { name: "Golpe Cuerpo",  power: 85,  accuracy: 100,      type: "normal" },
+        { name: "Hiperrayo",     power: 150, accuracy: 90,       type: "normal" },
+        { name: "Rapidez",       power: 60,  accuracy: Infinity, type: "normal" },
+        { name: "Danza Espada",  power: 0,   accuracy: 100,      type: "normal", damage_class: "status", statChange: { stat: "attack",  stages: 2, target: "self" } },
+        { name: "Refuerzo",      power: 0,   accuracy: 100,      type: "normal", damage_class: "status", statChange: { stat: "defense", stages: 1, target: "self" } },
+        { name: "Rugido",        power: 0,   accuracy: 100,      type: "normal", damage_class: "status", statChange: { stat: "attack",  stages: -1, target: "foe" } },
+        { name: "Cola Látigo",   power: 0,   accuracy: 100,      type: "normal", damage_class: "status", statChange: { stat: "defense", stages: -1, target: "foe" } },
     ],
     fire: [
         { name: "Ascuas",       power: 40,  accuracy: 100, type: "fire" },

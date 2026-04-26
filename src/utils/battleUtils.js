@@ -1,54 +1,43 @@
 // src/utils/battleUtils.js
 import { calculateTypeEffectiveness } from './typeEffectiveness';
 
-/**
- * Calcula el daño infligido por un ataque de Pokémon, incluyendo la efectividad de tipos.
- * @param {object} attackerPokemon - El objeto Pokémon que ataca.
- * @param {object} defenderPokemon - El objeto Pokémon que defiende.
- * @param {object} move - El objeto del movimiento utilizado.
- * @param {number} level - El nivel de los Pokémon (por simplicidad, asumimos uno fijo).
- * @returns {object} Un objeto con el daño calculado y un mensaje de efectividad.
- */
-export const calculateDamage = (attackerPokemon, defenderPokemon, move, level = 50) => {
-    // *** SOLUCIÓN DEFINITIVA Y A PRUEBA DE ERRORES ***
-    // 1. Nos aseguramos de que el objeto 'move' no sea nulo.
-    if (!move) {
-        console.error("Cálculo de daño abortado: el objeto 'move' es nulo.");
-        return { damage: 0, effectivenessMessage: "Movimiento inválido." };
-    }
+export const stageMultiplier = (stage) => {
+    const s = Math.max(-6, Math.min(6, stage ?? 0));
+    return s >= 0 ? (2 + s) / 2 : 2 / (2 - s);
+};
 
-    // 2. Si el movimiento no tiene una propiedad 'type', le asignamos 'normal' por defecto.
+export const calculateDamage = (attackerPokemon, defenderPokemon, move, level = 50) => {
+    if (!move) return { damage: 0, effectivenessMessage: 'Movimiento inválido.', isCritical: false };
     const moveType = move.type || 'normal';
-    // *** FIN DE LA SOLUCIÓN ***
 
     if (typeof move.power !== 'number' || move.power <= 0) {
-        console.warn(`Movimiento sin poder para el cálculo de daño: ${move.name}`);
-        return { damage: 0, effectivenessMessage: "" };
+        return { damage: 0, effectivenessMessage: '', isCritical: false };
     }
 
-    const attackStat = attackerPokemon.attack;
-    const defenseStat = defenderPokemon.defense;
-
-    if (typeof attackStat !== 'number' || typeof defenseStat !== 'number' || defenseStat === 0) {
-        console.error(`Estadísticas de ataque/defensa inválidas. Attacker: ${attackerPokemon?.name}, Defender: ${defenderPokemon?.name}`);
-        return { damage: 1, effectivenessMessage: "" };
+    const rawAtk = attackerPokemon.attack;
+    const rawDef = defenderPokemon.defense;
+    if (typeof rawAtk !== 'number' || typeof rawDef !== 'number' || rawDef === 0) {
+        return { damage: 1, effectivenessMessage: '', isCritical: false };
     }
 
-    // STAB (Same-Type Attack Bonus)
-    const attackerTypes = attackerPokemon.types.map(t => t.type.name);
-    // Usamos nuestra variable segura 'moveType'
-    const moveIsSameType = attackerTypes.includes(moveType);
-    const stab = moveIsSameType ? 1.5 : 1;
+    const isCritical = Math.random() < 0.0625;
+    const critMult = isCritical ? 1.5 : 1;
 
-    // Calcular la efectividad de tipo (usando nuestra variable segura 'moveType')
+    const attackStat  = rawAtk * stageMultiplier(attackerPokemon.attackStage);
+    const defenseStat = rawDef * stageMultiplier(defenderPokemon.defenseStage);
+
+    const attackerTypes = attackerPokemon.types.map(t => t.type?.name ?? t);
+    const stab = attackerTypes.includes(moveType) ? 1.5 : 1;
+
+    const defenderTypes = defenderPokemon.types.map(t => t.type?.name ?? t);
     const { multiplier: typeMultiplier, message: effectivenessMessage } =
-        calculateTypeEffectiveness(moveType, defenderPokemon.types.map(t => t.type.name));
+        calculateTypeEffectiveness(moveType, defenderTypes);
 
     let damage = Math.floor(
-        ((((2 * level) / 5 + 2) * move.power * (attackStat / defenseStat)) / 50 + 2) * stab * typeMultiplier
+        ((((2 * level) / 5 + 2) * move.power * (attackStat / defenseStat)) / 50 + 2)
+        * stab * typeMultiplier * critMult
     );
-
     damage = Math.max(typeMultiplier === 0 ? 0 : 1, damage);
 
-    return { damage, effectivenessMessage };
+    return { damage, effectivenessMessage, isCritical };
 };

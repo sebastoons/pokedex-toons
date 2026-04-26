@@ -159,3 +159,18 @@
         max-width: 70%;
     }
 }
+
+/* ===== PARTÍCULAS DE ATAQUE ===== */
+.battle-particle {
+    position: absolute;
+    border-radius: 50%;
+    pointer-events: none;
+    transform: translate(-50%, -50%);
+    animation: particle-fly 0.65s ease-out forwards;
+    z-index: 20;
+}
+
+@keyframes particle-fly {
+    0%   { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+    100% { transform: translate(calc(-50% + var(--pdx)), calc(-50% + var(--pdy))) scale(0.1); opacity: 0; }
+}
