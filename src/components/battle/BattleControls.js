@@ -42,6 +42,11 @@ export const BattleControls = ({
                 <BattleLogDisplay messages={battleLog} />
             </div>
             <div className="controls-wrapper">
+                {!battleEnded && (
+                    <div className={`turn-indicator ${isPlayersTurn ? 'turn-player' : 'turn-ia'}`}>
+                        {isPlayersTurn ? '⚡ TU TURNO' : gameMode === 'vsIA' ? '🤖 TURNO IA' : '⚔ TURNO RIVAL'}
+                    </div>
+                )}
                 {showIAWaitingMessage ? (
                     <div className="ia-waiting-message">
                         <div className="waiting-text">Turno de la IA...</div>

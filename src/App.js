@@ -14,6 +14,7 @@ import WelcomeModal from './components/WelcomeModal';
 import UpdateModal from './components/UpdateModal';
 import BattleModeSelector from './components/BattleModeSelector';
 import AnalyticsDashboard from './components/AnalyticsDashboard';
+import RPGWorld from './components/rpg/RPGWorld';
 
 import { generacionEspecial } from './data/generacionEspecial';
 import manualPokemonImages from './data/manualPokemonImages';
@@ -241,6 +242,7 @@ function App() {
                               {isGenMenuOpen && (<ul className="generation-dropdown-menu">{ALL_POKEMON_GENERATIONS.map(gen => (<li key={gen.id} onClick={() => handleGenerationSelect(gen.id)} className={selectedGeneration === gen.id.toString() ? 'active' : ''}>{gen.name}</li>))}</ul>)}
                           </div>
                           <Link to="/battle" className="battle-button">Ir a Batalla</Link>
+                          <Link to="/rpg" className="battle-button" style={{ background: 'linear-gradient(135deg,#2E7D32,#43A047)', marginLeft: '6px' }}>🌿 Mundo RPG</Link>
                       </div>
                       <div className="pokemon-list">{filteredPokemon.length > 0 ? (filteredPokemon.map(pokemon => <PokemonCard key={pokemon.id} pokemon={pokemon} />)) : (<div className="no-results">No se encontraron Pokémon.</div>)}</div>
                   </>
@@ -250,6 +252,7 @@ function App() {
               <Route path="/battle" element={<motion.div variants={pageVariants} initial="initial" animate="animate" exit="exit"><BattleModeSelector /></motion.div>} />
               <Route path="/battle-selector" element={<motion.div variants={pageVariants} initial="initial" animate="animate" exit="exit"><PokemonBattleSelector pokemonList={pokemonList} /></motion.div>} />
               <Route path="/battle/arena" element={<PokemonBattleArena pokemonList={pokemonList} />} />
+              <Route path="/rpg" element={<RPGWorld />} />
               <Route path="/analytics" element={<motion.div variants={pageVariants} initial="initial" animate="animate" exit="exit"><AnalyticsDashboard /></motion.div>} />
               <Route path="*" element={<div className="error">Página no encontrada</div>} />
           </Routes>
