@@ -193,6 +193,36 @@
     font-family: monospace;
 }
 
+/* ===== INDICADOR DE TURNO ===== */
+.turn-indicator {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 0.42em;
+    text-align: center;
+    padding: 3px 10px;
+    border-radius: 6px;
+    flex-shrink: 0;
+    letter-spacing: 1px;
+    margin-bottom: 4px;
+}
+
+.turn-indicator.turn-player {
+    background: rgba(67, 234, 122, 0.18);
+    border: 1px solid #43ea7a;
+    color: #43ea7a;
+    animation: turn-glow 1.6s infinite ease-in-out;
+}
+
+.turn-indicator.turn-ia {
+    background: rgba(100, 149, 237, 0.15);
+    border: 1px solid #6495ed;
+    color: #6495ed;
+}
+
+@keyframes turn-glow {
+    0%, 100% { box-shadow: 0 0 4px rgba(67, 234, 122, 0.25); }
+    50%       { box-shadow: 0 0 10px rgba(67, 234, 122, 0.55); }
+}
+
 /* ===== IA WAITING ===== */
 .ia-waiting-message {
     display: flex;

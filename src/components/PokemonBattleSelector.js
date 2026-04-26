@@ -53,6 +53,7 @@ const MOVES_DATABASE = {
         { name: "Lanzallamas",  power: 90,  accuracy: 100, type: "fire" },
         { name: "Llamarada",    power: 110, accuracy: 85,  type: "fire" },
         { name: "Puño Fuego",   power: 75,  accuracy: 100, type: "fire" },
+        { name: "Fuego Fatuo",  power: 0,   accuracy: 85,  type: "fire",     damage_class: "status" },
     ],
     water: [
         { name: "Pistola Agua", power: 40,  accuracy: 100, type: "water" },
@@ -71,6 +72,7 @@ const MOVES_DATABASE = {
         { name: "Rayo",         power: 90,  accuracy: 100, type: "electric" },
         { name: "Trueno",       power: 110, accuracy: 70,  type: "electric" },
         { name: "Puño Trueno",  power: 75,  accuracy: 100, type: "electric" },
+        { name: "Onda Trueno",  power: 0,   accuracy: 90,  type: "electric", damage_class: "status" },
     ],
     ice: [
         { name: "Rayo Hielo",   power: 90,  accuracy: 100, type: "ice" },
@@ -86,6 +88,7 @@ const MOVES_DATABASE = {
         { name: "Ácido",        power: 40,  accuracy: 100, type: "poison" },
         { name: "Bomba Lodo",   power: 90,  accuracy: 100, type: "poison" },
         { name: "Puya Nociva",  power: 80,  accuracy: 100, type: "poison" },
+        { name: "Tóxico",       power: 0,   accuracy: 90,  type: "poison",   damage_class: "status" },
     ],
     ground: [
         { name: "Terremoto",    power: 100, accuracy: 100, type: "ground" },
@@ -227,7 +230,7 @@ const MovePicker = ({ move, slotIndex, pool, onSelect }) => {
                 <span className="move-slot-name">{move ? move.name.toUpperCase() : 'SIN TÉCNICA'}</span>
                 <div className="move-slot-meta">
                     <span className="move-slot-type-label" style={{ background: typeColor }}>{typeName}</span>
-                    {move && <span className="move-slot-power">PWR {move.power === Infinity ? '∞' : move.power}</span>}
+                    {move && <span className="move-slot-power">{move.damage_class === 'status' ? 'APOYO' : `PWR ${move.power === Infinity ? '∞' : move.power}`}</span>}
                 </div>
                 <span className="move-slot-arrow">{open ? '▲' : '▼'}</span>
             </div>
@@ -251,7 +254,7 @@ const MovePicker = ({ move, slotIndex, pool, onSelect }) => {
                                     >
                                         <span className="move-option-name">{m.name}</span>
                                         <span className="move-option-power" style={{ color }}>
-                                            PWR {m.power === Infinity ? '∞' : m.power}
+                                            {m.damage_class === 'status' ? 'APOYO' : `PWR ${m.power === Infinity ? '∞' : m.power}`}
                                         </span>
                                     </div>
                                 ))}
@@ -280,6 +283,7 @@ function PokemonBattleSelector({ pokemonList }) {
     const [isGenMenuOpen, setIsGenMenuOpen] = useState(false);
     const [visibleCount, setVisibleCount] = useState(LAZY_BATCH);
     const sentinelRef = useRef(null);
+    const continueRef = useRef(null);
 
     const [apiMovePool, setApiMovePool] = useState({});
     const [loadingApiMoves, setLoadingApiMoves] = useState(false);
@@ -321,7 +325,11 @@ function PokemonBattleSelector({ pokemonList }) {
         if (currentTeam.some(p => p.id === pokemon.id)) { alert("¡Ya has seleccionado este Pokémon!"); return; }
         const pool = buildMovePool(getPokemonTypes(pokemon));
         if (currentPlayer === 1) setSelectedMovesP1(prev => ({ ...prev, [pokemon.id]: pool.slice(0, 4) }));
-        setCurrentTeam([...currentTeam, pokemon]);
+        const newTeam = [...currentTeam, pokemon];
+        setCurrentTeam(newTeam);
+        if (newTeam.length === teamSize) {
+            setTimeout(() => continueRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' }), 80);
+        }
     };
 
     const handleRemovePokemon = (pokemonId) => {
@@ -358,11 +366,11 @@ function PokemonBattleSelector({ pokemonList }) {
                         try {
                             const r = await fetch(url, { signal });
                             const d = await r.json();
-                            if (!d.power) return null;
+                            if (d.power === null && d.damage_class?.name !== 'status') return null;
                             const esName = d.names?.find(n => n.language.name === 'es')?.name;
                             return {
                                 name: esName || d.name,
-                                power: d.power,
+                                power: d.power || 0,
                                 accuracy: d.accuracy || 100,
                                 type: d.type.name,
                                 damage_class: d.damage_class?.name || 'physical',
@@ -470,7 +478,7 @@ function PokemonBattleSelector({ pokemonList }) {
             <Link to="/battle" className="back-to-pokedex-top">&lt; Cambiar Modo</Link>
             <h1>Elige tu Equipo (3 Pokémon)</h1>
             <TeamPreview team={currentTeam} teamSize={teamSize} onRemove={handleRemovePokemon} />
-            <button onClick={() => currentTeam.length === teamSize ? setIsConfiguringMoves(true) : alert(`Debes seleccionar ${teamSize} Pokémon.`)} className="start-battle-button" disabled={currentTeam.length !== teamSize}>
+            <button ref={continueRef} onClick={() => currentTeam.length === teamSize ? setIsConfiguringMoves(true) : alert(`Debes seleccionar ${teamSize} Pokémon.`)} className="start-battle-button" disabled={currentTeam.length !== teamSize}>
                 Continuar a Configuración
             </button>
             <div className="battle-controls-container">

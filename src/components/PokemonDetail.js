@@ -8,6 +8,7 @@ import { generacionEspecial } from '../data/generacionEspecial';
 // --- 1. IMPORTAMOS NUESTRAS NUEVAS FUNCIONES AUTOMÁTICAS ---
 import { getAutomaticAbility, getAutomaticMoves } from '../utils/specialGenerationUtils';
 
+import PokeBallSpinner from './PokeBallSpinner';
 import PokemonHeader from './pokemonDetail/PokemonHeader';
 import PokemonStats from './pokemonDetail/PokemonStats';
 // ... (el resto de tus importaciones de componentes se quedan igual)
@@ -168,7 +169,11 @@ function PokemonDetail() {
   }, [pokemonId]);
 
   // --- RENDERIZADO (sin cambios) ---
-  if (loading || !pokemonData?.sprites) return <div className="loading">Cargando Pokedex...</div>;
+  if (loading || !pokemonData?.sprites) return (
+    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '60vh' }}>
+      <PokeBallSpinner text="Cargando Pokédex..." size={64} />
+    </div>
+  );
   if (error) return <div className="error">Error al cargar los datos. Intenta de nuevo más tarde.</div>;
   if (!pokemonData) return null;
 
