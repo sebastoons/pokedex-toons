@@ -75,72 +75,112 @@ const MOVES_DATABASE = {
         { name: "Onda Trueno",  power: 0,   accuracy: 90,  type: "electric", damage_class: "status" },
     ],
     ice: [
-        { name: "Rayo Hielo",   power: 90,  accuracy: 100, type: "ice" },
-        { name: "Ventisca",     power: 110, accuracy: 70,  type: "ice" },
-        { name: "Puño Hielo",   power: 75,  accuracy: 100, type: "ice" },
+        { name: "Rayo Hielo",    power: 90,  accuracy: 100, type: "ice" },
+        { name: "Ventisca",      power: 110, accuracy: 70,  type: "ice" },
+        { name: "Puño Hielo",    power: 75,  accuracy: 100, type: "ice" },
+        { name: "Aguanieve",     power: 40,  accuracy: 100, type: "ice" },
+        { name: "Colmillo Hielo",power: 65,  accuracy: 95,  type: "ice" },
+        { name: "Alud",          power: 75,  accuracy: 90,  type: "ice" },
     ],
     fighting: [
-        { name: "Golpe Karate", power: 50,  accuracy: 100, type: "fighting" },
-        { name: "Sumisión",     power: 80,  accuracy: 80,  type: "fighting" },
-        { name: "A Bocajarro",  power: 120, accuracy: 100, type: "fighting" },
+        { name: "Golpe Karate",  power: 50,  accuracy: 100, type: "fighting" },
+        { name: "Sumisión",      power: 80,  accuracy: 80,  type: "fighting" },
+        { name: "A Bocajarro",   power: 120, accuracy: 100, type: "fighting" },
+        { name: "Patada Salto",  power: 100, accuracy: 95,  type: "fighting" },
+        { name: "Giro Patada",   power: 60,  accuracy: 85,  type: "fighting" },
+        { name: "Paliza",        power: 80,  accuracy: 100, type: "fighting" },
+        { name: "Patada Baja",   power: 40,  accuracy: 100, type: "fighting" },
+        { name: "Puño Dinámico", power: 100, accuracy: 50,  type: "fighting" },
+        { name: "Contraataque",  power: 65,  accuracy: 100, type: "fighting" },
     ],
     poison: [
-        { name: "Ácido",        power: 40,  accuracy: 100, type: "poison" },
-        { name: "Bomba Lodo",   power: 90,  accuracy: 100, type: "poison" },
-        { name: "Puya Nociva",  power: 80,  accuracy: 100, type: "poison" },
-        { name: "Tóxico",       power: 0,   accuracy: 90,  type: "poison",   damage_class: "status" },
+        { name: "Ácido",         power: 40,  accuracy: 100, type: "poison" },
+        { name: "Bomba Lodo",    power: 90,  accuracy: 100, type: "poison" },
+        { name: "Puya Nociva",   power: 80,  accuracy: 100, type: "poison" },
+        { name: "Colmillo Veneno",power: 65, accuracy: 95,  type: "poison" },
+        { name: "Residuo",       power: 45,  accuracy: 100, type: "poison" },
+        { name: "Tóxico",        power: 0,   accuracy: 90,  type: "poison",  damage_class: "status" },
     ],
     ground: [
-        { name: "Terremoto",    power: 100, accuracy: 100, type: "ground" },
-        { name: "Excavar",      power: 80,  accuracy: 100, type: "ground" },
-        { name: "Disparo Lodo", power: 55,  accuracy: 95,  type: "ground" },
+        { name: "Terremoto",     power: 100, accuracy: 100, type: "ground" },
+        { name: "Excavar",       power: 80,  accuracy: 100, type: "ground" },
+        { name: "Disparo Lodo",  power: 55,  accuracy: 95,  type: "ground" },
+        { name: "Tumba Rocas",   power: 60,  accuracy: 95,  type: "ground" },
+        { name: "Golpe Sísmico", power: 60,  accuracy: 100, type: "ground" },
+        { name: "Fisura",        power: 80,  accuracy: 90,  type: "ground" },
     ],
     flying: [
-        { name: "Vuelo",        power: 90,  accuracy: 95,       type: "flying" },
-        { name: "Picotazo",     power: 35,  accuracy: 100,      type: "flying" },
-        { name: "Golpe Aéreo",  power: 60,  accuracy: Infinity, type: "flying" },
+        { name: "Vuelo",         power: 90,  accuracy: 95,       type: "flying" },
+        { name: "Picotazo",      power: 35,  accuracy: 100,      type: "flying" },
+        { name: "Golpe Aéreo",   power: 60,  accuracy: Infinity, type: "flying" },
+        { name: "Pájaro Osado",  power: 120, accuracy: 100,      type: "flying" },
+        { name: "Golpe Pico",    power: 65,  accuracy: 95,       type: "flying" },
+        { name: "Torbellino",    power: 40,  accuracy: 85,       type: "flying" },
     ],
     psychic: [
-        { name: "Psíquico",     power: 90,  accuracy: 100, type: "psychic" },
-        { name: "Confusión",    power: 50,  accuracy: 100, type: "psychic" },
-        { name: "Premonición",  power: 120, accuracy: 100, type: "psychic" },
-        { name: "Cabezazo Zen", power: 80,  accuracy: 90,  type: "psychic" },
+        { name: "Psíquico",      power: 90,  accuracy: 100, type: "psychic" },
+        { name: "Confusión",     power: 50,  accuracy: 100, type: "psychic" },
+        { name: "Premonición",   power: 120, accuracy: 100, type: "psychic" },
+        { name: "Cabezazo Zen",  power: 80,  accuracy: 90,  type: "psychic" },
+        { name: "Psicocorte",    power: 70,  accuracy: 100, type: "psychic" },
+        { name: "Psicorrayo",    power: 65,  accuracy: 100, type: "psychic" },
+        { name: "Somnífero",     power: 0,   accuracy: 55,  type: "psychic", damage_class: "status" },
     ],
     bug: [
-        { name: "Picadura",     power: 60,  accuracy: 100, type: "bug" },
-        { name: "Zumbido",      power: 90,  accuracy: 100, type: "bug" },
-        { name: "Tijera X",     power: 80,  accuracy: 100, type: "bug" },
+        { name: "Picadura",      power: 60,  accuracy: 100, type: "bug" },
+        { name: "Zumbido",       power: 90,  accuracy: 100, type: "bug" },
+        { name: "Tijera X",      power: 80,  accuracy: 100, type: "bug" },
+        { name: "Cuchillada",    power: 70,  accuracy: 100, type: "bug" },
+        { name: "Ataque Polvo",  power: 35,  accuracy: 100, type: "bug" },
+        { name: "Megacuerno",    power: 120, accuracy: 85,  type: "bug" },
     ],
     rock: [
-        { name: "Lanzarrocas",  power: 50,  accuracy: 90,  type: "rock" },
-        { name: "Avalancha",    power: 75,  accuracy: 90,  type: "rock" },
-        { name: "Roca Afilada", power: 100, accuracy: 80,  type: "rock" },
+        { name: "Lanzarrocas",   power: 50,  accuracy: 90,  type: "rock" },
+        { name: "Avalancha",     power: 75,  accuracy: 90,  type: "rock" },
+        { name: "Roca Afilada",  power: 100, accuracy: 80,  type: "rock" },
+        { name: "Cabezazo Roca", power: 80,  accuracy: 85,  type: "rock" },
+        { name: "Pedrada",       power: 55,  accuracy: 95,  type: "rock" },
+        { name: "Romperrocas",   power: 40,  accuracy: 100, type: "rock" },
     ],
     ghost: [
-        { name: "Lengüetazo",   power: 30,  accuracy: 100, type: "ghost" },
-        { name: "Bola Sombra",  power: 80,  accuracy: 100, type: "ghost" },
-        { name: "Garra Umbría", power: 70,  accuracy: 100, type: "ghost" },
+        { name: "Lengüetazo",    power: 30,  accuracy: 100, type: "ghost" },
+        { name: "Bola Sombra",   power: 80,  accuracy: 100, type: "ghost" },
+        { name: "Garra Umbría",  power: 70,  accuracy: 100, type: "ghost" },
+        { name: "Tinieblas",     power: 50,  accuracy: 100, type: "ghost" },
+        { name: "Mal de Ojo",    power: 65,  accuracy: 100, type: "ghost" },
+        { name: "Finta Sombra",  power: 40,  accuracy: 100, type: "ghost" },
     ],
     dragon: [
-        { name: "Garra Dragón", power: 80,  accuracy: 100, type: "dragon" },
-        { name: "Pulso Dragón", power: 85,  accuracy: 100, type: "dragon" },
-        { name: "Cometa Draco", power: 130, accuracy: 90,  type: "dragon" },
+        { name: "Garra Dragón",  power: 80,  accuracy: 100, type: "dragon" },
+        { name: "Pulso Dragón",  power: 85,  accuracy: 100, type: "dragon" },
+        { name: "Cometa Draco",  power: 130, accuracy: 90,  type: "dragon" },
+        { name: "Furia Dragón",  power: 40,  accuracy: 100, type: "dragon" },
+        { name: "Cola Dragón",   power: 60,  accuracy: 90,  type: "dragon" },
+        { name: "Danza Dragón",  power: 0,   accuracy: 100, type: "dragon", damage_class: "status" },
     ],
     dark: [
-        { name: "Mordisco",     power: 60,  accuracy: 100, type: "dark" },
-        { name: "Triturar",     power: 80,  accuracy: 100, type: "dark" },
-        { name: "Pulso Umbrío", power: 80,  accuracy: 100, type: "dark" },
+        { name: "Mordisco",      power: 60,  accuracy: 100, type: "dark" },
+        { name: "Triturar",      power: 80,  accuracy: 100, type: "dark" },
+        { name: "Pulso Umbrío",  power: 80,  accuracy: 100, type: "dark" },
+        { name: "Golpe Bajo",    power: 65,  accuracy: 100, type: "dark" },
+        { name: "Castigo",       power: 60,  accuracy: 100, type: "dark" },
+        { name: "Mofa",          power: 55,  accuracy: 100, type: "dark" },
     ],
     steel: [
-        { name: "Garra Metal",       power: 50, accuracy: 95,  type: "steel" },
-        { name: "Foco Resplandor",   power: 80, accuracy: 100, type: "steel" },
-        { name: "Cabeza de Hierro",  power: 80, accuracy: 100, type: "steel" },
-        { name: "Puño Meteoro",      power: 90, accuracy: 90,  type: "steel" },
+        { name: "Garra Metal",      power: 50,  accuracy: 95,  type: "steel" },
+        { name: "Foco Resplandor",  power: 80,  accuracy: 100, type: "steel" },
+        { name: "Cabeza de Hierro", power: 80,  accuracy: 100, type: "steel" },
+        { name: "Puño Meteoro",     power: 90,  accuracy: 90,  type: "steel" },
+        { name: "Defensa Férrea",   power: 65,  accuracy: 100, type: "steel" },
+        { name: "Acero Ala",        power: 70,  accuracy: 90,  type: "steel" },
     ],
     fairy: [
-        { name: "Viento Feérico",    power: 40, accuracy: 100, type: "fairy" },
-        { name: "Brillo Mágico",     power: 80, accuracy: 100, type: "fairy" },
-        { name: "Fuerza Lunar",      power: 95, accuracy: 100, type: "fairy" },
+        { name: "Viento Feérico",   power: 40,  accuracy: 100, type: "fairy" },
+        { name: "Brillo Mágico",    power: 80,  accuracy: 100, type: "fairy" },
+        { name: "Fuerza Lunar",     power: 95,  accuracy: 100, type: "fairy" },
+        { name: "Voz Cautivadora",  power: 85,  accuracy: 90,  type: "fairy" },
+        { name: "Golpe Encanto",    power: 70,  accuracy: 100, type: "fairy" },
+        { name: "Danza Lunar",      power: 0,   accuracy: 100, type: "fairy", damage_class: "status" },
     ],
 };
 
@@ -353,6 +393,7 @@ function PokemonBattleSelector({ pokemonList }) {
             await Promise.all(player1Team.map(async (poke) => {
                 try {
                     const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${poke.id}`, { signal });
+                    if (!res.ok) throw new Error(res.status);
                     const data = await res.json();
 
                     const moveUrls = data.moves
@@ -360,18 +401,19 @@ function PokemonBattleSelector({ pokemonList }) {
                             ['level-up', 'machine', 'tutor'].includes(d.move_learn_method.name)
                         ))
                         .map(m => m.move.url)
-                        .slice(0, 24);
+                        .slice(0, 36);
 
                     const details = await Promise.all(moveUrls.map(async url => {
                         try {
                             const r = await fetch(url, { signal });
+                            if (!r.ok) return null;
                             const d = await r.json();
-                            if (d.power === null && d.damage_class?.name !== 'status') return null;
+                            if (d.power == null && d.damage_class?.name !== 'status') return null;
                             const esName = d.names?.find(n => n.language.name === 'es')?.name;
                             return {
                                 name: esName || d.name,
-                                power: d.power || 0,
-                                accuracy: d.accuracy || 100,
+                                power: d.power ?? 0,
+                                accuracy: d.accuracy ?? 100,
                                 type: d.type.name,
                                 damage_class: d.damage_class?.name || 'physical',
                             };
