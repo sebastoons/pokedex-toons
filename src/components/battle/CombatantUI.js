@@ -9,7 +9,7 @@ const STATUS_CONFIG = {
     burned:    { label: 'QUE', className: 'status-burned' },
 };
 
-export const CombatantUI = ({
+export const CombatantUI = React.memo(function CombatantUI({
     pokemon,
     team,
     isOpponent,
@@ -99,4 +99,4 @@ export const CombatantUI = ({
             </div>
         </div>
     );
-};
+});

@@ -158,9 +158,9 @@ export const useBattleLogic = () => {
             return;
         }
 
-        // Animación de ataque
+        // Animación de ataque — partículas al llegar al objetivo (tras la transición CSS de 300ms)
         (isPlayer1Turn ? setPokemonP1Attacking : setPokemonP2Attacking)(true);
-        setLastAttack({ side: isPlayer1Turn ? 'p1' : 'p2', moveType: usedMove.type, ts: Date.now() });
+        setTimeout(() => setLastAttack({ side: isPlayer1Turn ? 'p1' : 'p2', moveType: usedMove.type, ts: Date.now() }), 300);
         await new Promise(r => setTimeout(r, 800));
 
         const { damage, effectivenessMessage, isCritical } = calculateDamage(attacker, defender, usedMove);
