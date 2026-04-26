@@ -1,6 +1,7 @@
 // src/components/PokemonBattleSelector.js
 import React, { useState, useMemo, useEffect, useRef, useCallback } from 'react';
 import { useLocation, useNavigate, Link } from 'react-router-dom';
+import PokeBallSpinner from './PokeBallSpinner';
 import './PokemonBattleSelector.css';
 
 const ALL_POKEMON_GENERATIONS = [
@@ -280,6 +281,9 @@ function PokemonBattleSelector({ pokemonList }) {
     const [visibleCount, setVisibleCount] = useState(LAZY_BATCH);
     const sentinelRef = useRef(null);
 
+    const [apiMovePool, setApiMovePool] = useState({});
+    const [loadingApiMoves, setLoadingApiMoves] = useState(false);
+
     const currentTeam = currentPlayer === 1 ? player1Team : player2Team;
     const setCurrentTeam = currentPlayer === 1 ? setPlayer1Team : () => {};
 
@@ -329,6 +333,57 @@ function PokemonBattleSelector({ pokemonList }) {
         }
     };
 
+    useEffect(() => {
+        if (!isConfiguringMoves || player1Team.length === 0) return;
+        const ctrl = new AbortController();
+        const { signal } = ctrl;
+
+        const fetchApiMoves = async () => {
+            setLoadingApiMoves(true);
+            const pools = {};
+
+            await Promise.all(player1Team.map(async (poke) => {
+                try {
+                    const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${poke.id}`, { signal });
+                    const data = await res.json();
+
+                    const moveUrls = data.moves
+                        .filter(m => m.version_group_details.some(d =>
+                            ['level-up', 'machine', 'tutor'].includes(d.move_learn_method.name)
+                        ))
+                        .map(m => m.move.url)
+                        .slice(0, 24);
+
+                    const details = await Promise.all(moveUrls.map(async url => {
+                        try {
+                            const r = await fetch(url, { signal });
+                            const d = await r.json();
+                            if (!d.power) return null;
+                            const esName = d.names?.find(n => n.language.name === 'es')?.name;
+                            return {
+                                name: esName || d.name,
+                                power: d.power,
+                                accuracy: d.accuracy || 100,
+                                type: d.type.name,
+                                damage_class: d.damage_class?.name || 'physical',
+                            };
+                        } catch { return null; }
+                    }));
+
+                    pools[poke.id] = details.filter(Boolean);
+                } catch { pools[poke.id] = []; }
+            }));
+
+            if (!signal.aborted) {
+                setApiMovePool(pools);
+                setLoadingApiMoves(false);
+            }
+        };
+
+        fetchApiMoves();
+        return () => ctrl.abort();
+    }, [isConfiguringMoves]); // eslint-disable-line react-hooks/exhaustive-deps
+
     const handleMoveSelect = (pokemonId, slotIndex, move) => {
         setSelectedMovesP1(prev => {
             const current = [...(prev[pokemonId] || [])];
@@ -354,10 +409,21 @@ function PokemonBattleSelector({ pokemonList }) {
         return (
             <div className="battle-selector-container">
                 <h1 style={{ color: 'white', textShadow: '2px 2px 4px black' }}>Configura las Técnicas</h1>
+
+                {loadingApiMoves && (
+                    <div style={{ marginBottom: '10px' }}>
+                        <PokeBallSpinner text="Cargando técnicas..." size={40} />
+                    </div>
+                )}
+
                 <div className="team-config-grid">
                     {player1Team.map(poke => {
                         const types = getPokemonTypes(poke);
-                        const pool = buildMovePool(types);
+                        const staticPool = buildMovePool(types);
+                        const apiPool = apiMovePool[poke.id] || [];
+                        const pool = [...staticPool, ...apiPool].filter(
+                            (m, i, s) => i === s.findIndex(x => x.name === m.name)
+                        );
                         const mainColor = TYPE_DISPLAY[types[0]]?.color || '#888';
                         const moves = selectedMovesP1[poke.id] || [];
 

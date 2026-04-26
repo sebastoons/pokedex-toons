@@ -5,6 +5,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import ReactGA from 'react-ga4';
 
 // Componentes
+import PokeBallSpinner from './components/PokeBallSpinner';
 import PokemonCard from './components/PokemonCard';
 import PokemonDetail from './components/PokemonDetail';
 import PokemonBattleSelector from './components/PokemonBattleSelector';
@@ -96,68 +97,50 @@ function App() {
 
     useEffect(() => {
         const fetchPokemonWithDetails = async () => {
+            const fetchOne = async (pokemon) => {
+                try {
+                    const idFromUrl = parseInt(pokemon.url.split('/')[6]);
+                    const res = await fetch(pokemon.url);
+                    const data = res.ok ? await res.json() : { id: idFromUrl, name: pokemon.name, types: [{ type: { name: 'normal' } }] };
+                    return {
+                        name: data.name,
+                        url: pokemon.url,
+                        id: data.id,
+                        types: data.types.map(t => t.type.name),
+                        imageUrl: manualPokemonImages[data.id] || null,
+                    };
+                } catch { return null; }
+            };
+
             try {
-                const listResponse = await fetch('https://pokeapi.co/api/v2/pokemon?limit=1025&offset=0');
-                if (!listResponse.ok) throw new Error(`HTTP error! status: ${listResponse.status}`);
-                const listData = await listResponse.json();
-                const results = listData.results;
-                const pokemonWithDetails = [];
-                const chunkSize = 30;
-                const delayMs = 50; // Reducido para cargar más rápido
+                const listRes = await fetch('https://pokeapi.co/api/v2/pokemon?limit=1025&offset=0');
+                if (!listRes.ok) throw new Error(`HTTP error: ${listRes.status}`);
+                const { results } = await listRes.json();
 
-                for (let i = 0; i < results.length; i += chunkSize) {
-                    const chunk = results.slice(i, i + chunkSize);
-                    const chunkPromises = chunk.map(async (pokemon) => {
-                        try {
-                            // Optimización: Usamos datos básicos si falla el detalle
-                            const idFromUrl = pokemon.url.split('/')[6];
-                            const detailResponse = await fetch(pokemon.url);
-                            
-                            let detailData;
-                            if (detailResponse.ok) {
-                                detailData = await detailResponse.json();
-                            } else {
-                                detailData = { id: idFromUrl, name: pokemon.name, types: [{type: {name: 'normal'}}] };
-                            }
+                // Gen 1: fetch all 151 in parallel → render immediately
+                const gen1Raw = await Promise.all(results.slice(0, 151).map(fetchOne));
+                const gen1 = gen1Raw.filter(Boolean);
+                setPokemonList([...gen1]);
+                setLoading(false);
 
-                            return {
-                                name: detailData.name,
-                                url: pokemon.url,
-                                id: detailData.id,
-                                types: detailData.types.map(typeInfo => typeInfo.type.name),
-                                imageUrl: manualPokemonImages[detailData.id] || null
-                            };
-                        } catch (detailErr) { return null; }
-                    });
-                    const resolvedChunk = await Promise.all(chunkPromises);
-                    pokemonWithDetails.push(...resolvedChunk.filter(Boolean));
-                    
-                    // Solo cargamos el primer chunk obligatoriamente, el resto en background
-                    if (i === 0) setPokemonList([...pokemonWithDetails]); 
-                    
-                    if (i + chunkSize < results.length) {
-                        await new Promise(resolve => setTimeout(resolve, delayMs));
-                    }
+                // Rest: fetch in batches of 50 in background
+                const rest = results.slice(151);
+                const all = [...gen1];
+                const CHUNK = 50;
+                for (let i = 0; i < rest.length; i += CHUNK) {
+                    const chunk = await Promise.all(rest.slice(i, i + CHUNK).map(fetchOne));
+                    all.push(...chunk.filter(Boolean));
+                    setPokemonList([...all]);
+                    if (i + CHUNK < rest.length) await new Promise(r => setTimeout(r, 80));
                 }
 
-                const specialPokemonFormatted = generacionEspecial.map(p => ({
-                  id: p.id,
-                  name: p.name.toLowerCase(),
-                  types: p.types,
-                  imageUrl: p.imageUrl,
-                  isSpecial: true
+                const special = generacionEspecial.map(p => ({
+                    id: p.id, name: p.name.toLowerCase(), types: p.types, imageUrl: p.imageUrl, isSpecial: true,
                 }));
-                
-                // Actualización final con todos
-                setPokemonList(prev => {
-                    // Evitar duplicados si el render es rápido
-                    const combined = [...pokemonWithDetails, ...specialPokemonFormatted];
-                    return combined;
-                });
+                setPokemonList([...all, ...special]);
 
             } catch (err) {
                 setError(err);
-            } finally {
                 setLoading(false);
             }
         };
@@ -222,7 +205,11 @@ function App() {
 
     const toggleGenMenu = () => setIsGenMenuOpen(!isGenMenuOpen);
 
-    if (loading && pokemonList.length === 0) return <div className="pokedex-container"><div className="loading">Cargando Pokedex Toons...</div></div>;
+    if (loading && pokemonList.length === 0) return (
+        <div className="pokedex-container" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+            <PokeBallSpinner text="Cargando Pokédex..." size={72} />
+        </div>
+    );
     if (error) return <div className="pokedex-container"><div className="error">Error: {error.message}</div></div>;
 
     return (

@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useBattleLogic } from '../../hooks/useBattleLogic';
+import PokeBallSpinner from '../PokeBallSpinner';
 import { CombatantUI } from './CombatantUI';
 import { BattleControls } from './BattleControls';
 import { BattleEndModal } from './BattleEndModal';
@@ -16,8 +17,8 @@ import './BattleEndModal.css';
 import './BagModal.css';
 
 const FLOATING_MSG_CLASSES = {
-    super:    'float-super',
-    noeffect: 'float-noeffect',
+    super:     'float-super',
+    noeffect:  'float-noeffect',
     resistant: 'float-resistant',
 };
 
@@ -47,16 +48,14 @@ const PokemonBattleArena = () => {
     }, [loading, activePokemonP1, activePokemonP2, gameMode]);
 
     React.useEffect(() => {
-        if (winner) {
-            analyticsTracker.trackEvent('Batalla Completada', `Ganador: ${winner}`);
-        }
+        if (winner) analyticsTracker.trackEvent('Batalla Completada', `Ganador: ${winner}`);
     }, [winner]);
 
     if (loading || !activePokemonP1 || !activePokemonP2) {
         return (
             <div className="battle-arena-container">
                 <div className="loading-container">
-                    <p>Cargando batalla...</p>
+                    <PokeBallSpinner text="Preparando batalla..." size={64} />
                 </div>
             </div>
         );
@@ -86,12 +85,13 @@ const PokemonBattleArena = () => {
     };
 
     const defenderTypes = isPlayer1Turn ? activePokemonP2?.types : activePokemonP1?.types;
-
     const floatClass = floatingMsg ? (FLOATING_MSG_CLASSES[floatingMsg.type] || 'float-neutral') : '';
 
     return (
         <div className="battle-arena-container" data-theme={theme}>
             <div className="battle-elements">
+
+                {/* Área de combatientes + mensaje de efectividad centrado */}
                 <div className="combatants-container">
                     <CombatantUI
                         pokemon={activePokemonP2}
@@ -111,23 +111,24 @@ const PokemonBattleArena = () => {
                         onPokemonCircleClick={handlePlayer1Click}
                         canSwitch={canPlayer1Switch}
                     />
-                </div>
 
-                {/* Mensaje flotante de efectividad */}
-                <AnimatePresence>
-                    {floatingMsg && (
-                        <motion.div
-                            className={`floating-effectiveness ${floatClass}`}
-                            key={floatingMsg.text + Date.now()}
-                            initial={{ opacity: 0, y: 10, scale: 0.85 }}
-                            animate={{ opacity: 1, y: 0, scale: 1 }}
-                            exit={{ opacity: 0, y: -16, scale: 0.9 }}
-                            transition={{ duration: 0.25 }}
-                        >
-                            {floatingMsg.text}
-                        </motion.div>
-                    )}
-                </AnimatePresence>
+                    {/* Mensaje flotante centrado entre los Pokémon */}
+                    <AnimatePresence>
+                        {floatingMsg && (
+                            <motion.div
+                                className={`floating-effectiveness ${floatClass}`}
+                                key={floatingMsg.text + floatingMsg.type}
+                                style={{ x: '-50%' }}
+                                initial={{ opacity: 0, y: 12, scale: 0.8 }}
+                                animate={{ opacity: 1, y: 0, scale: 1 }}
+                                exit={{ opacity: 0, y: -14, scale: 0.9 }}
+                                transition={{ duration: 0.22 }}
+                            >
+                                {floatingMsg.text}
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
+                </div>
 
                 <BattleControls
                     activePokemon={activePokemonForControls}
@@ -144,7 +145,6 @@ const PokemonBattleArena = () => {
                 />
             </div>
 
-            {/* Mochila */}
             {showBag && (
                 <BagModal
                     bag={bag}
