@@ -244,7 +244,7 @@ export const useBattleLogic = () => {
         setAnimationBlocking(false);
     }, [
         animationBlocking, winner, awaitingSwitch, activePokemonP1, activePokemonP2,
-        addLog, isPlayer1Turn, autoSwitchLastPokemon, gameMode, showFloatingMessage,
+        addLog, isPlayer1Turn, autoSwitchLastPokemon, showFloatingMessage,
     ]);
 
     const handleSwitchPokemon = useCallback(async (newPokemon, isPlayer1 = true) => {
