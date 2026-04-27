@@ -134,6 +134,13 @@
     overflow: hidden;
 }
 
+/* Phaser injects its canvas here */
+.rpg-canvas-container > canvas {
+    display: block;
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
+}
+
 .rpg-canvas {
     display: block;
     image-rendering: pixelated;
