@@ -17,7 +17,7 @@ export const CombatantUI = React.memo(function CombatantUI({
     isDamaged,
     onPokemonCircleClick,
     canSwitch,
-}) => {
+}) {
     if (!pokemon) return null;
 
     const hpPercentage = Math.max(0, (pokemon.currentHp / pokemon.maxHp) * 100);

@@ -347,7 +347,6 @@ function PokemonBattleSelector({ pokemonList }) {
     const [loadingApiMoves, setLoadingApiMoves] = useState(false);
 
     const currentTeam = currentPlayer === 1 ? player1Team : player2Team;
-    const setCurrentTeam = currentPlayer === 1 ? setPlayer1Team : () => {};
 
     const availablePokemon = useMemo(() => {
         if (selectedGeneration === 'all') return pokemonList;
@@ -379,7 +378,7 @@ function PokemonBattleSelector({ pokemonList }) {
     }, [loadMore]);
 
     const handleSelectPokemon = useCallback((pokemon) => {
-        setCurrentTeam(prev => {
+        setPlayer1Team(prev => {
             if (prev.length >= teamSize) { alert(`¡Ya has seleccionado ${teamSize} Pokémon!`); return prev; }
             if (prev.some(p => p.id === pokemon.id)) { alert("¡Ya has seleccionado este Pokémon!"); return prev; }
             const pool = buildMovePool(getPokemonTypes(pokemon));
@@ -389,12 +388,12 @@ function PokemonBattleSelector({ pokemonList }) {
                 setTimeout(() => continueRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' }), 80);
             return next;
         });
-    }, [teamSize, setCurrentTeam]);
+    }, [teamSize]);
 
     const handleRemovePokemon = useCallback((pokemonId) => {
-        setCurrentTeam(prev => prev.filter(p => p.id !== pokemonId));
+        setPlayer1Team(prev => prev.filter(p => p.id !== pokemonId));
         setSelectedMovesP1(m => { const n = { ...m }; delete n[pokemonId]; return n; });
-    }, [setCurrentTeam]);
+    }, []);
 
     useEffect(() => {
         if (!isConfiguringMoves || player1Team.length === 0) return;
