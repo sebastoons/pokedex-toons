@@ -13,7 +13,10 @@ const SOLID = new Set([T.WATER, T.TREE, T.SIGN, T.HOUSE]);
 const ENCOUNTER_TILES = new Set([T.TALL]);
 const TILE_KEYS = ['grass', 'path', 'water', 'tree', 'tall', 'flower', 'sign', 'house'];
 
-// Ruta Verde — 1=árbol, 0=libre, 2=hierba alta (encuentros)
+const POKEBALLS_INIT = 30;
+const BASE_CATCH = 0.35;
+const BASE_FLEE  = 0.20;
+
 const MAP = [
   [3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3],
   [3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3],
@@ -56,14 +59,12 @@ function buildTextures(scene, c) {
   const g = scene.make.graphics({ x: 0, y: 0, add: false });
   const H = s => parseInt(s.replace('#', ''), 16);
 
-  // GRASS
   g.fillStyle(0x68B848); g.fillRect(0, 0, TS, TS);
   g.fillStyle(0x50A030); [1,5,9,13].forEach(y => g.fillRect(0, y, TS, 1));
   g.fillStyle(0x90D860);
   [[2,0],[6,3],[11,1],[14,4],[4,8],[9,6],[1,11],[13,9]].forEach(([x,y]) => g.fillRect(x,y,1,1));
   g.generateTexture('grass', TS, TS); g.clear();
 
-  // PATH
   g.fillStyle(0xB89850); g.fillRect(0,0,TS,TS);
   g.fillStyle(0xCCAC60); g.fillRect(1,1,TS-2,TS-2);
   g.fillStyle(0xD8BC74); g.fillRect(2,2,TS-4,TS-4);
@@ -71,7 +72,6 @@ function buildTextures(scene, c) {
   [[3,4],[8,11],[13,6],[5,13],[11,3],[7,9]].forEach(([x,y]) => g.fillRect(x,y,1,1));
   g.generateTexture('path', TS, TS); g.clear();
 
-  // WATER
   g.fillStyle(0x2858C0); g.fillRect(0,0,TS,TS);
   g.fillStyle(0x4070D8); g.fillRect(0,2,TS,4); g.fillRect(0,10,TS,4);
   g.fillStyle(0x6898F0); g.fillRect(0,4,TS,1); g.fillRect(0,12,TS,1);
@@ -79,7 +79,6 @@ function buildTextures(scene, c) {
   g.fillStyle(0xFFFFFF); [[6,2],[12,10]].forEach(([x,y]) => g.fillRect(x,y,1,1));
   g.generateTexture('water', TS, TS); g.clear();
 
-  // TREE
   g.fillStyle(0x68B848); g.fillRect(0,0,TS,TS);
   g.fillStyle(0x7A4828); g.fillRect(6,9,4,7);
   g.fillStyle(0x5A3818); g.fillRect(6,9,1,7);
@@ -90,7 +89,6 @@ function buildTextures(scene, c) {
   g.fillStyle(0x002800); g.fillRect(1,9,14,1);
   g.generateTexture('tree', TS, TS); g.clear();
 
-  // TALL GRASS
   g.fillStyle(0x409028); g.fillRect(0,0,TS,TS);
   g.fillStyle(0x306018); g.fillRect(0,10,TS,6);
   const blade = (bx, ty, h) => {
@@ -102,7 +100,6 @@ function buildTextures(scene, c) {
   blade(2,0,10); blade(7,1,9); blade(12,0,10);
   g.generateTexture('tall', TS, TS); g.clear();
 
-  // FLOWER
   g.fillStyle(0x68B848); g.fillRect(0,0,TS,TS);
   g.fillStyle(0x50A030); [1,5,9,13].forEach(y => g.fillRect(0,y,TS,1));
   g.fillStyle(0x287800); g.fillRect(7,9,2,5);
@@ -110,7 +107,6 @@ function buildTextures(scene, c) {
   g.fillStyle(0xFFE040); g.fillRect(7,5,2,2);
   g.generateTexture('flower', TS, TS); g.clear();
 
-  // SIGN
   g.fillStyle(0x68B848); g.fillRect(0,0,TS,TS);
   g.fillStyle(0x50A030); [1,5,9,13].forEach(y => g.fillRect(0,y,TS,1));
   g.fillStyle(0x8B5E3C); g.fillRect(7,8,2,8);
@@ -119,7 +115,6 @@ function buildTextures(scene, c) {
   g.fillStyle(0x282808); g.fillRect(4,3,8,1); g.fillRect(4,5,6,1); g.fillRect(4,7,7,1);
   g.generateTexture('sign', TS, TS); g.clear();
 
-  // HOUSE
   g.fillStyle(0xE8D4B8); g.fillRect(0,0,TS,TS);
   g.fillStyle(0xB06040); g.fillRect(0,0,TS,5);
   g.fillStyle(0x803820); g.fillRect(0,4,TS,1);
@@ -130,7 +125,6 @@ function buildTextures(scene, c) {
   g.fillStyle(0xC0A880); g.fillRect(7,11,3,5);
   g.generateTexture('house', TS, TS); g.clear();
 
-  // PLAYER SPRITES — 6 variants: down/up/side × idle/walk
   const skin = H(c.skin), shirt = H(c.shirt), pant = H(c.pants), hairC = H(c.hair);
   const capC = c.cap ? H(c.cap) : null, brimC = c.capBrim ? H(c.capBrim) : capC;
   const scarfC = c.scarf ? H(c.scarf) : null;
@@ -194,7 +188,6 @@ function buildTextures(scene, c) {
   g.destroy();
 }
 
-// Canvas-based character preview (64×64)
 function drawCharPreview(ctx, c) {
   ctx.clearRect(0, 0, 64, 64);
   ctx.save(); ctx.globalAlpha = 0.18; ctx.fillStyle = '#000';
@@ -231,16 +224,34 @@ export default function RPGWorld() {
   const containerRef = useRef(null);
   const gameRef = useRef(null);
   const touchDirRef = useRef(null);
+  const onEncounterRef = useRef(null);
+
   const [charColor, setCharColor] = useState(null);
   const [encounter, setEncounter] = useState(null);
   const [zone, setZone] = useState(null);
   const zoneRef = useRef(null);
 
+  const [pokeballs, setPokeballs] = useState(() => {
+    const s = localStorage.getItem('rpg_pokeballs');
+    return s !== null ? parseInt(s) : POKEBALLS_INIT;
+  });
+  const [captured, setCaptured] = useState(() =>
+    JSON.parse(localStorage.getItem('rpg_captured') || '[]')
+  );
+  const [showBodega, setShowBodega] = useState(false);
+  // bs = { angered, baited, msg, resolved, caught }
+  const [bs, setBs] = useState(null);
+
+  // Siempre apunta al callback más reciente desde Phaser
+  onEncounterRef.current = (poke) => {
+    setEncounter(poke);
+    setBs({ angered: false, baited: false, msg: null, resolved: false, caught: false });
+  };
+
   useEffect(() => {
     if (!charColor || !containerRef.current) return;
 
     const charConfig = CHARS[charColor];
-    const onEncounter = setEncounter;
     const getTD = () => touchDirRef.current;
     const onZoneChange = (newZone) => {
       if (newZone !== zoneRef.current) {
@@ -305,7 +316,7 @@ export default function RPGWorld() {
             if (ENCOUNTER_TILES.has(MAP[ny]?.[nx]??0) && Math.random() < 0.18) {
               const poke = WILD_POKEMON[Math.floor(Math.random()*WILD_POKEMON.length)];
               this.busy = true;
-              onEncounter(poke);
+              onEncounterRef.current(poke);
             }
           },
         });
@@ -327,10 +338,76 @@ export default function RPGWorld() {
 
   const dismissEncounter = () => {
     setEncounter(null);
+    setBs(null);
     const scene = gameRef.current?.scene?.getScene('GameScene');
     if (scene) scene.busy = false;
   };
 
+  // --- Acciones de batalla ---
+
+  const doRock = () => {
+    // Roca: +captura, +huida (pokémon enojado)
+    const fleeChance = Math.min(0.85, BASE_FLEE + (bs.baited ? -0.15 : 0) + 0.35);
+    const flees = Math.random() < fleeChance;
+    setBs(p => ({
+      ...p,
+      angered: true,
+      resolved: flees,
+      msg: flees
+        ? `¡${encounter.name.toUpperCase()} se asustó con la roca y huyó!`
+        : `¡${encounter.name.toUpperCase()} está furioso! Es más fácil capturarlo.`,
+    }));
+  };
+
+  const doBait = () => {
+    // Sebo: -huida, -captura (pokémon distraído)
+    const fleeChance = Math.max(0.02, BASE_FLEE + (bs.angered ? 0.35 : 0) - 0.15);
+    const flees = Math.random() < fleeChance;
+    setBs(p => ({
+      ...p,
+      baited: true,
+      resolved: flees,
+      msg: flees
+        ? `${encounter.name.toUpperCase()} comió el sebo... ¡y huyó de todos modos!`
+        : `${encounter.name.toUpperCase()} come el sebo. Menos probable que huya.`,
+    }));
+  };
+
+  const doBall = () => {
+    if (pokeballs <= 0) {
+      setBs(p => ({ ...p, msg: '¡No te quedan Pokéballs!' }));
+      return;
+    }
+    const nb = pokeballs - 1;
+    setPokeballs(nb);
+    localStorage.setItem('rpg_pokeballs', String(nb));
+
+    const catchRate = Math.min(0.95, BASE_CATCH + (bs.angered ? 0.25 : 0) - (bs.baited ? 0.20 : 0));
+
+    if (Math.random() < catchRate) {
+      const next = [...captured, { id: encounter.id, name: encounter.name }];
+      setCaptured(next);
+      localStorage.setItem('rpg_captured', JSON.stringify(next));
+      setBs(p => ({
+        ...p,
+        caught: true,
+        resolved: true,
+        msg: `¡${encounter.name.toUpperCase()} fue atrapado! Se guardó en la Bodega.`,
+      }));
+    } else {
+      const fleeChance = Math.min(0.80, BASE_FLEE + (bs.angered ? 0.35 : 0) - (bs.baited ? 0.15 : 0));
+      const flees = Math.random() < fleeChance;
+      setBs(p => ({
+        ...p,
+        resolved: flees,
+        msg: flees
+          ? `¡${encounter.name.toUpperCase()} rompió la Pokéball y huyó!`
+          : `¡Oh! ¡${encounter.name.toUpperCase()} se escapó de la Pokéball!`,
+      }));
+    }
+  };
+
+  // --- Pantalla de selección de personaje ---
   if (!charColor) {
     return (
       <div className="rpg-select-screen">
@@ -359,26 +436,35 @@ export default function RPGWorld() {
 
   return (
     <div className="rpg-wrapper">
+      {/* HUD */}
       <div className="rpg-hud">
         <div className="rpg-hud-left">
           <div className="rpg-hud-dot" />
           <span className="rpg-hud-title">MUNDO RPG</span>
         </div>
-        <button className="rpg-menu-btn" onClick={() => navigate('/')}>MENÚ</button>
+        <div className="rpg-hud-right">
+          <span className="rpg-pokeball-count">
+            <span className="rpg-pb-icon" />
+            {pokeballs}
+          </span>
+          <button className="rpg-bodega-btn" onClick={() => setShowBodega(true)}>
+            BODEGA {captured.length > 0 && `(${captured.length})`}
+          </button>
+          <button className="rpg-menu-btn" onClick={() => navigate('/')}>MENÚ</button>
+        </div>
       </div>
 
+      {/* Canvas del mundo */}
       <div className="rpg-canvas-container" ref={containerRef}>
         {zone && (
           <div key={zone} className="rpg-zone-banner">
             <span>{zone}</span>
           </div>
         )}
-
         <div className="rpg-legend">
           <span>WASD / Flechas para moverse</span>
           <span>Hierba oscura = encuentros</span>
         </div>
-
         <div className="rpg-dpad">
           {[['up','▲'],['left','◀'],['right','▶'],['down','▼']].map(([dir, icon]) => (
             <button key={dir} className={`rpg-dpad-btn ${dir}`}
@@ -390,23 +476,92 @@ export default function RPGWorld() {
         </div>
       </div>
 
-      {encounter && (
+      {/* Batalla con Pokémon salvaje */}
+      {encounter && bs && (
         <div className="rpg-encounter-overlay">
           <div className="rpg-battle-field">
             <img
               src={`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${encounter.id}.png`}
               alt={encounter.name}
-              className="rpg-encounter-sprite"
+              className={`rpg-encounter-sprite${bs.caught ? ' caught' : ''}`}
             />
           </div>
           <div className="rpg-battle-dialog">
+            {(bs.angered || bs.baited) && (
+              <div className="rpg-battle-status">
+                {bs.angered && <span className="rpg-status-chip rpg-status-angry">⚡ FURIOSO</span>}
+                {bs.baited  && <span className="rpg-status-chip rpg-status-baited">🍖 ATRAÍDO</span>}
+              </div>
+            )}
             <p className="rpg-battle-text">
-              ¡Un {encounter.name.toUpperCase()} salvaje apareció!
+              {bs.msg || `¡Un ${encounter.name.toUpperCase()} salvaje apareció!`}
             </p>
-            <div className="rpg-battle-actions">
-              <button className="rpg-btn-fight" onClick={() => navigate('/battle')}>LUCHAR</button>
-              <button className="rpg-btn-run" onClick={dismissEncounter}>HUIR</button>
+            {bs.resolved ? (
+              <button className="rpg-btn-continue" onClick={dismissEncounter}>
+                CONTINUAR ▶
+              </button>
+            ) : (
+              <div className="rpg-battle-actions">
+                <button className="rpg-btn-rock" onClick={doRock}>
+                  🪨 ROCA
+                  <small>+captura +huida</small>
+                </button>
+                <button className="rpg-btn-bait" onClick={doBait}>
+                  🍖 SEBO
+                  <small>-huida  −captura</small>
+                </button>
+                <button
+                  className="rpg-btn-ball"
+                  onClick={doBall}
+                  disabled={pokeballs <= 0}
+                >
+                  ⚪ POKÉBALL
+                  <small>x{pokeballs}</small>
+                </button>
+                <button className="rpg-btn-run" onClick={dismissEncounter}>
+                  🏃 HUIR
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Bodega */}
+      {showBodega && (
+        <div className="rpg-bodega-overlay" onClick={() => setShowBodega(false)}>
+          <div className="rpg-bodega-box" onClick={e => e.stopPropagation()}>
+            <div className="rpg-bodega-header">
+              <span className="rpg-bodega-title">
+                BODEGA — {captured.length} Pokémon
+              </span>
+              <div className="rpg-bodega-meta">
+                <span className="rpg-pokeball-count">
+                  <span className="rpg-pb-icon" /> {pokeballs} Pokéballs
+                </span>
+                <button className="rpg-bodega-close" onClick={() => setShowBodega(false)}>✕</button>
+              </div>
             </div>
+            {captured.length === 0 ? (
+              <p className="rpg-bodega-empty">
+                No has atrapado ningún Pokémon aún.<br />
+                ¡Entra en la hierba alta y atrapa uno!
+              </p>
+            ) : (
+              <div className="rpg-bodega-scroll">
+                <div className="rpg-bodega-grid">
+                  {captured.map((p, i) => (
+                    <div key={i} className="rpg-bodega-card">
+                      <img
+                        src={`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${p.id}.png`}
+                        alt={p.name}
+                      />
+                      <span>{p.name.toUpperCase()}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         </div>
       )}
