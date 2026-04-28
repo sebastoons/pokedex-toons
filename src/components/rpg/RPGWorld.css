@@ -6,82 +6,126 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background: radial-gradient(ellipse at center, #1b3a1b 0%, #0d1f0d 100%);
+    background: #181820;
+    background-image:
+        radial-gradient(ellipse 60% 40% at 50% 0%, #1a3a50 0%, transparent 70%),
+        radial-gradient(ellipse 40% 30% at 80% 90%, #0d2e10 0%, transparent 60%);
     padding: 20px;
     box-sizing: border-box;
+    font-family: 'Press Start 2P', monospace;
 }
 
 .rpg-select-box {
-    background: rgba(0, 0, 0, 0.75);
-    border: 3px solid #4CAF50;
-    border-radius: 20px;
-    padding: 36px 44px;
+    background: #0a0a14;
+    border: 4px solid #506090;
+    border-bottom-color: #283048;
+    border-right-color: #283048;
+    padding: 32px 40px 40px;
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 28px;
-    box-shadow: 0 0 50px rgba(76, 175, 80, 0.35);
-    max-width: 520px;
+    max-width: 560px;
     width: 100%;
+    box-shadow: 0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.06);
+}
+
+.rpg-select-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+}
+
+.rpg-select-pokeball {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: linear-gradient(180deg, #E83030 50%, #fff 50%);
+    border: 3px solid #181818;
+    box-shadow: 0 3px 0 #000;
+    position: relative;
+}
+.rpg-select-pokeball::after {
+    content: '';
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 8px; height: 8px;
+    background: #fff;
+    border-radius: 50%;
+    border: 2px solid #181818;
+    margin-top: -1px;
 }
 
 .rpg-select-title {
-    font-family: 'Press Start 2P', monospace;
-    color: #A5D6A7;
-    font-size: 0.9em;
+    color: #F0F0A0;
+    font-size: 0.72em;
     text-align: center;
-    text-shadow: 0 0 14px rgba(76, 175, 80, 0.7);
+    letter-spacing: 2px;
+    text-shadow: 2px 2px 0 #000, 0 0 20px rgba(240,240,80,0.3);
     margin: 0;
-    letter-spacing: 1px;
 }
 
 .rpg-char-options {
     display: flex;
-    gap: 20px;
+    gap: 12px;
     flex-wrap: wrap;
     justify-content: center;
 }
 
 .rpg-char-btn {
-    background: rgba(76, 175, 80, 0.08);
-    border: 2px solid #2E7D32;
-    border-radius: 14px;
-    padding: 16px 20px;
+    background: #12121e;
+    border: 3px solid #3a4a6a;
+    border-bottom-color: #1a2a40;
+    border-right-color: #1a2a40;
+    padding: 14px 16px 10px;
     cursor: pointer;
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 10px;
-    transition: all 0.2s ease;
+    transition: transform 0.1s, filter 0.1s;
+    box-shadow: 3px 3px 0 #000;
 }
 
 .rpg-char-btn:hover {
-    background: rgba(76, 175, 80, 0.22);
-    border-color: #66BB6A;
-    transform: translateY(-5px);
-    box-shadow: 0 10px 24px rgba(76, 175, 80, 0.35);
+    transform: translateY(-3px);
+    filter: brightness(1.2);
+    border-color: #6080c0;
+}
+
+.rpg-char-btn:active {
+    transform: translateY(1px);
+    box-shadow: 1px 1px 0 #000;
+}
+
+.rpg-char-preview {
+    background: #1e2e40;
+    border: 2px solid #283848;
+    padding: 4px;
+    image-rendering: pixelated;
 }
 
 .rpg-char-label {
-    font-family: 'Press Start 2P', monospace;
-    font-size: 0.45em;
-    text-transform: uppercase;
+    font-size: 0.42em;
     letter-spacing: 1px;
+    text-shadow: 1px 1px 0 #000;
 }
 
 .rpg-back-btn {
     background: transparent;
-    color: #888;
-    border: 1px solid #444;
-    border-radius: 8px;
-    padding: 10px 22px;
+    color: #6878a8;
+    border: 2px solid #2a3450;
+    padding: 10px 24px;
     font-family: 'Press Start 2P', monospace;
-    font-size: 0.48em;
+    font-size: 0.44em;
     cursor: pointer;
-    transition: all 0.2s ease;
+    letter-spacing: 1px;
+    transition: color 0.15s, border-color 0.15s;
 }
 
-.rpg-back-btn:hover { color: #ccc; border-color: #777; }
+.rpg-back-btn:hover { color: #c0c8e8; border-color: #5060a0; }
 
 /* ===== MUNDO RPG ===== */
 .rpg-wrapper {
@@ -89,43 +133,68 @@
     inset: 0;
     display: flex;
     flex-direction: column;
-    background: #1a2e1a;
+    background: #000;
     overflow: hidden;
     z-index: 50;
 }
 
-/* ===== HUD SUPERIOR ===== */
+/* ===== HUD ===== */
 .rpg-hud {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 8px 16px;
-    background: rgba(0, 0, 0, 0.85);
-    border-bottom: 2px solid #2E7D32;
+    padding: 6px 12px;
+    background: #080810;
+    border-bottom: 3px solid #283858;
     flex-shrink: 0;
     z-index: 10;
+    box-shadow: 0 2px 0 #000;
+}
+
+.rpg-hud-left {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.rpg-hud-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: #50E050;
+    box-shadow: 0 0 6px #50E050;
+    animation: hud-blink 2s ease-in-out infinite;
+}
+
+@keyframes hud-blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
 }
 
 .rpg-hud-title {
-    color: #81C784;
+    color: #A8C8F8;
     font-family: 'Press Start 2P', monospace;
-    font-size: 0.65em;
-    text-shadow: 0 0 10px rgba(102, 187, 106, 0.5);
+    font-size: 0.58em;
+    letter-spacing: 2px;
+    text-shadow: 0 0 8px rgba(168,200,248,0.4);
 }
 
 .rpg-menu-btn {
-    background: rgba(198, 40, 40, 0.85);
-    color: white;
-    border: 2px solid #ef5350;
-    border-radius: 8px;
-    padding: 6px 14px;
+    background: #2a0808;
+    color: #F08080;
+    border: 2px solid #6a1818;
+    border-bottom-color: #3a0808;
+    border-right-color: #3a0808;
+    padding: 5px 14px;
     font-family: 'Press Start 2P', monospace;
-    font-size: 0.42em;
+    font-size: 0.4em;
     cursor: pointer;
-    transition: all 0.2s ease;
+    letter-spacing: 1px;
+    box-shadow: 2px 2px 0 #000;
+    transition: filter 0.1s;
 }
 
-.rpg-menu-btn:hover { background: rgba(198, 40, 40, 1); transform: translateY(-1px); }
+.rpg-menu-btn:hover { filter: brightness(1.3); }
+.rpg-menu-btn:active { transform: translate(1px,1px); box-shadow: 1px 1px 0 #000; }
 
 /* ===== CANVAS ===== */
 .rpg-canvas-container {
@@ -134,19 +203,35 @@
     overflow: hidden;
 }
 
-/* Phaser injects its canvas here */
 .rpg-canvas-container > canvas {
     display: block;
     image-rendering: pixelated;
     image-rendering: crisp-edges;
 }
 
-.rpg-canvas {
-    display: block;
-    image-rendering: pixelated;
-    image-rendering: crisp-edges;
-    width: 100%;
-    height: 100%;
+/* ===== ZONE BANNER (como en los juegos originales) ===== */
+.rpg-zone-banner {
+    position: absolute;
+    bottom: 70px;
+    right: 0;
+    background: #F0F0D8;
+    border: 3px solid #404040;
+    border-right: none;
+    padding: 8px 18px 8px 22px;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 0.52em;
+    color: #181818;
+    box-shadow: -3px 3px 0 #000;
+    animation: banner-slide 3s ease forwards;
+    z-index: 20;
+    letter-spacing: 1px;
+}
+
+@keyframes banner-slide {
+    0%   { transform: translateX(110%); }
+    12%  { transform: translateX(0); }
+    75%  { transform: translateX(0); opacity: 1; }
+    100% { transform: translateX(0); opacity: 0; }
 }
 
 /* ===== LEYENDA ===== */
@@ -158,24 +243,25 @@
     flex-direction: column;
     gap: 3px;
     pointer-events: none;
+    z-index: 5;
 }
 
 .rpg-legend span {
-    font-family: monospace;
-    font-size: 0.7em;
-    color: rgba(255, 255, 255, 0.65);
-    background: rgba(0, 0, 0, 0.45);
-    padding: 2px 6px;
-    border-radius: 4px;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 0.38em;
+    color: rgba(255, 255, 255, 0.75);
+    background: rgba(0, 0, 0, 0.65);
+    padding: 3px 7px;
+    letter-spacing: 0.5px;
 }
 
 /* ===== D-PAD ===== */
 .rpg-dpad {
     position: absolute;
-    bottom: 20px;
-    right: 20px;
-    width: 132px;
-    height: 132px;
+    bottom: 16px;
+    right: 16px;
+    width: 128px;
+    height: 128px;
     display: grid;
     grid-template-areas:
         ". up ."
@@ -183,16 +269,17 @@
         ". down .";
     grid-template-columns: 1fr 1fr 1fr;
     grid-template-rows: 1fr 1fr 1fr;
-    gap: 4px;
-    /* Always visible — helps on desktop too */
+    gap: 3px;
+    z-index: 20;
 }
 
 .rpg-dpad-btn {
-    background: rgba(0, 0, 0, 0.55);
-    border: 2px solid rgba(255, 255, 255, 0.25);
-    border-radius: 10px;
-    color: rgba(255, 255, 255, 0.85);
-    font-size: 1.1em;
+    background: rgba(0, 0, 12, 0.75);
+    border: 2px solid rgba(120, 140, 200, 0.4);
+    border-bottom-color: rgba(40, 60, 100, 0.6);
+    border-right-color: rgba(40, 60, 100, 0.6);
+    color: rgba(200, 220, 255, 0.9);
+    font-size: 1em;
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -200,117 +287,169 @@
     user-select: none;
     -webkit-user-select: none;
     touch-action: none;
-    transition: background 0.1s;
+    box-shadow: 2px 2px 0 rgba(0,0,0,0.5);
+    transition: background 0.08s;
 }
 
 .rpg-dpad-btn:active,
-.rpg-dpad-btn.active { background: rgba(255, 255, 255, 0.22); }
+.rpg-dpad-btn.active {
+    background: rgba(80, 100, 180, 0.5);
+    transform: translate(1px, 1px);
+    box-shadow: 1px 1px 0 rgba(0,0,0,0.5);
+}
 
 .rpg-dpad-btn.up    { grid-area: up; }
 .rpg-dpad-btn.left  { grid-area: left; }
 .rpg-dpad-btn.right { grid-area: right; }
 .rpg-dpad-btn.down  { grid-area: down; }
 
-/* ===== ENCUENTRO ===== */
+/* ===== ENCUENTRO — estilo batalla GBA ===== */
 .rpg-encounter-overlay {
     position: fixed;
     inset: 0;
-    background: rgba(0, 0, 0, 0.88);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 200;
-    animation: rpg-flash 0.35s ease;
-}
-
-@keyframes rpg-flash {
-    0%   { background: white; }
-    40%  { background: rgba(0,0,0,0.6); }
-    100% { background: rgba(0,0,0,0.88); }
-}
-
-.rpg-encounter-box {
-    background: linear-gradient(160deg, #1a3a1a, #0d260d);
-    border: 3px solid #4CAF50;
-    border-radius: 18px;
-    padding: 28px 32px;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    gap: 14px;
-    max-width: 340px;
-    width: 90%;
-    box-shadow: 0 0 50px rgba(76, 175, 80, 0.45);
+    z-index: 200;
+    animation: rpg-battle-intro 0.55s steps(1) forwards;
 }
 
-.rpg-encounter-excl {
-    font-family: 'Press Start 2P', monospace;
-    font-size: 0.55em;
-    color: #A5D6A7;
-    text-align: center;
-    line-height: 1.7;
-    margin: 0;
-    text-transform: uppercase;
+@keyframes rpg-battle-intro {
+    0%   { filter: invert(1) brightness(2); }
+    16%  { filter: invert(0); }
+    33%  { filter: invert(1) brightness(2); }
+    50%  { filter: invert(0); }
+    66%  { filter: invert(1) brightness(2); }
+    83%  { filter: invert(0); }
+    100% { filter: invert(0); }
+}
+
+/* Campo de batalla */
+.rpg-battle-field {
+    flex: 1;
+    background: linear-gradient(180deg, #90C8F0 0%, #70B0E0 35%, #90D870 36%, #70B850 60%, #508040 100%);
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding: 0 48px 24px 0;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Plataforma del enemigo */
+.rpg-battle-field::before {
+    content: '';
+    position: absolute;
+    bottom: 28px;
+    right: 60px;
+    width: 120px;
+    height: 24px;
+    background: radial-gradient(ellipse, rgba(0,0,0,0.25) 0%, transparent 70%);
+    border-radius: 50%;
 }
 
 .rpg-encounter-sprite {
-    width: 140px;
-    height: 140px;
+    width: 160px;
+    height: 160px;
     object-fit: contain;
-    filter: drop-shadow(0 4px 14px rgba(0,0,0,0.6));
-    animation: rpg-bounce 0.5s cubic-bezier(0.34,1.56,0.64,1);
+    image-rendering: pixelated;
+    filter: drop-shadow(0 8px 0 rgba(0,0,0,0.2));
+    animation: rpg-poke-enter 0.35s cubic-bezier(0.2, 0.8, 0.4, 1) 0.55s both;
+    position: relative;
+    z-index: 1;
 }
 
-@keyframes rpg-bounce {
-    from { transform: scale(0.2) translateY(20px); opacity: 0; }
-    to   { transform: scale(1) translateY(0); opacity: 1; }
+@keyframes rpg-poke-enter {
+    from { transform: translateX(200px); opacity: 0; }
+    to   { transform: translateX(0); opacity: 1; }
 }
 
-.rpg-encounter-name {
-    font-family: 'Press Start 2P', monospace;
-    font-size: 0.7em;
-    color: #fff;
-    text-shadow: 0 0 8px rgba(76,175,80,0.5);
-    margin: 0;
-}
-
-.rpg-encounter-actions {
+/* Caja de diálogo estilo GBA */
+.rpg-battle-dialog {
+    background: #F0F0E0;
+    border-top: 4px solid #888880;
+    padding: 14px 20px 18px;
     display: flex;
+    flex-direction: column;
     gap: 12px;
-    margin-top: 4px;
+    box-shadow: inset 0 2px 0 rgba(255,255,255,0.6);
+    flex-shrink: 0;
 }
 
-.rpg-btn-run {
-    padding: 10px 28px;
-    border-radius: 10px;
+.rpg-battle-text {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 0.62em;
+    color: #181818;
+    line-height: 2;
+    margin: 0;
+    letter-spacing: 0.5px;
+    animation: text-reveal 0.6s steps(30) 0.9s both;
+}
+
+@keyframes text-reveal {
+    from { clip-path: inset(0 100% 0 0); }
+    to   { clip-path: inset(0 0% 0 0); }
+}
+
+.rpg-battle-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+}
+
+/* Botones estilo GBA — relieve 3D */
+.rpg-btn-fight {
+    padding: 9px 22px;
     font-family: 'Press Start 2P', monospace;
     font-size: 0.52em;
     cursor: pointer;
-    border: 2px solid #555;
-    background: rgba(255, 255, 255, 0.08);
-    color: #ccc;
-    transition: all 0.18s ease;
+    background: #D82020;
+    color: #fff;
+    border: 3px solid #F04040;
+    border-bottom-color: #901010;
+    border-right-color: #901010;
+    box-shadow: 3px 3px 0 #500000;
+    letter-spacing: 1px;
+    transition: filter 0.1s;
+    text-shadow: 1px 1px 0 #700000;
 }
 
-.rpg-btn-run:hover { background: rgba(255,255,255,0.18); border-color: #888; color: #fff; }
+.rpg-btn-fight:hover { filter: brightness(1.15); }
+.rpg-btn-fight:active { transform: translate(2px,2px); box-shadow: 1px 1px 0 #500000; }
+
+.rpg-btn-run {
+    padding: 9px 22px;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 0.52em;
+    cursor: pointer;
+    background: #C8C8B8;
+    color: #282818;
+    border: 3px solid #E0E0D0;
+    border-bottom-color: #888878;
+    border-right-color: #888878;
+    box-shadow: 3px 3px 0 #484838;
+    letter-spacing: 1px;
+    transition: filter 0.1s;
+}
+
+.rpg-btn-run:hover { filter: brightness(1.1); }
+.rpg-btn-run:active { transform: translate(2px,2px); box-shadow: 1px 1px 0 #484838; }
 
 /* ===== RESPONSIVE ===== */
 @media (max-width: 768px) {
-    .rpg-select-box { padding: 24px 20px; gap: 20px; }
-    .rpg-select-title { font-size: 0.7em; }
-    .rpg-char-options { gap: 12px; }
-    .rpg-hud-title { font-size: 0.5em; }
-    .rpg-dpad { width: 148px; height: 148px; bottom: 14px; right: 14px; }
-    .rpg-dpad-btn { font-size: 1.3em; }
+    .rpg-select-box { padding: 24px 20px 32px; }
+    .rpg-select-title { font-size: 0.58em; }
+    .rpg-char-options { gap: 8px; }
+    .rpg-dpad { width: 148px; height: 148px; bottom: 12px; right: 12px; }
+    .rpg-dpad-btn { font-size: 1.2em; }
+    .rpg-encounter-sprite { width: 130px; height: 130px; }
 }
 
 @media (max-width: 480px) {
-    .rpg-hud { padding: 6px 10px; }
-    .rpg-hud-title { font-size: 0.42em; }
+    .rpg-hud { padding: 5px 10px; }
     .rpg-legend { display: none; }
-    .rpg-dpad { width: 160px; height: 160px; bottom: 10px; right: 10px; gap: 5px; }
-    .rpg-dpad-btn { font-size: 1.5em; border-radius: 12px; }
+    .rpg-dpad { width: 156px; height: 156px; gap: 4px; }
+    .rpg-dpad-btn { font-size: 1.4em; }
+    .rpg-battle-text { font-size: 0.54em; }
     .rpg-encounter-sprite { width: 110px; height: 110px; }
-    .rpg-encounter-name { font-size: 0.6em; }
-    .rpg-encounter-excl { font-size: 0.48em; }
+    .rpg-zone-banner { font-size: 0.44em; bottom: 60px; }
 }
