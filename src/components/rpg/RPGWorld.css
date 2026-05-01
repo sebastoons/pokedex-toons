@@ -95,6 +95,17 @@
     border: 2px solid #283848;
     padding: 4px;
     image-rendering: pixelated;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.rpg-char-img {
+    width: 80px;
+    height: 100px;
+    object-fit: contain;
+    image-rendering: pixelated;
+    display: block;
 }
 
 .rpg-char-label {
@@ -383,6 +394,26 @@
     border-radius: 50%;
 }
 
+/* Entrenador de espaldas — izquierda del campo */
+.rpg-trainer-sprite {
+    position: absolute;
+    bottom: 20px;
+    left: 28px;
+    width: 110px;
+    height: 110px;
+    object-fit: contain;
+    image-rendering: pixelated;
+    filter: drop-shadow(0 6px 0 rgba(0,0,0,0.2));
+    animation: trainer-enter 0.3s ease-out 0.6s both;
+    z-index: 1;
+}
+
+@keyframes trainer-enter {
+    from { transform: translateX(-130px); opacity: 0; }
+    to   { transform: translateX(0);      opacity: 1; }
+}
+
+/* Pokémon salvaje — derecha del campo */
 .rpg-encounter-sprite {
     width: 160px; height: 160px;
     object-fit: contain;
