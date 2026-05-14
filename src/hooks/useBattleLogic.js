@@ -2,10 +2,10 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { fetchPokemonDetailsByIds } from '../services/pokemonService';
-import { calculateDamage } from '../utils/battleUtils';
+import { calculateDamage, checkAccuracy } from '../utils/battleUtils';
 import analyticsTracker from '../utils/analyticsTracker';
 
-const STRUGGLE = { name: 'Forcejeo', power: 50, accuracy: 100, type: 'normal', damage_class: 'physical', currentPP: Infinity, maxPP: Infinity };
+const STRUGGLE = { name: 'Forcejeo', power: 50, accuracy: 100, type: 'normal', damage_class: 'physical', priority: 0, currentPP: Infinity, maxPP: Infinity };
 
 const TYPE_TO_STATUS = {
     poison: 'poisoned', bug: 'poisoned',
@@ -34,9 +34,22 @@ const addPP = (moves) => (moves || []).map(m => {
 const initPokemon = (p, moves) => ({
     ...p,
     currentHp: p.hp, maxHp: p.hp,
-    status: null, attackStage: 0, defenseStage: 0,
+    status: null, attackStage: 0, defenseStage: 0, speedStage: 0,
     moves: addPP(moves || p.moves),
 });
+
+const pickIAMove = (pokemon) => {
+    const avail = (pokemon.moves || []).filter(m => (m.currentPP ?? 1) > 0);
+    const pool = avail.length > 0 ? avail : [STRUGGLE];
+    return pool[Math.floor(Math.random() * pool.length)];
+};
+
+const speedOf = (pokemon) => {
+    const base = pokemon.speed ?? pokemon.stats?.speed ?? 50;
+    const stage = pokemon.speedStage ?? 0;
+    const s = Math.max(-6, Math.min(6, stage));
+    return base * (s >= 0 ? (2 + s) / 2 : 2 / (2 - s));
+};
 
 export const useBattleLogic = () => {
     const navigate = useNavigate();
@@ -63,10 +76,16 @@ export const useBattleLogic = () => {
 
     const player1TeamRef = useRef(player1Team);
     const player2TeamRef = useRef(player2Team);
+    const activePokemonP1Ref = useRef(activePokemonP1);
+    const activePokemonP2Ref = useRef(activePokemonP2);
     const floatingMsgTimerRef = useRef(null);
+    const gameModeRef = useRef(gameMode);
 
     useEffect(() => { player1TeamRef.current = player1Team; }, [player1Team]);
     useEffect(() => { player2TeamRef.current = player2Team; }, [player2Team]);
+    useEffect(() => { activePokemonP1Ref.current = activePokemonP1; }, [activePokemonP1]);
+    useEffect(() => { activePokemonP2Ref.current = activePokemonP2; }, [activePokemonP2]);
+    useEffect(() => { gameModeRef.current = gameMode; }, [gameMode]);
 
     const addLog = useCallback((message) => {
         setBattleLog(prev => [...prev, message].slice(-15));
@@ -101,37 +120,33 @@ export const useBattleLogic = () => {
         return false;
     }, [addLog]);
 
-    const handleAttackAction = useCallback(async (move) => {
-        if (animationBlocking || winner || awaitingSwitch) return;
-        if (!move) { if (!isPlayer1Turn) setIsPlayer1Turn(true); return; }
-
-        setAnimationBlocking(true);
-
-        const attacker = isPlayer1Turn ? activePokemonP1 : activePokemonP2;
-        const defender = isPlayer1Turn ? activePokemonP2 : activePokemonP1;
-
-        // Parálisis
+    // Executes one attacker's move against defender. Returns updated defender HP and whether it fainted.
+    const executeOneAttack = useCallback(async ({
+        attacker, defender,
+        setAtkTeam, setActivePokemon_atk,
+        setDefTeam, setActivePokemon_def,
+        setPokemonAtkAnim, setPokemonDefDamaged,
+        attackSide,
+        move,
+        winnerIfAtkWins,
+    }) => {
+        // Paralysis check
         if (attacker.status === 'paralyzed' && Math.random() < 0.25) {
             addLog(`¡${attacker.name.toUpperCase()} está paralizado y no puede moverse!`);
             await new Promise(r => setTimeout(r, 900));
-            setIsPlayer1Turn(prev => !prev);
-            setAnimationBlocking(false);
-            return;
+            return { defenderFainted: false, attackerFainted: false, newDefHp: defender.currentHp, newAtkHp: attacker.currentHp };
         }
 
-        // PP check → Forcejeo si todos en 0
+        // PP deduction
         const moveInTeam = attacker.moves?.find(m => m.name === move.name);
         const usedMove = (moveInTeam && (moveInTeam.currentPP ?? 1) <= 0) ? STRUGGLE : move;
 
-        // Deducir PP
         if (usedMove !== STRUGGLE && moveInTeam) {
             const updatedMoves = attacker.moves.map(m =>
                 m.name === usedMove.name ? { ...m, currentPP: Math.max(0, (m.currentPP ?? 1) - 1) } : m
             );
-            const setAtk = isPlayer1Turn ? setPlayer1Team : setPlayer2Team;
-            const setActiveAtk = isPlayer1Turn ? setActivePokemonP1 : setActivePokemonP2;
-            setAtk(prev => prev.map(p => p.id === attacker.id ? { ...p, moves: updatedMoves } : p));
-            setActiveAtk(prev => ({ ...prev, moves: updatedMoves }));
+            setAtkTeam(prev => prev.map(p => p.id === attacker.id ? { ...p, moves: updatedMoves } : p));
+            setActivePokemon_atk(prev => ({ ...prev, moves: updatedMoves }));
         }
 
         addLog(`${attacker.name.toUpperCase()} usó ${usedMove.name.toUpperCase()}!`);
@@ -141,52 +156,59 @@ export const useBattleLogic = () => {
         if (usedMove.statChange) {
             const { stat, stages, target } = usedMove.statChange;
             const statKey = stat === 'attack' ? 'attackStage' : 'defenseStage';
-            const tgtIsP1 = target === 'self' ? isPlayer1Turn : !isPlayer1Turn;
-            const tgtPoke = target === 'self' ? attacker : defender;
+            const tgtIsAtk = target === 'self';
+            const tgtPoke = tgtIsAtk ? attacker : defender;
             const newStage = Math.max(-6, Math.min(6, (tgtPoke[statKey] ?? 0) + stages));
-            const setTgt = tgtIsP1 ? setPlayer1Team : setPlayer2Team;
-            const setActiveTgt = tgtIsP1 ? setActivePokemonP1 : setActivePokemonP2;
+            const setTgt = tgtIsAtk ? setAtkTeam : setDefTeam;
+            const setActiveTgt = tgtIsAtk ? setActivePokemon_atk : setActivePokemon_def;
             setTgt(prev => prev.map(p => p.id === tgtPoke.id ? { ...p, [statKey]: newStage } : p));
             setActiveTgt(prev => ({ ...prev, [statKey]: newStage }));
             const dir = stages > 0 ? 'subió' : 'bajó';
             const statLabel = stat === 'attack' ? 'ATAQUE' : 'DEFENSA';
             addLog(`¡El ${statLabel} de ${tgtPoke.name.toUpperCase()} ${dir}!`);
-            setLastAttack({ side: isPlayer1Turn ? 'p1' : 'p2', moveType: usedMove.type });
+            setLastAttack({ side: attackSide, moveType: usedMove.type });
             await new Promise(r => setTimeout(r, 800));
-            setIsPlayer1Turn(prev => !prev);
-            setAnimationBlocking(false);
-            return;
+            return { defenderFainted: false, attackerFainted: false, newDefHp: defender.currentHp, newAtkHp: attacker.currentHp };
         }
 
-        // Animación de ataque — partículas al llegar al objetivo (tras la transición CSS de 300ms)
-        (isPlayer1Turn ? setPokemonP1Attacking : setPokemonP2Attacking)(true);
-        setTimeout(() => setLastAttack({ side: isPlayer1Turn ? 'p1' : 'p2', moveType: usedMove.type, ts: Date.now() }), 300);
+        // Accuracy check
+        if (!checkAccuracy(usedMove)) {
+            setPokemonAtkAnim(true);
+            setTimeout(() => setLastAttack({ side: attackSide, moveType: usedMove.type, ts: Date.now() }), 300);
+            await new Promise(r => setTimeout(r, 600));
+            setPokemonAtkAnim(false);
+            addLog(`¡${attacker.name.toUpperCase()} falló el ataque!`);
+            await new Promise(r => setTimeout(r, 400));
+            return { defenderFainted: false, attackerFainted: false, newDefHp: defender.currentHp, newAtkHp: attacker.currentHp };
+        }
+
+        // Attack animation
+        setPokemonAtkAnim(true);
+        setTimeout(() => setLastAttack({ side: attackSide, moveType: usedMove.type, ts: Date.now() }), 300);
         await new Promise(r => setTimeout(r, 800));
 
         const { damage, effectivenessMessage, isCritical } = calculateDamage(attacker, defender, usedMove);
 
-        (isPlayer1Turn ? setPokemonP1Attacking : setPokemonP2Attacking)(false);
-        (isPlayer1Turn ? setPokemonP2Damaged : setPokemonP1Damaged)(true);
+        setPokemonAtkAnim(false);
+        setPokemonDefDamaged(true);
         await new Promise(r => setTimeout(r, 500));
 
         if (isCritical && damage > 0) addLog('¡Golpe crítico!');
 
-        const newHp = Math.max(0, defender.currentHp - damage);
+        const newDefHp = Math.max(0, defender.currentHp - damage);
 
-        // Estado al defensor
+        // Status on defender
         let newDefStatus = defender.status;
         const statusEffect = getStatusEffect(usedMove);
-        if (statusEffect && !defender.status && newHp > 0 && Math.random() < statusEffect.chance) {
+        if (statusEffect && !defender.status && newDefHp > 0 && Math.random() < statusEffect.chance) {
             newDefStatus = statusEffect.status;
             const snames = { poisoned: 'envenenado', paralyzed: 'paralizado', burned: 'quemado' };
             addLog(`¡${defender.name.toUpperCase()} quedó ${snames[newDefStatus]}!`);
         }
 
-        const setDefTeam = isPlayer1Turn ? setPlayer2Team : setPlayer1Team;
-        const setActiveDef = isPlayer1Turn ? setActivePokemonP2 : setActivePokemonP1;
-        setDefTeam(prev => prev.map(p => p.id === defender.id ? { ...p, currentHp: newHp, status: newDefStatus } : p));
-        setActiveDef(prev => ({ ...prev, currentHp: newHp, status: newDefStatus }));
-        (isPlayer1Turn ? setPokemonP2Damaged : setPokemonP1Damaged)(false);
+        setDefTeam(prev => prev.map(p => p.id === defender.id ? { ...p, currentHp: newDefHp, status: newDefStatus } : p));
+        setActivePokemon_def(prev => ({ ...prev, currentHp: newDefHp, status: newDefStatus }));
+        setPokemonDefDamaged(false);
 
         addLog(`${defender.name.toUpperCase()} recibió ${damage} de daño.`);
 
@@ -200,52 +222,192 @@ export const useBattleLogic = () => {
                 showFloatingMessage(effectivenessMessage, 'resistant');
         }
 
-        await new Promise(r => setTimeout(r, 500));
+        await new Promise(r => setTimeout(r, 400));
 
-        if (newHp === 0) {
+        // End-of-turn status damage on ATTACKER
+        let newAtkHp = attacker.currentHp;
+        if (attacker.status === 'poisoned' || attacker.status === 'burned') {
+            const dmg = Math.max(1, Math.floor(attacker.maxHp * 0.1));
+            newAtkHp = Math.max(0, attacker.currentHp - dmg);
+            setAtkTeam(prev => prev.map(p => p.id === attacker.id ? { ...p, currentHp: newAtkHp } : p));
+            setActivePokemon_atk(prev => ({ ...prev, currentHp: newAtkHp }));
+            const sname = attacker.status === 'poisoned' ? 'veneno' : 'quemadura';
+            addLog(`${attacker.name.toUpperCase()} sufrió ${Math.max(1, Math.floor(attacker.maxHp * 0.1))} PS por ${sname}!`);
+            await new Promise(r => setTimeout(r, 400));
+        }
+
+        return {
+            defenderFainted: newDefHp === 0,
+            attackerFainted: newAtkHp === 0,
+            newDefHp,
+            newAtkHp,
+        };
+    }, [addLog, showFloatingMessage]);
+
+    // vsPlayer: alternating turns (same as before)
+    const handleAttackVsPlayer = useCallback(async (move) => {
+        setAnimationBlocking(true);
+        const isP1 = isPlayer1Turn;
+        const attacker = isP1 ? activePokemonP1 : activePokemonP2;
+        const defender = isP1 ? activePokemonP2 : activePokemonP1;
+
+        const { defenderFainted, attackerFainted } = await executeOneAttack({
+            attacker, defender,
+            setAtkTeam: isP1 ? setPlayer1Team : setPlayer2Team,
+            setActivePokemon_atk: isP1 ? setActivePokemonP1 : setActivePokemonP2,
+            setDefTeam: isP1 ? setPlayer2Team : setPlayer1Team,
+            setActivePokemon_def: isP1 ? setActivePokemonP2 : setActivePokemonP1,
+            setPokemonAtkAnim: isP1 ? setPokemonP1Attacking : setPokemonP2Attacking,
+            setPokemonDefDamaged: isP1 ? setPokemonP2Damaged : setPokemonP1Damaged,
+            attackSide: isP1 ? 'p1' : 'p2',
+            move,
+            winnerIfAtkWins: isP1 ? 'player1' : 'player2',
+        });
+
+        if (defenderFainted) {
+            const defenderTeam = isP1 ? player2TeamRef.current : player1TeamRef.current;
             addLog(`${defender.name.toUpperCase()} se ha debilitado!`);
-            analyticsTracker.trackEvent('Pokémon Derrotado', `${defender.name} por ${attacker.name}`);
-            const remaining = (isPlayer1Turn ? player2TeamRef.current : player1TeamRef.current).filter(p => p.currentHp > 0);
-            if (remaining.length > 0) {
-                if (remaining.length === 1) {
-                    const ok = await autoSwitchLastPokemon(!isPlayer1Turn);
-                    if (!ok) setAwaitingSwitch(isPlayer1Turn ? 'player2' : 'player1');
-                } else {
-                    setAwaitingSwitch(isPlayer1Turn ? 'player2' : 'player1');
-                }
+            analyticsTracker.trackEvent('Pokémon Derrotado', `${defender.name}`);
+            const remaining = defenderTeam.filter(p => p.currentHp > 0);
+            if (remaining.length === 0) {
+                setWinner(isP1 ? 'player1' : 'player2');
+            } else if (remaining.length === 1) {
+                await autoSwitchLastPokemon(!isP1);
             } else {
-                setWinner(isPlayer1Turn ? 'player1' : 'player2');
+                setAwaitingSwitch(isP1 ? 'player2' : 'player1');
             }
+        } else if (attackerFainted) {
+            const atkTeam = isP1 ? player1TeamRef.current : player2TeamRef.current;
+            addLog(`${attacker.name.toUpperCase()} se ha debilitado!`);
+            const remaining = atkTeam.filter(p => p.id !== attacker.id && p.currentHp > 0);
+            if (remaining.length === 0) setWinner(isP1 ? 'player2' : 'player1');
+            else if (remaining.length === 1) await autoSwitchLastPokemon(isP1);
+            else setAwaitingSwitch(isP1 ? 'player1' : 'player2');
         } else {
-            let atkHp = attacker.currentHp;
-            if (attacker.status === 'poisoned' || attacker.status === 'burned') {
-                const dmg = Math.max(1, Math.floor(attacker.maxHp * 0.1));
-                atkHp = Math.max(0, attacker.currentHp - dmg);
-                const setAtkTeam = isPlayer1Turn ? setPlayer1Team : setPlayer2Team;
-                const setActiveAtk = isPlayer1Turn ? setActivePokemonP1 : setActivePokemonP2;
-                setAtkTeam(prev => prev.map(p => p.id === attacker.id ? { ...p, currentHp: atkHp } : p));
-                setActiveAtk(prev => ({ ...prev, currentHp: atkHp }));
-                const sname = attacker.status === 'poisoned' ? 'veneno' : 'quemadura';
-                addLog(`${attacker.name.toUpperCase()} sufrió ${dmg} PS por ${sname}!`);
-                await new Promise(r => setTimeout(r, 400));
-            }
-            if (atkHp === 0) {
-                addLog(`${attacker.name.toUpperCase()} se ha debilitado!`);
-                const atkTeam = (isPlayer1Turn ? player1TeamRef.current : player2TeamRef.current);
-                const remaining = atkTeam.filter(p => p.id !== attacker.id && p.currentHp > 0);
-                if (remaining.length === 0) setWinner(isPlayer1Turn ? 'player2' : 'player1');
-                else if (remaining.length === 1) await autoSwitchLastPokemon(isPlayer1Turn);
-                else setAwaitingSwitch(isPlayer1Turn ? 'player1' : 'player2');
-            } else {
-                setIsPlayer1Turn(prev => !prev);
-            }
+            setIsPlayer1Turn(prev => !prev);
         }
 
         setAnimationBlocking(false);
-    }, [
-        animationBlocking, winner, awaitingSwitch, activePokemonP1, activePokemonP2,
-        addLog, isPlayer1Turn, autoSwitchLastPokemon, showFloatingMessage,
-    ]);
+    }, [isPlayer1Turn, activePokemonP1, activePokemonP2, executeOneAttack, addLog, autoSwitchLastPokemon]);
+
+    // vsIA: full round — player picks, IA picks, speed determines order, both attack
+    const handleAttackVsIA = useCallback(async (playerMove) => {
+        setAnimationBlocking(true);
+
+        const p1 = activePokemonP1Ref.current;
+        const p2 = activePokemonP2Ref.current;
+
+        const iaMove = pickIAMove(p2);
+
+        // Determine order: priority first, then speed (ties go to p1)
+        const p1Priority = playerMove.priority ?? 0;
+        const p2Priority = iaMove.priority ?? 0;
+        const p1Speed = speedOf(p1);
+        const p2Speed = speedOf(p2);
+
+        const p1GoesFirst = p1Priority > p2Priority || (p1Priority === p2Priority && p1Speed >= p2Speed);
+
+        const firstAtk  = p1GoesFirst ? p1  : p2;
+        const secondAtk = p1GoesFirst ? p2  : p1;
+        const firstMove  = p1GoesFirst ? playerMove : iaMove;
+        const secondMove = p1GoesFirst ? iaMove : playerMove;
+        const firstIsP1  = p1GoesFirst;
+
+        // --- First attacker ---
+        const firstResult = await executeOneAttack({
+            attacker: firstAtk,
+            defender: secondAtk,
+            setAtkTeam: firstIsP1 ? setPlayer1Team : setPlayer2Team,
+            setActivePokemon_atk: firstIsP1 ? setActivePokemonP1 : setActivePokemonP2,
+            setDefTeam: firstIsP1 ? setPlayer2Team : setPlayer1Team,
+            setActivePokemon_def: firstIsP1 ? setActivePokemonP2 : setActivePokemonP1,
+            setPokemonAtkAnim: firstIsP1 ? setPokemonP1Attacking : setPokemonP2Attacking,
+            setPokemonDefDamaged: firstIsP1 ? setPokemonP2Damaged : setPokemonP1Damaged,
+            attackSide: firstIsP1 ? 'p1' : 'p2',
+            move: firstMove,
+        });
+
+        if (firstResult.defenderFainted) {
+            const defTeam = firstIsP1 ? player2TeamRef.current : player1TeamRef.current;
+            addLog(`${secondAtk.name.toUpperCase()} se ha debilitado!`);
+            analyticsTracker.trackEvent('Pokémon Derrotado', secondAtk.name);
+            const remaining = defTeam.filter(p => p.currentHp > 0);
+            if (remaining.length === 0) {
+                setWinner(firstIsP1 ? 'player1' : 'player2');
+            } else if (remaining.length === 1) {
+                await autoSwitchLastPokemon(!firstIsP1);
+            } else {
+                setAwaitingSwitch(firstIsP1 ? 'player2' : 'player1');
+            }
+            setAnimationBlocking(false);
+            return;
+        }
+
+        if (firstResult.attackerFainted) {
+            const atkTeam = firstIsP1 ? player1TeamRef.current : player2TeamRef.current;
+            addLog(`${firstAtk.name.toUpperCase()} se ha debilitado!`);
+            const remaining = atkTeam.filter(p => p.id !== firstAtk.id && p.currentHp > 0);
+            if (remaining.length === 0) setWinner(firstIsP1 ? 'player2' : 'player1');
+            else if (remaining.length === 1) await autoSwitchLastPokemon(firstIsP1);
+            else setAwaitingSwitch(firstIsP1 ? 'player1' : 'player2');
+            setAnimationBlocking(false);
+            return;
+        }
+
+        // --- Second attacker (uses refreshed refs) ---
+        const secondIsP1 = !firstIsP1;
+        const updatedSecond = secondIsP1 ? activePokemonP1Ref.current : activePokemonP2Ref.current;
+        const updatedFirst  = secondIsP1 ? activePokemonP2Ref.current : activePokemonP1Ref.current;
+
+        const secondResult = await executeOneAttack({
+            attacker: updatedSecond,
+            defender: updatedFirst,
+            setAtkTeam: secondIsP1 ? setPlayer1Team : setPlayer2Team,
+            setActivePokemon_atk: secondIsP1 ? setActivePokemonP1 : setActivePokemonP2,
+            setDefTeam: secondIsP1 ? setPlayer2Team : setPlayer1Team,
+            setActivePokemon_def: secondIsP1 ? setActivePokemonP2 : setActivePokemonP1,
+            setPokemonAtkAnim: secondIsP1 ? setPokemonP1Attacking : setPokemonP2Attacking,
+            setPokemonDefDamaged: secondIsP1 ? setPokemonP2Damaged : setPokemonP1Damaged,
+            attackSide: secondIsP1 ? 'p1' : 'p2',
+            move: secondMove,
+        });
+
+        if (secondResult.defenderFainted) {
+            const defTeam = secondIsP1 ? player2TeamRef.current : player1TeamRef.current;
+            addLog(`${updatedFirst.name.toUpperCase()} se ha debilitado!`);
+            analyticsTracker.trackEvent('Pokémon Derrotado', updatedFirst.name);
+            const remaining = defTeam.filter(p => p.currentHp > 0);
+            if (remaining.length === 0) {
+                setWinner(secondIsP1 ? 'player1' : 'player2');
+            } else if (remaining.length === 1) {
+                await autoSwitchLastPokemon(!secondIsP1);
+            } else {
+                setAwaitingSwitch(secondIsP1 ? 'player2' : 'player1');
+            }
+        } else if (secondResult.attackerFainted) {
+            const atkTeam = secondIsP1 ? player1TeamRef.current : player2TeamRef.current;
+            addLog(`${updatedSecond.name.toUpperCase()} se ha debilitado!`);
+            const remaining = atkTeam.filter(p => p.id !== updatedSecond.id && p.currentHp > 0);
+            if (remaining.length === 0) setWinner(secondIsP1 ? 'player2' : 'player1');
+            else if (remaining.length === 1) await autoSwitchLastPokemon(secondIsP1);
+            else setAwaitingSwitch(secondIsP1 ? 'player1' : 'player2');
+        }
+        // Always player's turn after full round in vsIA
+        setIsPlayer1Turn(true);
+        setAnimationBlocking(false);
+    }, [executeOneAttack, addLog, autoSwitchLastPokemon]);
+
+    const handleAttackAction = useCallback(async (move) => {
+        if (animationBlocking || winner || awaitingSwitch) return;
+        setAnimationBlocking(true);
+        if (gameModeRef.current === 'vsIA') {
+            setAnimationBlocking(false); // handleAttackVsIA sets it internally
+            await handleAttackVsIA(move);
+        } else {
+            setAnimationBlocking(false);
+            await handleAttackVsPlayer(move);
+        }
+    }, [animationBlocking, winner, awaitingSwitch, handleAttackVsIA, handleAttackVsPlayer]);
 
     const handleSwitchPokemon = useCallback(async (newPokemon, isPlayer1 = true) => {
         if (animationBlocking || winner) return;
@@ -292,23 +454,19 @@ export const useBattleLogic = () => {
             setBag(prev => ({ ...prev, fullRestore: prev.fullRestore - 1 }));
         }
         await new Promise(r => setTimeout(r, 500));
-        setIsPlayer1Turn(false);
-        setAnimationBlocking(false);
-    }, [animationBlocking, winner, awaitingSwitch, isPlayer1Turn, activePokemonP1, bag, addLog]);
+        // In vsIA, using an item counts as the player's action — IA attacks
+        if (gameModeRef.current === 'vsIA') {
+            const iaMove = pickIAMove(activePokemonP2Ref.current);
+            setIsPlayer1Turn(false);
+            setAnimationBlocking(false);
+            await handleAttackVsIA(iaMove);
+        } else {
+            setIsPlayer1Turn(false);
+            setAnimationBlocking(false);
+        }
+    }, [animationBlocking, winner, awaitingSwitch, isPlayer1Turn, activePokemonP1, bag, addLog, handleAttackVsIA]);
 
-    // Turno IA
-    useEffect(() => {
-        if (winner || isPlayer1Turn || animationBlocking || awaitingSwitch || gameMode !== 'vsIA') return;
-        const t = setTimeout(() => {
-            if (!activePokemonP2?.moves) return;
-            const avail = activePokemonP2.moves.filter(m => (m.currentPP ?? 1) > 0);
-            const pool = avail.length > 0 ? avail : [STRUGGLE];
-            handleAttackAction(pool[Math.floor(Math.random() * pool.length)]);
-        }, 800);
-        return () => clearTimeout(t);
-    }, [isPlayer1Turn, winner, animationBlocking, awaitingSwitch, gameMode, activePokemonP2, handleAttackAction]);
-
-    // Cambio forzado IA
+    // Forzar cambio IA
     useEffect(() => {
         if (awaitingSwitch !== 'player2' || gameMode !== 'vsIA' || winner) return;
         const avail = player2Team.filter(p => p.currentHp > 0);

@@ -82,6 +82,7 @@ export const fetchPokemonDetails = async (pokemonId) => {
             maxHp: Math.floor(stats.hp * 2.5),
             attack: Math.floor(stats.attack * 0.5),
             defense: Math.floor(stats.defense * 0.5),
+            speed: stats.speed ?? 50,
             stats: stats,
             types: pokemonData.types,
             moves: finalMoves.slice(0, 4),
@@ -104,12 +105,13 @@ export const fetchPokemonDetails = async (pokemonId) => {
         }
         
         return {
-            id: pokemonId, 
-            name: `Pokémon ${pokemonId}`, 
-            hp: 100, 
+            id: pokemonId,
+            name: `Pokémon ${pokemonId}`,
+            hp: 100,
             maxHp: 100,
-            attack: 25, 
+            attack: 25,
             defense: 15,
+            speed: 40,
             stats: { hp: 40, attack: 50, defense: 30, 'special-attack': 40, 'special-defense': 30, speed: 40 },
             types: basicTypes.map(type => ({ type: { name: type } })),
             moves: movesForFallback,
@@ -156,6 +158,7 @@ export const fetchPokemonDetailsByIds = async (ids) => {
                 maxHp: Math.floor(specialPokemon.stats.hp * 2.5),
                 attack: Math.floor(specialPokemon.stats.attack * 0.5),
                 defense: Math.floor(specialPokemon.stats.defense * 0.5),
+                speed: specialPokemon.stats.speed ?? 50,
                 stats: specialPokemon.stats,
                 types: specialPokemon.types.map(t => ({ type: { name: t } })),
                 moves: finalMoves,
