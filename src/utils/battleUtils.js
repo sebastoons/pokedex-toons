@@ -1,6 +1,14 @@
 // src/utils/battleUtils.js
 import { calculateTypeEffectiveness } from './typeEffectiveness';
 
+export const checkAccuracy = (move, attackerAccStage = 0, defenderEvaStage = 0) => {
+    const acc = move.accuracy;
+    if (acc === null || acc === undefined) return true;
+    const stage = Math.max(-6, Math.min(6, attackerAccStage - defenderEvaStage));
+    const modifier = stage >= 0 ? (3 + stage) / 3 : 3 / (3 - stage);
+    return Math.random() < (acc / 100) * modifier;
+};
+
 export const stageMultiplier = (stage) => {
     const s = Math.max(-6, Math.min(6, stage ?? 0));
     return s >= 0 ? (2 + s) / 2 : 2 / (2 - s);

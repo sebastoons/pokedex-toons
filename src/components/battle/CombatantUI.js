@@ -22,9 +22,11 @@ export const CombatantUI = React.memo(function CombatantUI({
 
     const hpPercentage = Math.max(0, (pokemon.currentHp / pokemon.maxHp) * 100);
 
-    let hpBarClass = 'high-hp';
-    if (hpPercentage < 20) hpBarClass = 'low-hp';
-    else if (hpPercentage < 50) hpBarClass = 'medium-hp';
+    // Smooth HSL gradient: green (120°) → yellow (60°) → red (0°)
+    const hue = Math.round((hpPercentage / 100) * 120);
+    const hpBarStyle = {
+        background: `linear-gradient(to right, hsl(${hue},80%,38%), hsl(${hue},90%,52%))`,
+    };
 
     const manualImage = manualPokemonImages[pokemon.id];
     const fallbackImage = isOpponent
@@ -52,8 +54,8 @@ export const CombatantUI = React.memo(function CombatantUI({
                     <div className="hp-label">HP</div>
                     <div className="combatant-hp-bar-bg">
                         <div
-                            className={`combatant-hp-bar-fill ${hpBarClass}`}
-                            style={{ width: `${hpPercentage}%` }}
+                            className="combatant-hp-bar-fill"
+                            style={{ width: `${hpPercentage}%`, ...hpBarStyle }}
                         />
                     </div>
                 </div>

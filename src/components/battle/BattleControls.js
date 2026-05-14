@@ -28,7 +28,6 @@ export const BattleControls = React.memo(function BattleControls({
         (gameMode === 'vsIA' && !isPlayersTurn);
 
     const movesToDisplay = (activePokemon.moves || []).slice(0, 4);
-    const showIAWaiting = gameMode === 'vsIA' && !isPlayersTurn && !battleEnded && !awaitingPlayerSwitch;
     const allPPEmpty = movesToDisplay.length > 0 && movesToDisplay.every(m => (m.currentPP ?? 1) <= 0);
 
     return (
@@ -39,10 +38,10 @@ export const BattleControls = React.memo(function BattleControls({
             <div className="controls-wrapper">
                 {!battleEnded && (
                     <div className={`turn-indicator ${isPlayersTurn ? 'turn-player' : 'turn-ia'}`}>
-                        {isPlayersTurn ? '⚡ TU TURNO' : gameMode === 'vsIA' ? '🤖 TURNO IA' : '⚔ TURNO RIVAL'}
+                        {isPlayersTurn ? '⚡ TU TURNO' : '⚔ TURNO RIVAL'}
                     </div>
                 )}
-                {showIAWaiting ? (
+                {false ? (
                     <div className="ia-waiting-message">
                         <div className="waiting-text">Turno de la IA...</div>
                         <div className="waiting-dots"><span>●</span><span>●</span><span>●</span></div>
