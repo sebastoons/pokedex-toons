@@ -113,7 +113,7 @@ export const useBattleLogic = () => {
             addLog(`¡Adelante, ${last.name.toUpperCase()}! ¡Es tu último Pokémon!`);
             await new Promise(r => setTimeout(r, 1000));
             (isPlayer1 ? setActivePokemonP1 : setActivePokemonP2)(last);
-            setIsPlayer1Turn(isPlayer1);
+            setIsPlayer1Turn(gameModeRef.current === 'vsIA' ? true : isPlayer1);
             setAnimationBlocking(false);
             return true;
         }
@@ -243,6 +243,41 @@ export const useBattleLogic = () => {
             newAtkHp,
         };
     }, [addLog, showFloatingMessage]);
+
+    // Runs only the IA's half of the round (after player switch or item use)
+    const executeIASingleAttack = useCallback(async () => {
+        const ia = activePokemonP2Ref.current;
+        const player = activePokemonP1Ref.current;
+        if (!ia || !player) return;
+        setAnimationBlocking(true);
+        const iaMove = pickIAMove(ia);
+        const result = await executeOneAttack({
+            attacker: ia, defender: player,
+            setAtkTeam: setPlayer2Team, setActivePokemon_atk: setActivePokemonP2,
+            setDefTeam: setPlayer1Team, setActivePokemon_def: setActivePokemonP1,
+            setPokemonAtkAnim: setPokemonP2Attacking, setPokemonDefDamaged: setPokemonP1Damaged,
+            attackSide: 'p2', move: iaMove,
+        });
+        if (result.defenderFainted) {
+            const freshPlayer = activePokemonP1Ref.current;
+            addLog(`${freshPlayer.name.toUpperCase()} se ha debilitado!`);
+            analyticsTracker.trackEvent('Pokémon Derrotado', freshPlayer.name);
+            const remaining = player1TeamRef.current.filter(p => p.currentHp > 0);
+            if (remaining.length === 0) { setWinner('player2'); setAnimationBlocking(false); return; }
+            if (remaining.length === 1) await autoSwitchLastPokemon(true);
+            else setAwaitingSwitch('player1');
+        } else if (result.attackerFainted) {
+            const freshIA = activePokemonP2Ref.current;
+            addLog(`${freshIA.name.toUpperCase()} se ha debilitado!`);
+            analyticsTracker.trackEvent('Pokémon Derrotado', freshIA.name);
+            const remaining = player2TeamRef.current.filter(p => p.currentHp > 0);
+            if (remaining.length === 0) { setWinner('player1'); setAnimationBlocking(false); return; }
+            if (remaining.length === 1) await autoSwitchLastPokemon(false);
+            else setAwaitingSwitch('player2');
+        }
+        setIsPlayer1Turn(true);
+        setAnimationBlocking(false);
+    }, [executeOneAttack, addLog, autoSwitchLastPokemon]);
 
     // vsPlayer: alternating turns (same as before)
     const handleAttackVsPlayer = useCallback(async (move) => {
@@ -421,10 +456,22 @@ export const useBattleLogic = () => {
         addLog(`¡Adelante, ${newPokemon.name.toUpperCase()}!`);
         await new Promise(r => setTimeout(r, 500));
         analyticsTracker.trackEvent('Cambio', `${isPlayer1 ? 'P1' : 'P2'} → ${newPokemon.name}`);
-        if (!wasAwaiting) setIsPlayer1Turn(prev => !prev);
-        else setIsPlayer1Turn(wasAwaiting === 'player1');
-        setAnimationBlocking(false);
-    }, [animationBlocking, winner, activePokemonP1, activePokemonP2, addLog, awaitingSwitch]);
+        if (gameModeRef.current === 'vsIA') {
+            if (!wasAwaiting) {
+                // Voluntary player switch: IA earns a free attack
+                setAnimationBlocking(false);
+                await executeIASingleAttack();
+            } else {
+                // Forced switch after faint: player's turn
+                setIsPlayer1Turn(true);
+                setAnimationBlocking(false);
+            }
+        } else {
+            if (!wasAwaiting) setIsPlayer1Turn(prev => !prev);
+            else setIsPlayer1Turn(wasAwaiting === 'player1');
+            setAnimationBlocking(false);
+        }
+    }, [animationBlocking, winner, activePokemonP1, activePokemonP2, addLog, awaitingSwitch, executeIASingleAttack]);
 
     const handlePokemonCircleClick = useCallback((pokemon, isPlayer1 = true) => {
         const can = (isPlayer1 && (isPlayer1Turn || awaitingSwitch === 'player1')) ||
@@ -454,17 +501,15 @@ export const useBattleLogic = () => {
             setBag(prev => ({ ...prev, fullRestore: prev.fullRestore - 1 }));
         }
         await new Promise(r => setTimeout(r, 500));
-        // In vsIA, using an item counts as the player's action — IA attacks
+        // In vsIA, using an item costs the player's turn — IA attacks once
         if (gameModeRef.current === 'vsIA') {
-            const iaMove = pickIAMove(activePokemonP2Ref.current);
-            setIsPlayer1Turn(false);
             setAnimationBlocking(false);
-            await handleAttackVsIA(iaMove);
+            await executeIASingleAttack();
         } else {
             setIsPlayer1Turn(false);
             setAnimationBlocking(false);
         }
-    }, [animationBlocking, winner, awaitingSwitch, isPlayer1Turn, activePokemonP1, bag, addLog, handleAttackVsIA]);
+    }, [animationBlocking, winner, awaitingSwitch, isPlayer1Turn, activePokemonP1, bag, addLog, executeIASingleAttack]);
 
     // Forzar cambio IA
     useEffect(() => {
