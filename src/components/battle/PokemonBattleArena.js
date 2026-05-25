@@ -104,8 +104,10 @@ const PokemonBattleArena = () => {
         if (gameMode === 'vsPlayer') handlePokemonCircleClick(pokemon, false);
     };
 
+    const arenaType = (activePokemonP2?.types?.[0]?.type?.name ?? activePokemonP2?.types?.[0]) || 'normal';
+
     return (
-        <div className="battle-arena-container">
+        <div className="battle-arena-container" data-type={arenaType}>
             <div className="battle-elements">
                 <div className="combatants-container">
                     <CombatantUI

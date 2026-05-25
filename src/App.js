@@ -1,24 +1,27 @@
 // src/App.js
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, lazy, Suspense } from 'react';
 import { Routes, Route, Link, useLocation } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 import ReactGA from 'react-ga4';
 
-// Componentes
+// Componentes cargados inmediatamente
 import PokeBallSpinner from './components/PokeBallSpinner';
 import PokemonCard from './components/PokemonCard';
-import PokemonDetail from './components/PokemonDetail';
-import PokemonBattleSelector from './components/PokemonBattleSelector';
-import PokemonBattleArena from './components/battle/PokemonBattleArena';
+import PokemonDelDia from './components/PokemonDelDia';
 import WelcomeModal from './components/WelcomeModal';
 import UpdateModal from './components/UpdateModal';
-import BattleModeSelector from './components/BattleModeSelector';
-import AnalyticsDashboard from './components/AnalyticsDashboard';
 import { generacionEspecial } from './data/generacionEspecial';
 import manualPokemonImages from './data/manualPokemonImages';
 
 // Analytics Tracker
 import analyticsTracker from './utils/analyticsTracker';
+
+// Componentes lazy (solo se cargan al navegar a su ruta)
+const PokemonDetail         = lazy(() => import('./components/PokemonDetail'));
+const PokemonBattleSelector = lazy(() => import('./components/PokemonBattleSelector'));
+const PokemonBattleArena    = lazy(() => import('./components/battle/PokemonBattleArena'));
+const BattleModeSelector    = lazy(() => import('./components/BattleModeSelector'));
+const AnalyticsDashboard    = lazy(() => import('./components/AnalyticsDashboard'));
 
 // Constantes
 const ALL_POKEMON_GENERATIONS = [
@@ -224,6 +227,7 @@ function App() {
           </header>
 
           <AnimatePresence mode="wait">
+          <Suspense fallback={<div style={{display:'flex',justifyContent:'center',paddingTop:'40px'}}><PokeBallSpinner text="Cargando..." size={56} /></div>}>
           <Routes location={location} key={location.pathname}>
               <Route path="/" element={
                   <motion.div variants={pageVariants} initial="initial" animate="animate" exit="exit">
@@ -232,6 +236,7 @@ function App() {
                           <h2>Busca tu Pokémon</h2>
                           <p>¡Encuentra a tu Pokémon favorito por nombre, ID o tipo!</p>
                       </div>
+                      {pokemonList.length > 0 && <PokemonDelDia pokemonList={pokemonList} />}
                       <div className="controls-container">
                           <div><label htmlFor="search-input">Nombre o ID:</label><input id="search-input" type="text" placeholder="Buscar..." value={searchTerm} onChange={handleSearchChange} /></div>
                           <div><label htmlFor="type-filter">Tipo:</label><select id="type-filter" value={selectedType} onChange={handleTypeChange}><option value="">Todos</option>{ALL_POKEMON_TYPES.map(type => <option key={type.value} value={type.value}>{type.display}</option>)}</select></div>
@@ -252,6 +257,7 @@ function App() {
               <Route path="/analytics" element={<motion.div variants={pageVariants} initial="initial" animate="animate" exit="exit"><AnalyticsDashboard /></motion.div>} />
               <Route path="*" element={<div className="error">Página no encontrada</div>} />
           </Routes>
+          </Suspense>
           </AnimatePresence>
 
           <div style={{ 
