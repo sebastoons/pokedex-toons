@@ -3,6 +3,7 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { fetchPokemonDetailsByIds } from '../services/pokemonService';
 import { calculateDamage, checkAccuracy } from '../utils/battleUtils';
+import { calculateTypeEffectiveness } from '../utils/typeEffectiveness';
 import analyticsTracker from '../utils/analyticsTracker';
 
 const STRUGGLE = { name: 'Forcejeo', power: 50, accuracy: 100, type: 'normal', damage_class: 'physical', priority: 0, currentPP: Infinity, maxPP: Infinity };
@@ -38,10 +39,20 @@ const initPokemon = (p, moves) => ({
     moves: addPP(moves || p.moves),
 });
 
-const pickIAMove = (pokemon) => {
+const pickIAMove = (pokemon, defender) => {
     const avail = (pokemon.moves || []).filter(m => (m.currentPP ?? 1) > 0);
     const pool = avail.length > 0 ? avail : [STRUGGLE];
-    return pool[Math.floor(Math.random() * pool.length)];
+    if (!defender || pool.length === 1) return pool[0];
+
+    const defTypes = (defender.types || []).map(t => t.type?.name ?? t);
+    const scored = pool.map(move => {
+        const power = move.power || 0;
+        if (power === 0) return { move, score: Math.random() * 8 };
+        const { multiplier } = calculateTypeEffectiveness(move.type || 'normal', defTypes);
+        return { move, score: power * multiplier + Math.random() * 15 };
+    });
+    scored.sort((a, b) => b.score - a.score);
+    return scored[0].move;
 };
 
 const speedOf = (pokemon) => {
@@ -250,7 +261,7 @@ export const useBattleLogic = () => {
         const player = activePokemonP1Ref.current;
         if (!ia || !player) return;
         setAnimationBlocking(true);
-        const iaMove = pickIAMove(ia);
+        const iaMove = pickIAMove(ia, player);
         const result = await executeOneAttack({
             attacker: ia, defender: player,
             setAtkTeam: setPlayer2Team, setActivePokemon_atk: setActivePokemonP2,
@@ -332,7 +343,7 @@ export const useBattleLogic = () => {
         const p1 = activePokemonP1Ref.current;
         const p2 = activePokemonP2Ref.current;
 
-        const iaMove = pickIAMove(p2);
+        const iaMove = pickIAMove(p2, p1);
 
         // Determine order: priority first, then speed (ties go to p1)
         const p1Priority = playerMove.priority ?? 0;

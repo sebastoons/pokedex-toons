@@ -18,15 +18,28 @@
     transition: background 0.5s ease;
 }
 
-.battle-arena-container[data-theme="great-ball"] {
-    --theme-bg-start: #0d1f3c;
-    --theme-bg-end: #1a3460;
-}
+.battle-arena-container[data-theme="great-ball"] { --theme-bg-start: #0d1f3c; --theme-bg-end: #1a3460; }
+.battle-arena-container[data-theme="ultra-ball"]  { --theme-bg-start: #1a1a1a; --theme-bg-end: #2a2a2a; }
 
-.battle-arena-container[data-theme="ultra-ball"] {
-    --theme-bg-start: #1a1a1a;
-    --theme-bg-end: #2a2a2a;
-}
+/* ===== TEMAS POR TIPO DE POKÉMON ===== */
+.battle-arena-container[data-type="fire"]     { --theme-bg-start: #6b1a00; --theme-bg-end: #3d0d00; --theme-accent: #ff7a2e; }
+.battle-arena-container[data-type="water"]    { --theme-bg-start: #003a6b; --theme-bg-end: #001e3d; --theme-accent: #4fc3f7; }
+.battle-arena-container[data-type="grass"]    { --theme-bg-start: #1a4a10; --theme-bg-end: #0d2608; --theme-accent: #69f0ae; }
+.battle-arena-container[data-type="electric"] { --theme-bg-start: #3d3000; --theme-bg-end: #1e1800; --theme-accent: #ffd740; }
+.battle-arena-container[data-type="ice"]      { --theme-bg-start: #0d3040; --theme-bg-end: #061820; --theme-accent: #80deea; }
+.battle-arena-container[data-type="fighting"] { --theme-bg-start: #4a1010; --theme-bg-end: #280808; --theme-accent: #ef5350; }
+.battle-arena-container[data-type="poison"]   { --theme-bg-start: #2e0a3d; --theme-bg-end: #180520; --theme-accent: #ce93d8; }
+.battle-arena-container[data-type="ground"]   { --theme-bg-start: #3d2800; --theme-bg-end: #1e1400; --theme-accent: #ffa726; }
+.battle-arena-container[data-type="flying"]   { --theme-bg-start: #1a2a4a; --theme-bg-end: #0d1526; --theme-accent: #b39ddb; }
+.battle-arena-container[data-type="psychic"]  { --theme-bg-start: #4a0a26; --theme-bg-end: #280513; --theme-accent: #f48fb1; }
+.battle-arena-container[data-type="bug"]      { --theme-bg-start: #1e2d00; --theme-bg-end: #0f1600; --theme-accent: #aed581; }
+.battle-arena-container[data-type="rock"]     { --theme-bg-start: #2d2800; --theme-bg-end: #161300; --theme-accent: #bcaaa4; }
+.battle-arena-container[data-type="ghost"]    { --theme-bg-start: #0f0b26; --theme-bg-end: #060413; --theme-accent: #9575cd; }
+.battle-arena-container[data-type="dragon"]   { --theme-bg-start: #1a0f40; --theme-bg-end: #0d0720; --theme-accent: #7e57c2; }
+.battle-arena-container[data-type="dark"]     { --theme-bg-start: #0f0f0f; --theme-bg-end: #050505; --theme-accent: #78909c; }
+.battle-arena-container[data-type="steel"]    { --theme-bg-start: #1a1e26; --theme-bg-end: #0d1013; --theme-accent: #b0bec5; }
+.battle-arena-container[data-type="fairy"]    { --theme-bg-start: #3d0a26; --theme-bg-end: #200513; --theme-accent: #f8bbd0; }
+.battle-arena-container[data-type="normal"]   { --theme-bg-start: #2a2a2a; --theme-bg-end: #141414; --theme-accent: #e0e0e0; }
 
 /* ===== LAYOUT ESTABLE CON GRID (evita desplazamiento de imágenes) ===== */
 .battle-elements {
