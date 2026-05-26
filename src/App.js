@@ -10,6 +10,7 @@ import PokemonCard from './components/PokemonCard';
 import PokemonDelDia from './components/PokemonDelDia';
 import WelcomeModal from './components/WelcomeModal';
 import UpdateModal from './components/UpdateModal';
+import PokedexMenu from './components/PokedexMenu';
 import { generacionEspecial } from './data/generacionEspecial';
 import manualPokemonImages from './data/manualPokemonImages';
 
@@ -78,6 +79,7 @@ function App() {
     const [isGenMenuOpen, setIsGenMenuOpen] = useState(false);
     const [showWelcome, setShowWelcome] = useState(true);
     const [showUpdate, setShowUpdate] = useState(false);
+    const [showPokedexMenu, setShowPokedexMenu] = useState(true);
     const LATEST_UPDATE_VERSION = "1.2.4";
 
     useEffect(() => {
@@ -216,14 +218,18 @@ function App() {
 
     return (
       <div className="pokedex-container">
-          {showWelcome && <WelcomeModal onClose={handleWelcomeClose} />}
+          {showPokedexMenu && <PokedexMenu onClose={() => setShowPokedexMenu(false)} />}
+          {showWelcome && !showPokedexMenu && <WelcomeModal onClose={handleWelcomeClose} />}
           {showUpdate && <UpdateModal onClose={handleUpdateClose} />}
-          
+
           <header>
-              <Link to="/" style={{ textDecoration: 'none', color: 'inherit' }}>
+              <div
+                  style={{ textDecoration: 'none', color: 'inherit', cursor: 'pointer' }}
+                  onClick={() => setShowPokedexMenu(true)}
+              >
                   <img src="/logo.svg" alt="Mi Pokedex Logo" className="pokedex-logo" />
                   <span style={{ textAlign: 'right', display: 'block', marginLeft: '150px', marginTop: '5px',fontWeight: 'bold',fontSize: '0.9em',fontFamily: 'monospace', color: '#ebebebff' }}>By Toons ♥ </span>
-              </Link>
+              </div>
           </header>
 
           <AnimatePresence mode="wait">
