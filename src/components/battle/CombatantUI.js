@@ -38,6 +38,18 @@ export const CombatantUI = React.memo(function CombatantUI({
 
     return (
         <div className={`combatant-ui ${isOpponent ? 'opponent' : 'player'}`}>
+            <div className="pokemon-image-frame">
+                <motion.img
+                    key={pokemon.id}
+                    src={imageUrl}
+                    alt={pokemon.name}
+                    className={`pokemon-combatant-sprite ${isOpponent ? 'opponent-sprite' : 'player-sprite'} ${isAttacking ? 'attacking' : ''} ${isDamaged ? 'damaged' : ''}`}
+                    initial={{ x: isOpponent ? 80 : -80, opacity: 0 }}
+                    animate={{ x: 0, opacity: 1 }}
+                    transition={{ type: 'spring', stiffness: 140, damping: 18, duration: 0.5 }}
+                />
+            </div>
+
             <div className="pokemon-data-panel">
                 <div className="panel-header">
                     <span className="combatant-name">{pokemon.name.toUpperCase()}</span>
@@ -58,8 +70,8 @@ export const CombatantUI = React.memo(function CombatantUI({
                             style={{ width: `${hpPercentage}%`, ...hpBarStyle }}
                         />
                     </div>
+                    <span className="combatant-hp-text">{pokemon.currentHp}/{pokemon.maxHp}</span>
                 </div>
-                <span className="combatant-hp-text">{pokemon.currentHp} / {pokemon.maxHp}</span>
 
                 <div className="pokemon-team-circles">
                     {team.map((p, index) => {
@@ -86,18 +98,6 @@ export const CombatantUI = React.memo(function CombatantUI({
                         );
                     })}
                 </div>
-            </div>
-
-            <div className="pokemon-image-frame">
-                <motion.img
-                    key={pokemon.id}
-                    src={imageUrl}
-                    alt={pokemon.name}
-                    className={`pokemon-combatant-sprite ${isOpponent ? 'opponent-sprite' : 'player-sprite'} ${isAttacking ? 'attacking' : ''} ${isDamaged ? 'damaged' : ''}`}
-                    initial={{ x: isOpponent ? 80 : -80, opacity: 0 }}
-                    animate={{ x: 0, opacity: 1 }}
-                    transition={{ type: 'spring', stiffness: 140, damping: 18, duration: 0.5 }}
-                />
             </div>
         </div>
     );

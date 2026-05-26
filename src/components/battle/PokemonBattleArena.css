@@ -55,13 +55,13 @@
 
 /* ===== ÁREA DE COMBATIENTES ===== */
 .combatants-container {
-    position: relative; /* para el mensaje de efectividad */
+    position: relative;
     display: flex;
-    justify-content: space-around;
+    justify-content: space-between;
     align-items: stretch;
     width: 100%;
     flex-direction: row-reverse;
-    gap: 16px;
+    gap: 6px;
     min-height: 0;
     overflow: hidden;
 }
