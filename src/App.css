@@ -19,6 +19,7 @@ body {
     box-sizing: border-box;
     position: relative;
     overflow-x: hidden; /* Evitar scroll horizontal en el body */
+    overscroll-behavior-y: contain; /* Deshabilita pull-to-refresh en móvil */
 
     /* --- Fondo de Imagen (Estilo GBA) --- */
     background-image: url('/public/imgindex/1.jpg'); /* Asegúrate que esta ruta sea correcta desde la raíz pública */
