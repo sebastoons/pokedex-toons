@@ -79,7 +79,7 @@ function App() {
     const [isGenMenuOpen, setIsGenMenuOpen] = useState(false);
     const [showWelcome, setShowWelcome] = useState(true);
     const [showUpdate, setShowUpdate] = useState(false);
-    const [showPokedexMenu, setShowPokedexMenu] = useState(true);
+    const [showPokedexMenu, setShowPokedexMenu] = useState(() => !sessionStorage.getItem('pdx-entered'));
     const LATEST_UPDATE_VERSION = "1.2.4";
 
     useEffect(() => {
@@ -218,7 +218,7 @@ function App() {
 
     return (
       <div className="pokedex-container">
-          {showPokedexMenu && <PokedexMenu onClose={() => setShowPokedexMenu(false)} />}
+          {showPokedexMenu && <PokedexMenu onClose={() => { sessionStorage.setItem('pdx-entered', '1'); setShowPokedexMenu(false); }} />}
           {showWelcome && !showPokedexMenu && <WelcomeModal onClose={handleWelcomeClose} />}
           {showUpdate && <UpdateModal onClose={handleUpdateClose} />}
 
