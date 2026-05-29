@@ -3,6 +3,11 @@
 /* --- Importar fuente de Google Fonts (PRIMERO DE TODO) --- */
 @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
 
+/* --- Deshabilita pull-to-refresh en iOS y Android --- */
+html {
+    overscroll-behavior-y: contain;
+}
+
 /* --- Estilos Generales del Body --- */
 body {
     margin: 0;
