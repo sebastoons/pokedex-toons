@@ -329,13 +329,16 @@ function PokemonBattleSelector({ pokemonList }) {
     const navigate = useNavigate();
     const location = useLocation();
     const { gameMode } = location.state || { gameMode: 'vsIA' };
+    const isVsPlayer = gameMode === 'vsPlayer';
 
     const [player1Team, setPlayer1Team] = useState([]);
-    const [player2Team] = useState([]);
-    const [currentPlayer] = useState(1);
+    const [player2Team, setPlayer2Team] = useState([]);
+    const [currentPlayer, setCurrentPlayer] = useState(1);
     const [teamSize] = useState(3);
     const [isConfiguringMoves, setIsConfiguringMoves] = useState(false);
+    const [showPlayerTransition, setShowPlayerTransition] = useState(false);
     const [selectedMovesP1, setSelectedMovesP1] = useState({});
+    const [selectedMovesP2, setSelectedMovesP2] = useState({});
 
     const [selectedGeneration, setSelectedGeneration] = useState('1');
     const [isGenMenuOpen, setIsGenMenuOpen] = useState(false);
@@ -378,33 +381,39 @@ function PokemonBattleSelector({ pokemonList }) {
     }, [loadMore]);
 
     const handleSelectPokemon = useCallback((pokemon) => {
-        setPlayer1Team(prev => {
+        const setTeam = currentPlayer === 1 ? setPlayer1Team : setPlayer2Team;
+        const setMoves = currentPlayer === 1 ? setSelectedMovesP1 : setSelectedMovesP2;
+        setTeam(prev => {
             if (prev.length >= teamSize) { alert(`¡Ya has seleccionado ${teamSize} Pokémon!`); return prev; }
             if (prev.some(p => p.id === pokemon.id)) { alert("¡Ya has seleccionado este Pokémon!"); return prev; }
             const pool = buildMovePool(getPokemonTypes(pokemon));
-            setSelectedMovesP1(m => ({ ...m, [pokemon.id]: pool.slice(0, 4) }));
+            setMoves(m => ({ ...m, [pokemon.id]: pool.slice(0, 4) }));
             const next = [...prev, pokemon];
             if (next.length === teamSize)
                 setTimeout(() => continueRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' }), 80);
             return next;
         });
-    }, [teamSize]);
+    }, [currentPlayer, teamSize]);
 
     const handleRemovePokemon = useCallback((pokemonId) => {
-        setPlayer1Team(prev => prev.filter(p => p.id !== pokemonId));
-        setSelectedMovesP1(m => { const n = { ...m }; delete n[pokemonId]; return n; });
-    }, []);
+        (currentPlayer === 1 ? setPlayer1Team : setPlayer2Team)(prev => prev.filter(p => p.id !== pokemonId));
+        (currentPlayer === 1 ? setSelectedMovesP1 : setSelectedMovesP2)(m => { const n = { ...m }; delete n[pokemonId]; return n; });
+    }, [currentPlayer]);
 
+    // Fetch API moves for the current player's team whenever move config opens
     useEffect(() => {
-        if (!isConfiguringMoves || player1Team.length === 0) return;
+        if (!isConfiguringMoves) return;
+        const team = currentPlayer === 1 ? player1Team : player2Team;
+        if (team.length === 0) return;
         const ctrl = new AbortController();
         const { signal } = ctrl;
 
         const fetchApiMoves = async () => {
             setLoadingApiMoves(true);
+            setApiMovePool({});
             const pools = {};
 
-            await Promise.all(player1Team.map(async (poke) => {
+            await Promise.all(team.map(async (poke) => {
                 try {
                     const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${poke.id}`, { signal });
                     if (!res.ok) throw new Error(res.status);
@@ -446,33 +455,79 @@ function PokemonBattleSelector({ pokemonList }) {
 
         fetchApiMoves();
         return () => ctrl.abort();
-    }, [isConfiguringMoves]); // eslint-disable-line react-hooks/exhaustive-deps
+    }, [isConfiguringMoves, currentPlayer]); // eslint-disable-line react-hooks/exhaustive-deps
 
     const handleMoveSelect = (pokemonId, slotIndex, move) => {
-        setSelectedMovesP1(prev => {
-            const current = [...(prev[pokemonId] || [])];
-            current[slotIndex] = move;
-            return { ...prev, [pokemonId]: current };
+        (currentPlayer === 1 ? setSelectedMovesP1 : setSelectedMovesP2)(prev => {
+            const curr = [...(prev[pokemonId] || [])];
+            curr[slotIndex] = move;
+            return { ...prev, [pokemonId]: curr };
         });
     };
 
     const handleStartBattle = () => {
         let finalP2Team = player2Team;
-        if (gameMode === 'vsIA') {
+        let finalMovesP2 = selectedMovesP2;
+        if (!isVsPlayer) {
             finalP2Team = [...pokemonList]
                 .filter(p => !player1Team.some(s => s.id === p.id))
                 .sort(() => 0.5 - Math.random())
                 .slice(0, teamSize);
+            finalMovesP2 = {};
         }
-        navigate(`/battle/arena?p1=${player1Team.map(p=>p.id).join(',')}&p2=${finalP2Team.map(p=>p.id).join(',')}&mode=${gameMode}`, {
-            state: { customMovesP1: selectedMovesP1 },
-        });
+        navigate(
+            `/battle/arena?p1=${player1Team.map(p => p.id).join(',')}&p2=${finalP2Team.map(p => p.id).join(',')}&mode=${gameMode}`,
+            { state: { customMovesP1: selectedMovesP1, customMovesP2: finalMovesP2 } }
+        );
     };
 
+    // ── Pantalla de transición entre J1 y J2 ─────────────────────────────────
+    if (showPlayerTransition) {
+        return (
+            <div className="battle-selector-container" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '80vh' }}>
+                <div style={{
+                    background: 'rgba(255,255,255,0.07)',
+                    border: '2px solid rgba(255,255,255,0.2)',
+                    borderRadius: '20px',
+                    padding: '48px 40px',
+                    textAlign: 'center',
+                    maxWidth: '420px',
+                    width: '100%',
+                }}>
+                    <div style={{ fontSize: '3rem', marginBottom: '16px' }}>🎮</div>
+                    <h2 style={{ color: '#ffcb05', fontFamily: "'Press Start 2P', monospace", fontSize: '0.85em', marginBottom: '16px' }}>
+                        ¡Turno del Jugador 2!
+                    </h2>
+                    <p style={{ color: 'rgba(255,255,255,0.75)', fontFamily: 'monospace', fontSize: '0.95em', lineHeight: 1.6, marginBottom: '32px' }}>
+                        Pasa el dispositivo al Jugador 2.<br />
+                        El Jugador 1 ya configuró su equipo.
+                    </p>
+                    <button
+                        className="start-battle-button"
+                        onClick={() => {
+                            setShowPlayerTransition(false);
+                            setCurrentPlayer(2);
+                            setIsConfiguringMoves(false);
+                            setVisibleCount(LAZY_BATCH);
+                        }}
+                    >
+                        ¡Listo, Jugador 2! →
+                    </button>
+                </div>
+            </div>
+        );
+    }
+
+    // ── Pantalla de configuración de técnicas ─────────────────────────────────
     if (isConfiguringMoves) {
+        const team = currentPlayer === 1 ? player1Team : player2Team;
+        const selectedMoves = currentPlayer === 1 ? selectedMovesP1 : selectedMovesP2;
+
         return (
             <div className="battle-selector-container">
-                <h1 style={{ color: 'white', textShadow: '2px 2px 4px black' }}>Configura las Técnicas</h1>
+                <h1 style={{ color: 'white', textShadow: '2px 2px 4px black' }}>
+                    {isVsPlayer ? `Jugador ${currentPlayer} — ` : ''}Configura las Técnicas
+                </h1>
 
                 {loadingApiMoves && (
                     <div style={{ marginBottom: '10px' }}>
@@ -481,7 +536,7 @@ function PokemonBattleSelector({ pokemonList }) {
                 )}
 
                 <div className="team-config-grid">
-                    {player1Team.map(poke => {
+                    {team.map(poke => {
                         const types = getPokemonTypes(poke);
                         const staticPool = buildMovePool(types);
                         const apiPool = apiMovePool[poke.id] || [];
@@ -489,7 +544,7 @@ function PokemonBattleSelector({ pokemonList }) {
                             (m, i, s) => i === s.findIndex(x => x.name === m.name)
                         );
                         const mainColor = TYPE_DISPLAY[types[0]]?.color || '#888';
-                        const moves = selectedMovesP1[poke.id] || [];
+                        const moves = selectedMoves[poke.id] || [];
 
                         return (
                             <div key={poke.id} className="poke-config-card" style={{ borderColor: mainColor }}>
@@ -521,20 +576,34 @@ function PokemonBattleSelector({ pokemonList }) {
 
                 <div className="config-actions">
                     <button onClick={() => setIsConfiguringMoves(false)} className="back-btn">Volver</button>
-                    <button onClick={handleStartBattle} className="start-battle-button">¡LUCHAR!</button>
+                    {isVsPlayer && currentPlayer === 1 ? (
+                        <button onClick={() => setShowPlayerTransition(true)} className="start-battle-button">
+                            Continuar → J2
+                        </button>
+                    ) : (
+                        <button onClick={handleStartBattle} className="start-battle-button">¡LUCHAR!</button>
+                    )}
                 </div>
             </div>
         );
     }
 
+    // ── Pantalla de selección de Pokémon ──────────────────────────────────────
     const currentGenName = ALL_POKEMON_GENERATIONS.find(g => g.id.toString() === selectedGeneration)?.name || 'Seleccionar';
 
     return (
         <div className="battle-selector-container">
             <Link to="/battle" className="back-to-pokedex-top">&lt; Cambiar Modo</Link>
-            <h1>Elige tu Equipo (3 Pokémon)</h1>
+            <h1>
+                {isVsPlayer ? `Jugador ${currentPlayer} — ` : ''}Elige tu Equipo (3 Pokémon)
+            </h1>
             <TeamPreview team={currentTeam} teamSize={teamSize} onRemove={handleRemovePokemon} />
-            <button ref={continueRef} onClick={() => currentTeam.length === teamSize ? setIsConfiguringMoves(true) : alert(`Debes seleccionar ${teamSize} Pokémon.`)} className="start-battle-button" disabled={currentTeam.length !== teamSize}>
+            <button
+                ref={continueRef}
+                onClick={() => currentTeam.length === teamSize ? setIsConfiguringMoves(true) : alert(`Debes seleccionar ${teamSize} Pokémon.`)}
+                className="start-battle-button"
+                disabled={currentTeam.length !== teamSize}
+            >
                 Continuar a Configuración
             </button>
             <div className="battle-controls-container">
@@ -543,7 +612,11 @@ function PokemonBattleSelector({ pokemonList }) {
                     {isGenMenuOpen && (
                         <ul className="generation-dropdown-menu">
                             {ALL_POKEMON_GENERATIONS.map(gen => (
-                                <li key={gen.id} onClick={() => { setSelectedGeneration(gen.id.toString()); setIsGenMenuOpen(false); }} className={selectedGeneration === gen.id.toString() ? 'active' : ''}>
+                                <li
+                                    key={gen.id}
+                                    onClick={() => { setSelectedGeneration(gen.id.toString()); setIsGenMenuOpen(false); }}
+                                    className={selectedGeneration === gen.id.toString() ? 'active' : ''}
+                                >
                                     {gen.name}
                                 </li>
                             ))}
