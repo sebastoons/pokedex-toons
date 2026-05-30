@@ -542,6 +542,7 @@ export const useBattleLogic = () => {
             const p2Ids = params.get('p2')?.split(',').map(Number);
             const mode = params.get('mode') || 'vsIA';
             const customMovesP1 = location.state?.customMovesP1 || {};
+            const customMovesP2 = location.state?.customMovesP2 || {};
             if (!p1Ids || !p2Ids || !p1Ids.length || !p2Ids.length) { navigate('/'); return; }
             setGameMode(mode);
             try {
@@ -549,7 +550,7 @@ export const useBattleLogic = () => {
                 const [p1d, p2d] = await Promise.all([fetchPokemonDetailsByIds(p1Ids), fetchPokemonDetailsByIds(p2Ids)]);
                 if (!p1d.length || !p2d.length) throw new Error('No se cargaron los equipos.');
                 const p1 = p1d.map(p => initPokemon(p, customMovesP1[p.id]));
-                const p2 = p2d.map(p => initPokemon(p, null));
+                const p2 = p2d.map(p => initPokemon(p, customMovesP2[p.id] || null));
                 setPlayer1Team(p1); setPlayer2Team(p2);
                 setActivePokemonP1(p1[0]); setActivePokemonP2(p2[0]);
                 setBag({ potions: 3, fullRestore: 1 });
