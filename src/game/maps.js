@@ -1,19 +1,23 @@
 // src/game/maps.js
-// Mapas de la Región Satélite — formato: 1 carácter = 1 tile
-//  T árbol      . césped      , flores     G hierba alta   p camino
-//  w agua       s arena       R techo rojo C techo centro  B techo azul (lab)
-//  W pared      D puerta      S cartel     = valla         i objeto
-//  (bloquean: T w R C B W S = ; D se maneja como acción especial)
+// Mapas de la Región Satélite — 10 mapas totales
+//
+//  Tiles transitables:   . , G p s c ~ g i
+//  Tiles sólidos:        T w R C B W S = # m
+//  Especiales:           D (puerta, dispara acción)
+//                        i (objeto recogible)
 
-export const SOLID_TILES = new Set(['T', 'w', 'R', 'C', 'B', 'W', 'S', '=']);
+export const SOLID_TILES = new Set(['T', 'w', 'R', 'C', 'B', 'W', 'S', '=', '#', 'm']);
 
 export const MAPS = {
+
+    // ══════════════════════════════════════════════════════════════════════
     pueblo: {
         name: 'Pueblo Órbita',
-        zoneTypes: null, // sin encuentros
+        zoneTypes: null,
         levelRange: null,
+        trainers: [],
         grid: [
-            'TTTTTTTTppTTTTTTTTTT',
+            'TTTTTTTTTTTTTTTTTTTT',
             'T,,.....pp.........T',
             'T..RRR..pp..RRR....T',
             'T..WDW..pp..WDW....T',
@@ -27,22 +31,41 @@ export const MAPS = {
             'T..p...,,,.....p...T',
             'T..ppppppppppppp...T',
             'T,,................T',
-            'TTTTTTTTTTTTTTTTTTTT',
+            'TTTTTTTTppTTTTTTTTTT',
         ],
         actions: {
-            '8,0':  { type: 'warp', to: 'ruta1', x: 8, y: 22 },
-            '9,0':  { type: 'warp', to: 'ruta1', x: 9, y: 22 },
-            '5,6':  { type: 'lab' },
-            '4,3':  { type: 'msg', text: 'Es tu casa. ¡Tu aventura te espera fuera!' },
-            '13,3': { type: 'msg', text: 'La puerta está cerrada.' },
+            '8,14':  { type: 'warp', to: 'ruta1', x: 8, y: 22 },
+            '9,14':  { type: 'warp', to: 'ruta1', x: 9, y: 22 },
+            '5,6':   { type: 'lab' },
+            '4,3':   { type: 'msg', text: 'Es tu casa. ¡Tu aventura te espera fuera!' },
+            '13,3':  { type: 'msg', text: 'La puerta está cerrada.' },
         },
         spawn: { x: 9, y: 9, dir: 'down' },
     },
 
+    // ══════════════════════════════════════════════════════════════════════
     ruta1: {
         name: 'Ruta Estelar 1',
         zoneTypes: ['normal', 'grass', 'bug'],
         levelRange: [2, 5],
+        trainers: [
+            {
+                id: 'r1-bugcatcher1',
+                x: 7, y: 8, dir: 'right', sight: 4,
+                name: 'Insectero Tomás',
+                teamIds: [1104, 1115], teamLevels: [4, 5],
+                dialog: '¡Alto ahí! ¡Tengo los mejores bichos!',
+                defeatDialog: '¡Increíble! ¡Mis bichos perdieron!',
+            },
+            {
+                id: 'r1-lass1',
+                x: 14, y: 15, dir: 'left', sight: 4,
+                name: 'Chica Lara',
+                teamIds: [1026], teamLevels: [6],
+                dialog: '¡El césped está lleno de Pokémon! ¡Yo también fui sorprendida!',
+                defeatDialog: 'Sabía que no tenía suficiente entrenamiento...',
+            },
+        ],
         grid: [
             'TTTTTTTTTTppTTTTTTTT',
             'T.....GGG.pp.......T',
@@ -72,17 +95,19 @@ export const MAPS = {
         actions: {
             '10,0': { type: 'warp', to: 'ciudad', x: 11, y: 15 },
             '11,0': { type: 'warp', to: 'ciudad', x: 12, y: 15 },
-            '8,22': { type: 'warp', to: 'pueblo', x: 8, y: 1 },
-            '9,22': { type: 'warp', to: 'pueblo', x: 9, y: 1 },
+            '8,23': { type: 'warp', to: 'pueblo', x: 8, y: 13 },
+            '9,23': { type: 'warp', to: 'pueblo', x: 9, y: 13 },
             '3,12': { type: 'msg', text: 'RUTA ESTELAR 1 — Pueblo Órbita al sur, Ciudad Cometa al norte.' },
         },
         spawn: { x: 9, y: 21, dir: 'up' },
     },
 
+    // ══════════════════════════════════════════════════════════════════════
     ciudad: {
         name: 'Ciudad Cometa',
         zoneTypes: null,
         levelRange: null,
+        trainers: [],
         grid: [
             'TTTTTTTTTTTTTTTTTTTTTTTT',
             'T......................T',
@@ -109,6 +134,7 @@ export const MAPS = {
             '0,8':   { type: 'warp', to: 'bosque', x: 20, y: 8 },
             '0,9':   { type: 'warp', to: 'bosque', x: 20, y: 9 },
             '23,9':  { type: 'warp', to: 'ruta2', x: 1, y: 6 },
+            '11,9':  { type: 'warp', to: 'ruta3', x: 1, y: 6 },
             '12,7':  { type: 'heal' },
             '4,3':   { type: 'msg', text: 'Hay alguien durmiendo dentro...' },
             '12,3':  { type: 'msg', text: 'TIENDA — Próximamente.' },
@@ -119,10 +145,12 @@ export const MAPS = {
         spawn: { x: 12, y: 10, dir: 'down' },
     },
 
+    // ══════════════════════════════════════════════════════════════════════
     bosque: {
         name: 'Bosque Lunar',
         zoneTypes: ['bug', 'grass', 'psychic', 'ghost', 'poison'],
         levelRange: [4, 8],
+        trainers: [],
         grid: [
             'TTTTTTTTTTTTTTTTTTTTT',
             'TTT.GGG..TT..GGGG..TT',
@@ -132,8 +160,8 @@ export const MAPS = {
             'TT.TTTT..TT..TTTT...T',
             'TT.TGGG..TT..i......T',
             'TT.TGGG..TTTTTTTT...T',
-            'TT.TGGG.............p',
-            'TT......TTT.........p',
+            'TT.TGGG..............',
+            'TT......TTT..........',
             'TT.GGGG.TTT..GGGG...T',
             'TT.GGGG.TTT..GGGG...T',
             'TT.GGGG.TTT..GGGG...T',
@@ -150,10 +178,12 @@ export const MAPS = {
         spawn: { x: 19, y: 8, dir: 'left' },
     },
 
+    // ══════════════════════════════════════════════════════════════════════
     ruta2: {
         name: 'Ruta Estelar 2',
         zoneTypes: ['electric', 'fighting', 'normal', 'fire', 'rock', 'ground'],
         levelRange: [8, 13],
+        trainers: [],
         grid: [
             'TTTTTTTTTTTTTTTTTTTTTTTTTT',
             'T....GGGG......GGGG......T',
@@ -179,10 +209,12 @@ export const MAPS = {
         spawn: { x: 1, y: 6, dir: 'right' },
     },
 
+    // ══════════════════════════════════════════════════════════════════════
     lago: {
         name: 'Lago Eclipse',
         zoneTypes: ['water', 'ice', 'dragon', 'fairy', 'flying'],
         levelRange: [11, 16],
+        trainers: [],
         grid: [
             'TTTTTTTTTTTTTTTTTTTT',
             'T...GGG.......GGG..T',
@@ -206,6 +238,212 @@ export const MAPS = {
             '0,7': { type: 'warp', to: 'ruta2', x: 24, y: 7 },
         },
         spawn: { x: 1, y: 6, dir: 'right' },
+    },
+
+    // ══════════════════════════════════════════════════════════════════════
+    ruta3: {
+        name: 'Ruta Cósmica 3',
+        zoneTypes: ['psychic', 'fairy', 'normal'],
+        levelRange: [12, 17],
+        trainers: [
+            {
+                id: 'r3-psychic1',
+                x: 8, y: 5, dir: 'down', sight: 4,
+                name: 'Psíquica Dana',
+                teamIds: [1040, 1026], teamLevels: [12, 13],
+                dialog: '¡He leído tu mente! ¡Sabía que vendrías!',
+                defeatDialog: 'Imposible... mis predicciones fallaron...',
+            },
+            {
+                id: 'r3-hiker1',
+                x: 16, y: 12, dir: 'left', sight: 4,
+                name: 'Excursionista Beto',
+                teamIds: [1032, 1032], teamLevels: [14, 15],
+                dialog: '¡Estas rutas son perfectas para entrenar!',
+                defeatDialog: 'Uff... necesito más práctica.',
+            },
+        ],
+        grid: [
+            'TTTTTTTTTTTTTTTTTTTTTTT',
+            'T...GGG...#####........T',
+            'T...GGG...##m##........T',
+            'T.........#####....GGG.T',
+            'T..ppppppppppppppppppp.T',
+            'T..p...................T',
+            'p..p...................',
+            'pppp...................',
+            'T..p...GGG....GGG......T',
+            'T..p...GGG....GGG......T',
+            'T..p...GGG....GGG......T',
+            'T..p...................T',
+            'T..p..,,......,,..pp...T',
+            'T..p..,,......,,..pp...T',
+            'T..pppppppppppppppp....T',
+            'T......................T',
+            'T......GGGG............T',
+            'T......GGGG....i.......T',
+            'T..S...GGGG............T',
+            'T......................T',
+            'TTTTTTTTTTTTTTTTTTTTTTT',
+        ],
+        actions: {
+            '0,6':  { type: 'warp', to: 'ciudad', x: 10, y: 10 },
+            '0,7':  { type: 'warp', to: 'ciudad', x: 10, y: 10 },
+            '22,6': { type: 'warp', to: 'villacosmos', x: 1, y: 10 },
+            '22,7': { type: 'warp', to: 'villacosmos', x: 1, y: 11 },
+            '3,18': { type: 'msg', text: 'RUTA CÓSMICA 3 — Ciudad Cometa al oeste, Villa Cosmos al este.' },
+        },
+        spawn: { x: 1, y: 6, dir: 'right' },
+    },
+
+    // ══════════════════════════════════════════════════════════════════════
+    villacosmos: {
+        name: 'Villa Cosmos',
+        zoneTypes: null,
+        levelRange: null,
+        trainers: [],
+        grid: [
+            'TTTTTTTTTTTTTTTTTTTTT',
+            'T...................T',
+            'T.RRR...RRRR...RRR..T',
+            'T.WDW...WWDW...WDW..T',
+            'T...................T',
+            'T.pppppppppppppppp..T',
+            'T.p................T',
+            'T.p...CCCC.........T',
+            'T.p...WWDW.........T',
+            'T.p................T',
+            '..p.................',
+            'pppppppppppppppppppp',
+            'T.p................T',
+            'T.p..=======.......T',
+            'T.p..=......=......T',
+            'T.p..=.BBBB.=......T',
+            'T.p..=.WWDW.=......T',
+            'T.p..=......=....i.T',
+            'T.p..=======.......T',
+            'T.p................T',
+            'T.pppppppppppppppp.T',
+            'TTTTTTTTTTTTTTTTTTTTT',
+        ],
+        actions: {
+            '0,10':  { type: 'warp', to: 'ruta3', x: 21, y: 6 },
+            '0,11':  { type: 'warp', to: 'ruta3', x: 21, y: 7 },
+            '20,10': { type: 'warp', to: 'cueva', x: 1, y: 8 },
+            '20,11': { type: 'warp', to: 'cueva', x: 1, y: 9 },
+            '6,8':   { type: 'heal' },
+            '7,3':   { type: 'msg', text: 'El vecino de al lado siempre tiene la luz encendida.' },
+            '13,3':  { type: 'msg', text: 'TIENDA COSMOS — Aquí venden suministros de exploración.' },
+            '19,3':  { type: 'msg', text: 'Una casa con un jardín de flores extrañas.' },
+            '7,16':  { type: 'mart' },
+        },
+        spawn: { x: 1, y: 10, dir: 'right' },
+    },
+
+    // ══════════════════════════════════════════════════════════════════════
+    cueva: {
+        name: 'Cueva Satélite',
+        zoneTypes: ['rock', 'ground', 'dark', 'ghost'],
+        levelRange: [18, 24],
+        trainers: [
+            {
+                id: 'cueva-hiker1',
+                x: 6, y: 5, dir: 'down', sight: 4,
+                name: 'Excavador Rufus',
+                teamIds: [1032, 1104], teamLevels: [18, 19],
+                dialog: '¡Las cuevas son mi hogar! ¡Te reto!',
+                defeatDialog: 'No conocía bien las oscuridades de aquí...',
+            },
+            {
+                id: 'cueva-ghost1',
+                x: 14, y: 10, dir: 'up', sight: 4,
+                name: 'Médium Silvia',
+                teamIds: [1115, 1115], teamLevels: [20, 21],
+                dialog: '¡Los espíritus me advierten de tu presencia!',
+                defeatDialog: 'Los espíritus me abandonaron...',
+            },
+            {
+                id: 'cueva-rocktrainer1',
+                x: 8, y: 16, dir: 'right', sight: 4,
+                name: 'Escalador Marco',
+                teamIds: [1032, 1026, 1040], teamLevels: [22, 22, 23],
+                dialog: '¡Esta cueva te pondrá a prueba de verdad!',
+                defeatDialog: '¡Eres más fuerte de lo que imaginé!',
+            },
+        ],
+        grid: [
+            'TTTTTTTTTTTTTTTTTTT',
+            'T#################T',
+            'T#...#...#...#...#T',
+            'T#.c.#.c.#.c.#.c.#T',
+            'T#...#...........#T',
+            'T##.##.ccccccccc.#T',
+            'T#...............#T',
+            'T#.cccccc.####...#T',
+            '..c...............',
+            '..c...............',
+            'T#.cccccc....#...#T',
+            'T#...........#.c.#T',
+            'T#.##########.cc.#T',
+            'T#.c..........cc.#T',
+            'T#.c..###.###.cc.#T',
+            'T#.c..#.....#....#T',
+            'T#.cc.#..i..#....#T',
+            'T#....#.....#....#T',
+            'T#....#######....#T',
+            'T#...............#T',
+            'T#################T',
+            'TTTTTTTTTTTTTTTTTTT',
+        ],
+        actions: {
+            '0,8':  { type: 'warp', to: 'villacosmos', x: 19, y: 10 },
+            '0,9':  { type: 'warp', to: 'villacosmos', x: 19, y: 11 },
+            '18,8': { type: 'warp', to: 'ciudadestrella', x: 1, y: 10 },
+            '18,9': { type: 'warp', to: 'ciudadestrella', x: 1, y: 11 },
+        },
+        spawn: { x: 1, y: 8, dir: 'right' },
+    },
+
+    // ══════════════════════════════════════════════════════════════════════
+    ciudadestrella: {
+        name: 'Ciudad Estrella',
+        zoneTypes: null,
+        levelRange: null,
+        trainers: [],
+        grid: [
+            'TTTTTTTTTTTTTTTTTTTTTTTT',
+            'T......................T',
+            'T.RRR...RRRR...RRR.....T',
+            'T.WDW...WWDW...WDW.....T',
+            'T......................T',
+            'T.pppppppppppppppppp...T',
+            'T.p....................T',
+            'T.p...CCCC.............T',
+            'T.p...WWDW.............T',
+            'T.p....................T',
+            '..p.....................',
+            'pppppppppppppppppppppppp',
+            'T.p....................T',
+            'T.p...ggggg............T',
+            'T.p...gWWWg............T',
+            'T.p...gWDWg............T',
+            'T.p...gWWWg............T',
+            'T.p...ggggg....i.......T',
+            'T.p....................T',
+            'T.pppppppppppppppppp...T',
+            'T......................T',
+            'TTTTTTTTTTTTTTTTTTTTTTTT',
+        ],
+        actions: {
+            '0,10':  { type: 'warp', to: 'cueva', x: 17, y: 8 },
+            '0,11':  { type: 'warp', to: 'cueva', x: 17, y: 9 },
+            '7,8':   { type: 'heal' },
+            '7,15':  { type: 'gym' },
+            '5,3':   { type: 'msg', text: 'El gimnasio de Ciudad Estrella usa Pokémon de tipo Roca.' },
+            '12,3':  { type: 'msg', text: 'TIENDA ESTRELLA — Todo para el explorador experto.' },
+            '19,3':  { type: 'msg', text: '«¡El Líder Asteón es el más duro de la región!»' },
+        },
+        spawn: { x: 1, y: 10, dir: 'right' },
     },
 };
 
