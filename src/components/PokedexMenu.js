@@ -6,6 +6,7 @@ import './PokedexMenu.css';
 const MENU_ITEMS = [
     { id: 'pokedex',  label: 'Pokédex',   icon: '📖', path: '/',              desc: 'Explorar Pokémon' },
     { id: 'battle',   label: 'Batalla',    icon: '⚔️',  path: '/battle',       desc: 'Modo combate' },
+    { id: 'game',     label: 'Aventura',  icon: '🎮', path: '/game',          desc: 'Región Satélite' },
     { id: 'settings', label: 'Ajustes',   icon: '⚙️',  path: '/settings',     desc: 'Configuración' },
 ];
 
