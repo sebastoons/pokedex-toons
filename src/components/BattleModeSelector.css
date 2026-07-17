@@ -43,6 +43,16 @@
   border-color: #f1c40f;
 }
 
+.mode-card-random {
+  background: linear-gradient(160deg, rgba(136, 72, 200, 0.25), rgba(90, 46, 160, 0.15));
+  border-color: rgba(180, 130, 240, 0.4);
+}
+
+.mode-card-random:hover {
+  border-color: #b482f0;
+  box-shadow: 0 10px 24px rgba(136, 72, 200, 0.5);
+}
+
 .mode-card h2 {
   margin-top: 0;
   color: #ffffff;
