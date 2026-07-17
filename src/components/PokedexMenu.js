@@ -1,24 +1,28 @@
 // src/components/PokedexMenu.js
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './PokedexMenu.css';
 
 const MENU_ITEMS = [
-    { id: 'pokedex',  label: 'Pokédex',   icon: '📖', path: '/',              desc: 'Explorar Pokémon' },
-    { id: 'battle',   label: 'Batalla',    icon: '⚔️',  path: '/battle',       desc: 'Modo combate' },
-    { id: 'settings', label: 'Ajustes',   icon: '⚙️',  path: '/settings',     desc: 'Configuración' },
+    { id: 'pokedex', label: 'Pokédex', icon: '📖', path: '/',       desc: 'Explorar Pokémon' },
+    { id: 'battle',  label: 'Batalla', icon: '⚔️',  path: '/battle', desc: 'Modo combate' },
 ];
 
 export default function PokedexMenu({ onClose }) {
     const navigate = useNavigate();
     const [opening, setOpening] = useState(false);
     const [selectedPath, setSelectedPath] = useState(null);
+    const closeTimerRef = useRef(null);
+
+    useEffect(() => () => {
+        if (closeTimerRef.current) clearTimeout(closeTimerRef.current);
+    }, []);
 
     const handleSelect = (path) => {
         if (opening) return;
         setSelectedPath(path);
         setOpening(true);
-        setTimeout(() => {
+        closeTimerRef.current = setTimeout(() => {
             onClose();
             navigate(path);
         }, 900);

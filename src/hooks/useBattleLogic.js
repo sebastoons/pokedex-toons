@@ -2,7 +2,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { fetchPokemonDetailsByIds } from '../services/pokemonService';
-import { calculateDamage, checkAccuracy } from '../utils/battleUtils';
+import { calculateDamage, checkAccuracy, stageMultiplier } from '../utils/battleUtils';
 import { calculateTypeEffectiveness } from '../utils/typeEffectiveness';
 import analyticsTracker from '../utils/analyticsTracker';
 
@@ -57,9 +57,7 @@ const pickIAMove = (pokemon, defender) => {
 
 const speedOf = (pokemon) => {
     const base = pokemon.speed ?? pokemon.stats?.speed ?? 50;
-    const stage = pokemon.speedStage ?? 0;
-    const s = Math.max(-6, Math.min(6, stage));
-    return base * (s >= 0 ? (2 + s) / 2 : 2 / (2 - s));
+    return base * stageMultiplier(pokemon.speedStage);
 };
 
 export const useBattleLogic = () => {
@@ -91,6 +89,7 @@ export const useBattleLogic = () => {
     const activePokemonP2Ref = useRef(activePokemonP2);
     const floatingMsgTimerRef = useRef(null);
     const gameModeRef = useRef(gameMode);
+    const isProcessingRef = useRef(false);
 
     useEffect(() => { player1TeamRef.current = player1Team; }, [player1Team]);
     useEffect(() => { player2TeamRef.current = player2Team; }, [player2Team]);
@@ -198,7 +197,7 @@ export const useBattleLogic = () => {
         setTimeout(() => setLastAttack({ side: attackSide, moveType: usedMove.type, ts: Date.now() }), 300);
         await new Promise(r => setTimeout(r, 800));
 
-        const { damage, effectivenessMessage, isCritical } = calculateDamage(attacker, defender, usedMove);
+        const { damage, effectivenessMessage, effectivenessTier, isCritical } = calculateDamage(attacker, defender, usedMove);
 
         setPokemonAtkAnim(false);
         setPokemonDefDamaged(true);
@@ -225,11 +224,11 @@ export const useBattleLogic = () => {
 
         if (effectivenessMessage) {
             addLog(effectivenessMessage);
-            if (effectivenessMessage.includes('súper') || effectivenessMessage.includes('cuádruple'))
+            if (effectivenessTier === 'super' || effectivenessTier === 'quad')
                 showFloatingMessage(effectivenessMessage, 'super');
-            else if (effectivenessMessage.includes('efecto'))
+            else if (effectivenessTier === 'immune')
                 showFloatingMessage(effectivenessMessage, 'noeffect');
-            else if (effectivenessMessage.includes('efectiv'))
+            else if (effectivenessTier === 'resist' || effectivenessTier === 'barely')
                 showFloatingMessage(effectivenessMessage, 'resistant');
         }
 
@@ -243,7 +242,7 @@ export const useBattleLogic = () => {
             setAtkTeam(prev => prev.map(p => p.id === attacker.id ? { ...p, currentHp: newAtkHp } : p));
             setActivePokemon_atk(prev => ({ ...prev, currentHp: newAtkHp }));
             const sname = attacker.status === 'poisoned' ? 'veneno' : 'quemadura';
-            addLog(`${attacker.name.toUpperCase()} sufrió ${Math.max(1, Math.floor(attacker.maxHp * 0.1))} PS por ${sname}!`);
+            addLog(`${attacker.name.toUpperCase()} sufrió ${dmg} PS por ${sname}!`);
             await new Promise(r => setTimeout(r, 400));
         }
 
@@ -444,16 +443,18 @@ export const useBattleLogic = () => {
     }, [executeOneAttack, addLog, autoSwitchLastPokemon]);
 
     const handleAttackAction = useCallback(async (move) => {
-        if (animationBlocking || winner || awaitingSwitch) return;
-        setAnimationBlocking(true);
-        if (gameModeRef.current === 'vsIA') {
-            setAnimationBlocking(false); // handleAttackVsIA sets it internally
-            await handleAttackVsIA(move);
-        } else {
-            setAnimationBlocking(false);
-            await handleAttackVsPlayer(move);
+        if (isProcessingRef.current || winner || awaitingSwitch) return;
+        isProcessingRef.current = true;
+        try {
+            if (gameModeRef.current === 'vsIA') {
+                await handleAttackVsIA(move);
+            } else {
+                await handleAttackVsPlayer(move);
+            }
+        } finally {
+            isProcessingRef.current = false;
         }
-    }, [animationBlocking, winner, awaitingSwitch, handleAttackVsIA, handleAttackVsPlayer]);
+    }, [winner, awaitingSwitch, handleAttackVsIA, handleAttackVsPlayer]);
 
     const handleSwitchPokemon = useCallback(async (newPokemon, isPlayer1 = true) => {
         if (animationBlocking || winner) return;

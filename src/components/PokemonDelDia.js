@@ -12,7 +12,7 @@ function PokemonDelDia({ pokemonList }) {
 
     if (!pokemon) return null;
 
-    const imgUrl = manualPokemonImages[pokemon.id]
+    const imgUrl = pokemon.imageUrl || manualPokemonImages[pokemon.id]
         || `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${pokemon.id}.png`;
 
     return (

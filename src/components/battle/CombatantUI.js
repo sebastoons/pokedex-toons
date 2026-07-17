@@ -20,7 +20,7 @@ export const CombatantUI = React.memo(function CombatantUI({
 }) {
     if (!pokemon) return null;
 
-    const hpPercentage = Math.max(0, (pokemon.currentHp / pokemon.maxHp) * 100);
+    const hpPercentage = Math.min(100, Math.max(0, (pokemon.currentHp / pokemon.maxHp) * 100));
 
     // Smooth HSL gradient: green (120°) → yellow (60°) → red (0°)
     const hue = Math.round((hpPercentage / 100) * 120);

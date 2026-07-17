@@ -36,6 +36,8 @@ function PokemonDetail() {
 
   useEffect(() => {
     window.scrollTo(0, 0);
+    let ignore = false;
+
     const fetchAllPokemonDetails = async () => {
       setLoading(true);
       setError(null);
@@ -48,19 +50,19 @@ function PokemonDetail() {
         const specialPokemon = generacionEspecial.find(p => p.id === id);
 
         if (!specialPokemon) {
-          setError(new Error("Pokémon especial no encontrado."));
-          setLoading(false);
+          if (!ignore) { setError(new Error("Pokémon especial no encontrado.")); setLoading(false); }
           return;
         }
 
         // --- 2. LLAMAMOS A LAS FUNCIONES AUTOMÁTICAS ---
         const autoAbility = getAutomaticAbility(specialPokemon.types);
         const autoMoves = getAutomaticMoves(specialPokemon.types);
-        
+
         // --- 3. CALCULAMOS LA EFECTIVIDAD DE TIPOS ---
         const effectiveness = await getPokemonTypeEffectiveness(
             specialPokemon.types.map(t => ({ type: { name: t } }))
         );
+        if (ignore) return;
         setTypeEffectiveness(effectiveness);
 
 
@@ -85,27 +87,30 @@ function PokemonDetail() {
         setPokemonMoves(autoMoves); // Guardamos los movimientos automáticos
         setEvolutionLine(specialPokemon.evolutionLine || []);
         setClassicSprites([]);
-        
+
         setLoading(false);
 
       } else {
         // --- LÓGICA ORIGINAL PARA POKÉMON DE LA API (sin cambios) ---
         try {
           const pokemonJson = await fetchPokemon(pokemonId);
+          if (ignore) return;
           setPokemonData(pokemonJson);
           let speciesJson = null;
           if (pokemonJson.species?.url) {
               const speciesResponse = await fetch(pokemonJson.species.url);
               speciesJson = await speciesResponse.json();
+              if (ignore) return;
               setSpeciesData(speciesJson);
           }
           if (pokemonJson.abilities && pokemonJson.abilities.length > 0) {
               let chosenAbility = pokemonJson.abilities.find(a => !a.is_hidden) || pokemonJson.abilities[0];
               const abilityResponse = await fetch(chosenAbility.ability.url);
               const abilityJson = await abilityResponse.json();
+              if (ignore) return;
               const spanishName = abilityJson.names.find(n => n.language.name === 'es')?.name || chosenAbility.ability.name;
-              const spanishDesc = abilityJson.effect_entries.find(e => e.language.name === 'es')?.effect || 
-                                  abilityJson.effect_entries.find(e => e.language.name === 'en')?.effect || 
+              const spanishDesc = abilityJson.effect_entries.find(e => e.language.name === 'es')?.effect ||
+                                  abilityJson.effect_entries.find(e => e.language.name === 'en')?.effect ||
                                   "Descripción no disponible.";
               setDetailedAbility({ name: spanishName, description: spanishDesc.replace(/[\n\r\f]/g, ' '), isHidden: chosenAbility.is_hidden });
           }
@@ -117,7 +122,9 @@ function PokemonDetail() {
                   const spanishName = moveJson.names.find(n => n.language.name === 'es')?.name || moveEntry.move.name;
                   return { id: moveJson.id, name: spanishName, type: moveJson.type.name };
               });
-              setPokemonMoves(await Promise.all(movePromises));
+              const resolvedMoves = await Promise.all(movePromises);
+              if (ignore) return;
+              setPokemonMoves(resolvedMoves);
           }
           const sprites = [];
           if (pokemonJson.sprites.versions?.["generation-i"]?.["red-blue"]?.front_default) sprites.push({ name: "GB (Rojo/Azul)", url: pokemonJson.sprites.versions["generation-i"]["red-blue"].front_default });
@@ -128,20 +135,22 @@ function PokemonDetail() {
               const evoChainRes = await fetch(speciesJson.evolution_chain.url);
               const evoChainJson = await evoChainRes.json();
               const processedEvoLine = await processEvolutionChain(evoChainJson.chain);
+              if (ignore) return;
               setEvolutionLine(processedEvoLine);
           }
           if (pokemonJson.types && pokemonJson.types.length > 0) {
               const effectiveness = await getPokemonTypeEffectiveness(pokemonJson.types);
+              if (ignore) return;
               setTypeEffectiveness(effectiveness);
           }
         } catch (err) {
-          setError(err);
+          if (!ignore) setError(err);
         } finally {
-          setLoading(false);
+          if (!ignore) setLoading(false);
         }
       }
     };
-    
+
     const processEvolutionChain = async (chain) => {
         const evolutions = [];
         const seenIds = new Set();
@@ -156,9 +165,10 @@ function PokemonDetail() {
             } catch (error) {
                 evolutions.push({ id, name: currentEvoStage.species.name, sprite: '', details: detailsToReachThisStage });
             }
-            for (const nextEvoStage of currentEvoStage.evolves_to) {
-                await traverseChain(nextEvoStage, nextEvoStage.evolution_details[0]);
-            }
+            // Ramas hermanas (ej. familias tipo Eevee) se recorren en paralelo
+            await Promise.all(currentEvoStage.evolves_to.map(nextEvoStage =>
+                traverseChain(nextEvoStage, nextEvoStage.evolution_details[0])
+            ));
         };
         await traverseChain(chain);
         evolutions.sort((a, b) => parseInt(a.id) - parseInt(b.id));
@@ -166,6 +176,7 @@ function PokemonDetail() {
     };
 
     fetchAllPokemonDetails();
+    return () => { ignore = true; };
   }, [pokemonId]);
 
   // --- RENDERIZADO (sin cambios) ---

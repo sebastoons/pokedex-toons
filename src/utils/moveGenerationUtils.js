@@ -174,6 +174,15 @@ const normalFallbackMoves = [
     { name: "Golpe Cuerpo", power: 85, accuracy: 100, damage_class: "physical" }
 ];
 
+// Agrega `candidate` a `moves` solo si su nombre no está ya presente
+const pushUniqueMove = (moves, candidate) => {
+    if (candidate && !moves.some(m => m.name === candidate.name)) {
+        moves.push(candidate);
+        return true;
+    }
+    return false;
+};
+
 // Función para generar movimientos según los tipos del Pokémon
 export const generateMovesByTypes = (pokemonTypes, stats = null) => {
     const types = Array.isArray(pokemonTypes) ? pokemonTypes : [pokemonTypes];
@@ -186,57 +195,40 @@ export const generateMovesByTypes = (pokemonTypes, stats = null) => {
     // Tipo principal (primeros 2 movimientos)
     const primaryType = types[0];
     const primaryMoves = movesByType[primaryType] || normalFallbackMoves;
-    
-    // Agregar 2 movimientos del tipo principal
-    for (let i = 0; i < 2 && i < primaryMoves.length; i++) {
-        moves.push({
-            ...primaryMoves[i],
-            type: primaryType,
-            pp: 15
-        });
+
+    for (let i = 0; i < primaryMoves.length && moves.length < 2; i++) {
+        pushUniqueMove(moves, { ...primaryMoves[i], type: primaryType, pp: 15 });
     }
 
-    // Tipo secundario (1 movimiento)
+    // Tipo secundario (1 movimiento), o un tercer movimiento del tipo principal
     if (types.length > 1) {
         const secondaryType = types[1];
         const secondaryMoves = movesByType[secondaryType] || normalFallbackMoves;
-        
-        if (secondaryMoves.length > 0) {
-            moves.push({
-                ...secondaryMoves[0],
-                type: secondaryType,
-                pp: 10
-            });
+        for (let i = 0; i < secondaryMoves.length && moves.length < 3; i++) {
+            if (pushUniqueMove(moves, { ...secondaryMoves[i], type: secondaryType, pp: 10 })) break;
         }
     } else {
-        // Si solo tiene un tipo, agregar otro movimiento del tipo principal
-        if (primaryMoves.length > 2) {
-            moves.push({
-                ...primaryMoves[2],
-                type: primaryType,
-                pp: 10
-            });
+        for (let i = 2; i < primaryMoves.length && moves.length < 3; i++) {
+            if (pushUniqueMove(moves, { ...primaryMoves[i], type: primaryType, pp: 10 })) break;
         }
     }
 
-    // Movimiento normal (último slot)
+    // Movimiento normal (último slot), evitando duplicar uno ya elegido
     const normalMoves = movesByType.normal;
     if (normalMoves.length > 0) {
-        moves.push({
-            ...normalMoves[Math.floor(Math.random() * Math.min(3, normalMoves.length))],
-            type: 'normal',
-            pp: 20
-        });
+        const startIdx = Math.floor(Math.random() * normalMoves.length);
+        for (let i = 0; i < normalMoves.length && moves.length < 4; i++) {
+            const candidate = normalMoves[(startIdx + i) % normalMoves.length];
+            if (pushUniqueMove(moves, { ...candidate, type: 'normal', pp: 20 })) break;
+        }
     }
 
-    // Completar con movimientos normales si faltan
-    while (moves.length < 4) {
-        const fallback = normalFallbackMoves[moves.length % normalFallbackMoves.length];
-        moves.push({
-            ...fallback,
-            type: 'normal',
-            pp: 15
-        });
+    // Completar con movimientos normales si faltan (sin duplicar)
+    let fallbackIdx = 0;
+    while (moves.length < 4 && fallbackIdx < normalFallbackMoves.length * 2) {
+        const fallback = normalFallbackMoves[fallbackIdx % normalFallbackMoves.length];
+        pushUniqueMove(moves, { ...fallback, type: 'normal', pp: 15 });
+        fallbackIdx++;
     }
 
     return moves.slice(0, 4);
@@ -262,11 +254,4 @@ export const improvePokemonMoves = (pokemon) => {
     }
 
     return generatedMoves;
-};
-
-// Agrega esta exportación para usarla en el selector
-export const getMovesByType = (type) => {
-    // Convierte el tipo a minúsculas para coincidir con las claves del objeto
-    const typeKey = type.toLowerCase();
-    return movesByType[typeKey] || movesByType['normal']; // Fallback a normal si no existe
 };

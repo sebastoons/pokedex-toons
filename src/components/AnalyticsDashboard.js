@@ -3,8 +3,11 @@ import React, { useState, useEffect } from 'react';
 import { BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, AreaChart, Area } from 'recharts';
 import './AnalyticsDashboard.css';
 
-const ADMIN_USERNAME = 'admin';
-const ADMIN_PASSWORD = 'admin123';
+// Nota: esta app no tiene backend, por lo que este login es solo una cortina
+// de vista local (evita que alguien mirando por encima del hombro abra el
+// dashboard por accidente) y NO debe tratarse como una barrera de seguridad real.
+const ADMIN_USERNAME = process.env.REACT_APP_ANALYTICS_USER || 'toons-admin';
+const ADMIN_PASSWORD = process.env.REACT_APP_ANALYTICS_PASS || 'satelite-2026';
 
 const LoginScreen = ({ onLogin }) => {
   const [username, setUsername] = useState('');
@@ -123,10 +126,10 @@ const AnalyticsDashboard = () => {
 
   // KPIs principales
   const kpis = [
-    { label: 'Visitas Totales', value: analyticsData.totalVisits || 0, icon: '👥', color: '#667eea', change: '+12%' },
-    { label: 'Usuarios Únicos', value: uniqueUsersCount, icon: '🎯', color: '#764ba2', change: '+8%' },
-    { label: 'Batallas Jugadas', value: analyticsData.totalBattles || 0, icon: '⚔️', color: '#f093fb', change: '+25%' },
-    { label: 'Promedio Sesión', value: `${Math.floor((analyticsData.avgSessionTime || 0) / 60)}:${String((analyticsData.avgSessionTime || 0) % 60).padStart(2, '0')}`, icon: '⏱️', color: '#4facfe', change: '+3%' }
+    { label: 'Visitas Totales', value: analyticsData.totalVisits || 0, icon: '👥', color: '#667eea' },
+    { label: 'Usuarios Únicos', value: uniqueUsersCount, icon: '🎯', color: '#764ba2' },
+    { label: 'Batallas Jugadas', value: analyticsData.totalBattles || 0, icon: '⚔️', color: '#f093fb' },
+    { label: 'Promedio Sesión', value: `${Math.floor((analyticsData.avgSessionTime || 0) / 60)}:${String((analyticsData.avgSessionTime || 0) % 60).padStart(2, '0')}`, icon: '⏱️', color: '#4facfe' }
   ];
 
   // Datos para gráficos
@@ -256,7 +259,6 @@ const AnalyticsDashboard = () => {
             <div>
               <div className="kpi-label">{kpi.label}</div>
               <div className="kpi-value">{kpi.value}</div>
-              <div className="kpi-change">{kpi.change}</div>
             </div>
           </div>
         ))}

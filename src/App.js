@@ -13,6 +13,8 @@ import UpdateModal from './components/UpdateModal';
 import PokedexMenu from './components/PokedexMenu';
 import { generacionEspecial } from './data/generacionEspecial';
 import manualPokemonImages from './data/manualPokemonImages';
+import { POKEMON_TYPES } from './utils/pokemonTypes';
+import { APP_VERSION } from './data/appVersion';
 
 // Analytics Tracker
 import analyticsTracker from './utils/analyticsTracker';
@@ -38,26 +40,9 @@ const ALL_POKEMON_GENERATIONS = [
     { id: 'special', name: 'Generación Especial' },
 ];
 
-const ALL_POKEMON_TYPES = [
-    { value: 'normal', display: 'Normal', color: '#A8A77A' },
-    { value: 'fire', display: 'Fuego', color: '#EE8130' },
-    { value: 'water', display: 'Agua', color: '#6390F0' },
-    { value: 'electric', display: 'Eléctrico', color: '#F7D02C' },
-    { value: 'grass', display: 'Planta', color: '#7AC74C' },
-    { value: 'ice', display: 'Hielo', color: '#96D9D6' },
-    { value: 'fighting', display: 'Lucha', color: '#C22E28' },
-    { value: 'poison', display: 'Veneno', color: '#A33EA1' },
-    { value: 'ground', display: 'Tierra', color: '#E2BF65' },
-    { value: 'flying', display: 'Volador', color: '#A98FF3' },
-    { value: 'psychic', display: 'Psíquico', color: '#F95587' },
-    { value: 'bug', display: 'Bicho', color: '#A6B91A' },
-    { value: 'rock', display: 'Roca', color: '#B6A136' },
-    { value: 'ghost', display: 'Fantasma', color: '#735797' },
-    { value: 'dragon', display: 'Dragón', color: '#6F35FC' },
-    { value: 'dark', display: 'Siniestro', color: '#705746' },
-    { value: 'steel', display: 'Acero', color: '#B7B7CE' },
-    { value: 'fairy', display: 'Hada', color: '#D685AD' },
-];
+const ALL_POKEMON_TYPES = Object.entries(POKEMON_TYPES).map(([value, info]) => ({
+    value, display: info.name, color: info.color,
+}));
 
 const GA_MEASUREMENT_ID = "G-KPGB8SXW4B"; 
 ReactGA.initialize(GA_MEASUREMENT_ID);
@@ -80,11 +65,15 @@ function App() {
     const [showWelcome, setShowWelcome] = useState(true);
     const [showUpdate, setShowUpdate] = useState(false);
     const [showPokedexMenu, setShowPokedexMenu] = useState(() => !sessionStorage.getItem('pdx-entered'));
-    const LATEST_UPDATE_VERSION = "1.2.4";
+    const LATEST_UPDATE_VERSION = APP_VERSION;
 
     useEffect(() => {
         analyticsTracker.trackPageVisit();
     }, []);
+
+    useEffect(() => {
+        ReactGA.send({ hitType: 'pageview', page: location.pathname });
+    }, [location.pathname]);
 
     const handleWelcomeClose = () => {
         setShowWelcome(false);
@@ -100,6 +89,8 @@ function App() {
     };
 
     useEffect(() => {
+        let ignore = false;
+
         const fetchPokemonWithDetails = async () => {
             const fetchOne = async (pokemon) => {
                 try {
@@ -123,6 +114,7 @@ function App() {
 
                 // Gen 1: fetch all 151 in parallel → render immediately
                 const gen1Raw = await Promise.all(results.slice(0, 151).map(fetchOne));
+                if (ignore) return;
                 const gen1 = gen1Raw.filter(Boolean);
                 setPokemonList([...gen1]);
                 setLoading(false);
@@ -133,10 +125,12 @@ function App() {
                 const CHUNK = 50;
                 for (let i = 0; i < rest.length; i += CHUNK) {
                     const chunk = await Promise.all(rest.slice(i, i + CHUNK).map(fetchOne));
+                    if (ignore) return;
                     all.push(...chunk.filter(Boolean));
                     setPokemonList([...all]);
                     if (i + CHUNK < rest.length) await new Promise(r => setTimeout(r, 80));
                 }
+                if (ignore) return;
 
                 const special = generacionEspecial.map(p => ({
                     id: p.id, name: p.name.toLowerCase(), types: p.types, imageUrl: p.imageUrl, isSpecial: true,
@@ -144,16 +138,18 @@ function App() {
                 setPokemonList([...all, ...special]);
 
             } catch (err) {
+                if (ignore) return;
                 setError(err);
                 setLoading(false);
             }
         };
 
         fetchPokemonWithDetails();
+        return () => { ignore = true; };
     }, []);
 
     const filteredPokemon = useMemo(() => {
-        let currentList = [...pokemonList];
+        let currentList = pokemonList;
         if (selectedGeneration) {
             if (selectedGeneration === 'special') {
                 currentList = currentList.filter(pokemon => pokemon.isSpecial);
@@ -219,7 +215,7 @@ function App() {
     return (
       <div className="pokedex-container">
           {showPokedexMenu && <PokedexMenu onClose={() => { sessionStorage.setItem('pdx-entered', '1'); setShowPokedexMenu(false); }} />}
-          {showWelcome && !showPokedexMenu && <WelcomeModal onClose={handleWelcomeClose} />}
+          {showWelcome && !showPokedexMenu && location.pathname === '/' && <WelcomeModal onClose={handleWelcomeClose} />}
           {showUpdate && <UpdateModal onClose={handleUpdateClose} />}
 
           <header>
@@ -259,7 +255,7 @@ function App() {
               <Route path="/pokemon/:pokemonId" element={<motion.div variants={pageVariants} initial="initial" animate="animate" exit="exit"><PokemonDetail /></motion.div>} />
               <Route path="/battle" element={<motion.div variants={pageVariants} initial="initial" animate="animate" exit="exit"><BattleModeSelector /></motion.div>} />
               <Route path="/battle-selector" element={<motion.div variants={pageVariants} initial="initial" animate="animate" exit="exit"><PokemonBattleSelector pokemonList={pokemonList} /></motion.div>} />
-              <Route path="/battle/arena" element={<PokemonBattleArena pokemonList={pokemonList} />} />
+              <Route path="/battle/arena" element={<motion.div variants={pageVariants} initial="initial" animate="animate" exit="exit"><PokemonBattleArena pokemonList={pokemonList} /></motion.div>} />
               <Route path="/analytics" element={<motion.div variants={pageVariants} initial="initial" animate="animate" exit="exit"><AnalyticsDashboard /></motion.div>} />
               <Route path="*" element={<div className="error">Página no encontrada</div>} />
           </Routes>

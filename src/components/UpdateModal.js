@@ -1,13 +1,14 @@
 // src/components/UpdateModal.js
 import React from 'react';
 import './UpdateModal.css'; // Usaremos estilos similares al de bienvenida pero en su propio archivo
+import { APP_VERSION, APP_VERSION_DATE } from '../data/appVersion';
 
 const UpdateModal = ({ onClose }) => {
   // Aquí puedes definir las notas de la actualización.
   // En el futuro, esto podría venir de un archivo de configuración o una API.
   const updateDetails = {
-    version: "1.2.4",
-    date: "17 de Septiembre 2025",
+    version: APP_VERSION,
+    date: APP_VERSION_DATE,
     changes: [
       "Se añaden nuevos pokémon en generación especial.",
       "Mejora visual en pokemon battle arena y se añaden funciones.",
