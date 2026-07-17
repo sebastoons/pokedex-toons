@@ -2,6 +2,7 @@
 import React, { useState, useMemo, useEffect, useRef, useCallback } from 'react';
 import { useLocation, useNavigate, Link } from 'react-router-dom';
 import PokeBallSpinner from './PokeBallSpinner';
+import { POKEMON_TYPES as TYPE_DISPLAY } from '../utils/pokemonTypes';
 import './PokemonBattleSelector.css';
 
 const ALL_POKEMON_GENERATIONS = [
@@ -17,27 +18,6 @@ const ALL_POKEMON_GENERATIONS = [
     { id: 9, limit: 120, offset: 905, name: 'Generación 9' },
     { id: 'special', name: 'Especiales' },
 ];
-
-const TYPE_DISPLAY = {
-    normal:   { name: 'Normal',    color: '#A8A878' },
-    fire:     { name: 'Fuego',     color: '#F08030' },
-    water:    { name: 'Agua',      color: '#6890F0' },
-    grass:    { name: 'Planta',    color: '#78C850' },
-    electric: { name: 'Eléctrico', color: '#F8D030' },
-    ice:      { name: 'Hielo',     color: '#98D8D8' },
-    fighting: { name: 'Lucha',     color: '#C03028' },
-    poison:   { name: 'Veneno',    color: '#A040A0' },
-    ground:   { name: 'Tierra',    color: '#E0C068' },
-    flying:   { name: 'Volador',   color: '#A890F0' },
-    psychic:  { name: 'Psíquico',  color: '#F85888' },
-    bug:      { name: 'Bicho',     color: '#A8B820' },
-    rock:     { name: 'Roca',      color: '#B8A038' },
-    ghost:    { name: 'Fantasma',  color: '#705898' },
-    dragon:   { name: 'Dragón',    color: '#7038F8' },
-    dark:     { name: 'Siniestro', color: '#705848' },
-    steel:    { name: 'Acero',     color: '#B8B8D0' },
-    fairy:    { name: 'Hada',      color: '#EE99AC' },
-};
 
 const MOVES_DATABASE = {
     normal: [
@@ -325,6 +305,48 @@ const MovePicker = ({ move, slotIndex, pool, onSelect }) => {
     );
 };
 
+// Tarjeta de configuración de técnicas de un Pokémon; memoiza su pool de
+// movimientos por poke.id/apiPool para no recalcularlo en cada render del padre.
+const PokeConfigCard = React.memo(function PokeConfigCard({ poke, moves, apiPool, onSelectMove }) {
+    // onSelectMove es la referencia estable handleMoveSelect(pokemonId, slotIndex, move);
+    // aquí solo se le antepone el pokemonId con una currificación memoizada.
+    const handleSelect = useCallback((idx, m) => onSelectMove(poke.id, idx, m), [onSelectMove, poke.id]);
+    const types = useMemo(() => getPokemonTypes(poke), [poke]);
+    const pool = useMemo(() => {
+        const staticPool = buildMovePool(types);
+        return [...staticPool, ...(apiPool || [])].filter(
+            (m, i, s) => i === s.findIndex(x => x.name === m.name)
+        );
+    }, [types, apiPool]);
+    const mainColor = TYPE_DISPLAY[types[0]]?.color || '#888';
+
+    return (
+        <div className="poke-config-card" style={{ borderColor: mainColor }}>
+            <div className="poke-config-header">
+                <img src={getPokemonImageUrl(poke)} alt={poke.name} className="poke-config-sprite" />
+                <div>
+                    <h3 className="poke-config-name">{poke.name}</h3>
+                    <div style={{ display: 'flex', gap: '5px', marginTop: '4px' }}>
+                        {types.map(t => <TypeBadge key={t} typeName={t} />)}
+                    </div>
+                </div>
+            </div>
+
+            <div className="poke-config-moves">
+                {[0, 1, 2, 3].map(idx => (
+                    <MovePicker
+                        key={idx}
+                        move={moves[idx] || null}
+                        slotIndex={idx}
+                        pool={pool}
+                        onSelect={(m) => handleSelect(idx, m)}
+                    />
+                ))}
+            </div>
+        </div>
+    );
+});
+
 function PokemonBattleSelector({ pokemonList }) {
     const navigate = useNavigate();
     const location = useLocation();
@@ -457,13 +479,13 @@ function PokemonBattleSelector({ pokemonList }) {
         return () => ctrl.abort();
     }, [isConfiguringMoves, currentPlayer]); // eslint-disable-line react-hooks/exhaustive-deps
 
-    const handleMoveSelect = (pokemonId, slotIndex, move) => {
+    const handleMoveSelect = useCallback((pokemonId, slotIndex, move) => {
         (currentPlayer === 1 ? setSelectedMovesP1 : setSelectedMovesP2)(prev => {
             const curr = [...(prev[pokemonId] || [])];
             curr[slotIndex] = move;
             return { ...prev, [pokemonId]: curr };
         });
-    };
+    }, [currentPlayer]);
 
     const handleStartBattle = () => {
         let finalP2Team = player2Team;
@@ -536,42 +558,15 @@ function PokemonBattleSelector({ pokemonList }) {
                 )}
 
                 <div className="team-config-grid">
-                    {team.map(poke => {
-                        const types = getPokemonTypes(poke);
-                        const staticPool = buildMovePool(types);
-                        const apiPool = apiMovePool[poke.id] || [];
-                        const pool = [...staticPool, ...apiPool].filter(
-                            (m, i, s) => i === s.findIndex(x => x.name === m.name)
-                        );
-                        const mainColor = TYPE_DISPLAY[types[0]]?.color || '#888';
-                        const moves = selectedMoves[poke.id] || [];
-
-                        return (
-                            <div key={poke.id} className="poke-config-card" style={{ borderColor: mainColor }}>
-                                <div className="poke-config-header">
-                                    <img src={getPokemonImageUrl(poke)} alt={poke.name} className="poke-config-sprite" />
-                                    <div>
-                                        <h3 className="poke-config-name">{poke.name}</h3>
-                                        <div style={{ display: 'flex', gap: '5px', marginTop: '4px' }}>
-                                            {types.map(t => <TypeBadge key={t} typeName={t} />)}
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div className="poke-config-moves">
-                                    {[0,1,2,3].map(idx => (
-                                        <MovePicker
-                                            key={idx}
-                                            move={moves[idx] || null}
-                                            slotIndex={idx}
-                                            pool={pool}
-                                            onSelect={(m) => handleMoveSelect(poke.id, idx, m)}
-                                        />
-                                    ))}
-                                </div>
-                            </div>
-                        );
-                    })}
+                    {team.map(poke => (
+                        <PokeConfigCard
+                            key={poke.id}
+                            poke={poke}
+                            moves={selectedMoves[poke.id] || []}
+                            apiPool={apiMovePool[poke.id]}
+                            onSelectMove={handleMoveSelect}
+                        />
+                    ))}
                 </div>
 
                 <div className="config-actions">

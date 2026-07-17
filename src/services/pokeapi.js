@@ -33,30 +33,34 @@ export async function fetchTypeDetails(typeName) {
 export async function getPokemonTypeEffectiveness(pokemonTypes) {
   const damageMultipliers = {}; // Objeto para llevar la cuenta de la efectividad acumulada para cada tipo de ataque
 
-  for (const typeInfo of pokemonTypes) {
+  // Todas las relaciones de tipo se piden en paralelo; cada una conserva su
+  // propio try/catch para no bloquear al resto si una falla.
+  const allTypeRelations = await Promise.all(pokemonTypes.map(async (typeInfo) => {
     const typeName = typeInfo.type.name;
     try {
-        const typeRelations = await fetchTypeDetails(typeName);
-
-        if (typeRelations) {
-          // Procesa debilidades (double_damage_from)
-          for (const weakTo of typeRelations.double_damage_from) {
-            const type = weakTo.name;
-            damageMultipliers[type] = (damageMultipliers[type] || 1) * 2;
-          }
-          // Procesa resistencias (half_damage_from)
-          for (const resistTo of typeRelations.half_damage_from) {
-            const type = resistTo.name;
-            damageMultipliers[type] = (damageMultipliers[type] || 1) * 0.5;
-          }
-          // Procesa inmunidades (no_damage_from)
-          for (const immuneTo of typeRelations.no_damage_from) {
-            const type = immuneTo.name;
-            damageMultipliers[type] = 0; // La inmunidad siempre lo hace 0x, sobrescribiendo cualquier otro multiplicador
-          }
-        }
+      return await fetchTypeDetails(typeName);
     } catch (error) {
-        console.warn(`No se pudieron obtener las relaciones de daño para el tipo ${typeName}. Continuando con otros tipos.`, error);
+      console.warn(`No se pudieron obtener las relaciones de daño para el tipo ${typeName}. Continuando con otros tipos.`, error);
+      return null;
+    }
+  }));
+
+  for (const typeRelations of allTypeRelations) {
+    if (!typeRelations) continue;
+    // Procesa debilidades (double_damage_from)
+    for (const weakTo of typeRelations.double_damage_from) {
+      const type = weakTo.name;
+      damageMultipliers[type] = (damageMultipliers[type] || 1) * 2;
+    }
+    // Procesa resistencias (half_damage_from)
+    for (const resistTo of typeRelations.half_damage_from) {
+      const type = resistTo.name;
+      damageMultipliers[type] = (damageMultipliers[type] || 1) * 0.5;
+    }
+    // Procesa inmunidades (no_damage_from)
+    for (const immuneTo of typeRelations.no_damage_from) {
+      const type = immuneTo.name;
+      damageMultipliers[type] = 0; // La inmunidad siempre lo hace 0x, sobrescribiendo cualquier otro multiplicador
     }
   }
 

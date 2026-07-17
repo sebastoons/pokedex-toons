@@ -9,6 +9,17 @@ const fallbackMoves = [
     { name: "Gruñido", power: 0, type: "normal", damage_class: "status" }
 ];
 
+// Elige hasta `count` elementos al azar sin sesgo (Fisher-Yates parcial)
+const sampleRandom = (array, count) => {
+    const arr = [...array];
+    const n = Math.min(count, arr.length);
+    for (let i = 0; i < n; i++) {
+        const j = i + Math.floor(Math.random() * (arr.length - i));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr.slice(0, n);
+};
+
 const getLocalizedMoveName = (moveDetail) => {
     const nameEntry = moveDetail.names.find(name => name.language.name === 'es');
     return nameEntry ? nameEntry.name : moveDetail.name.replace(/-/g, ' ').split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
@@ -36,7 +47,7 @@ export const fetchPokemonDetails = async (pokemonId) => {
         if (pokemonData.moves.length > 0) {
             try {
                 const allMoveUrls = pokemonData.moves.map(move => move.move.url);
-                const movesToInspectUrls = allMoveUrls.sort(() => 0.5 - Math.random()).slice(0, 20);
+                const movesToInspectUrls = sampleRandom(allMoveUrls, 20);
                 
                 const moveDetailsPromises = movesToInspectUrls.map(url => 
                     fetch(url).then(res => res.json()).catch(() => null)
@@ -136,7 +147,20 @@ export const fetchPokemonDetailsByIds = async (ids) => {
     const teamDetailsPromises = ids.map(id => {
         if (id > 1025) {
             const specialPokemon = generacionEspecial.find(p => p.id === id);
-            if (!specialPokemon) return null;
+            if (!specialPokemon) {
+                console.error(`Pokémon especial con ID ${id} no encontrado en generacionEspecial.`);
+                const placeholderImg = `https://placehold.co/200x200/e0e0e0/333?text=%3F`;
+                return Promise.resolve({
+                    id,
+                    name: `Pokémon ${id}`,
+                    hp: 100, maxHp: 100, attack: 25, defense: 15, speed: 40,
+                    stats: { hp: 40, attack: 50, defense: 30, 'special-attack': 40, 'special-defense': 30, speed: 40 },
+                    types: [{ type: { name: 'normal' } }],
+                    moves: [...fallbackMoves],
+                    imageUrl: placeholderImg,
+                    sprites: { front_default: placeholderImg, back_default: placeholderImg },
+                });
+            }
 
             let finalMoves = specialPokemon.moves;
             

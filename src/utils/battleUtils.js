@@ -1,12 +1,10 @@
 // src/utils/battleUtils.js
 import { calculateTypeEffectiveness } from './typeEffectiveness';
 
-export const checkAccuracy = (move, attackerAccStage = 0, defenderEvaStage = 0) => {
+export const checkAccuracy = (move) => {
     const acc = move.accuracy;
     if (acc === null || acc === undefined) return true;
-    const stage = Math.max(-6, Math.min(6, attackerAccStage - defenderEvaStage));
-    const modifier = stage >= 0 ? (3 + stage) / 3 : 3 / (3 - stage);
-    return Math.random() < (acc / 100) * modifier;
+    return Math.random() < acc / 100;
 };
 
 export const stageMultiplier = (stage) => {
@@ -15,17 +13,17 @@ export const stageMultiplier = (stage) => {
 };
 
 export const calculateDamage = (attackerPokemon, defenderPokemon, move, level = 50) => {
-    if (!move) return { damage: 0, effectivenessMessage: 'Movimiento inválido.', isCritical: false };
+    if (!move) return { damage: 0, effectivenessMessage: 'Movimiento inválido.', effectivenessTier: 'normal', isCritical: false };
     const moveType = move.type || 'normal';
 
     if (typeof move.power !== 'number' || move.power <= 0) {
-        return { damage: 0, effectivenessMessage: '', isCritical: false };
+        return { damage: 0, effectivenessMessage: '', effectivenessTier: 'normal', isCritical: false };
     }
 
     const rawAtk = attackerPokemon.attack;
     const rawDef = defenderPokemon.defense;
     if (typeof rawAtk !== 'number' || typeof rawDef !== 'number' || rawDef === 0) {
-        return { damage: 1, effectivenessMessage: '', isCritical: false };
+        return { damage: 1, effectivenessMessage: '', effectivenessTier: 'normal', isCritical: false };
     }
 
     const isCritical = Math.random() < 0.0625;
@@ -38,7 +36,7 @@ export const calculateDamage = (attackerPokemon, defenderPokemon, move, level = 
     const stab = attackerTypes.includes(moveType) ? 1.5 : 1;
 
     const defenderTypes = defenderPokemon.types.map(t => t.type?.name ?? t);
-    const { multiplier: typeMultiplier, message: effectivenessMessage } =
+    const { multiplier: typeMultiplier, message: effectivenessMessage, tier: effectivenessTier } =
         calculateTypeEffectiveness(moveType, defenderTypes);
 
     let damage = Math.floor(
@@ -47,5 +45,5 @@ export const calculateDamage = (attackerPokemon, defenderPokemon, move, level = 
     );
     damage = Math.max(typeMultiplier === 0 ? 0 : 1, damage);
 
-    return { damage, effectivenessMessage, isCritical };
+    return { damage, effectivenessMessage, effectivenessTier, isCritical };
 };

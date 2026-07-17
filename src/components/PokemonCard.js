@@ -3,14 +3,8 @@ import React, { useState, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import '../App.css';
 import manualPokemonImages from '../data/manualPokemonImages';
+import { POKEMON_TYPES } from '../utils/pokemonTypes';
 import analyticsTracker from '../utils/analyticsTracker';
-
-const TYPE_NAMES = {
-    normal:'Normal', fire:'Fuego', water:'Agua', grass:'Planta', electric:'Eléctrico',
-    ice:'Hielo', fighting:'Lucha', poison:'Veneno', ground:'Tierra', flying:'Volador',
-    psychic:'Psíquico', bug:'Bicho', rock:'Roca', ghost:'Fantasma', dragon:'Dragón',
-    steel:'Acero', dark:'Siniestro', fairy:'Hada', unknown:'Desconocido', shadow:'Sombra',
-};
 
 function PokemonCard({ pokemon }) {
     const [imageLoadError, setImageLoadError] = useState(false);
@@ -31,7 +25,7 @@ function PokemonCard({ pokemon }) {
     }, []);
 
     const pokemonId = pokemon.id;
-    const imageUrl = manualPokemonImages[pokemonId];
+    const imageUrl = pokemon.imageUrl || manualPokemonImages[pokemonId];
     const finalImageUrl = imageUrl || `https://placehold.co/100x100/e0e0e0/333?text=No+Img`;
 
     return (
@@ -62,7 +56,7 @@ function PokemonCard({ pokemon }) {
                 <div className="pokemon-types">
                     {pokemon.types?.map(type => (
                         <span key={type} className={`type-${type}`}>
-                            {TYPE_NAMES[type] ?? type}
+                            {POKEMON_TYPES[type]?.name ?? type}
                         </span>
                     ))}
                 </div>
@@ -71,4 +65,4 @@ function PokemonCard({ pokemon }) {
     );
 }
 
-export default PokemonCard;
+export default React.memo(PokemonCard);

@@ -31,6 +31,7 @@ const PokemonBattleArena = () => {
     const [showBag, setShowBag] = useState(false);
     const [particles, setParticles] = useState([]);
     const particleIdRef = useRef(0);
+    const battleStartTrackedRef = useRef(false);
 
     const {
         loading, winner, battleLog, gameMode,
@@ -40,7 +41,7 @@ const PokemonBattleArena = () => {
         pokemonP1Attacking, pokemonP2Attacking,
         pokemonP1Damaged, pokemonP2Damaged,
         animationBlocking, bag, floatingMsg, lastAttack,
-        handleAttack, handlePokemonCircleClick, handleSwitchPokemon, handleUseItem,
+        handleAttack, handlePokemonCircleClick, handleUseItem,
     } = useBattleLogic();
 
     // Partículas de ataque
@@ -72,13 +73,28 @@ const PokemonBattleArena = () => {
     }, [lastAttack, spawnParticles]);
 
     useEffect(() => {
-        if (!loading && activePokemonP1 && activePokemonP2)
+        if (loading) { battleStartTrackedRef.current = false; return; }
+        if (activePokemonP1 && activePokemonP2 && !battleStartTrackedRef.current) {
+            battleStartTrackedRef.current = true;
             analyticsTracker.trackBattleStart(gameMode);
+        }
     }, [loading, activePokemonP1, activePokemonP2, gameMode]);
 
     useEffect(() => {
         if (winner) analyticsTracker.trackEvent('Batalla Completada', `Ganador: ${winner}`);
     }, [winner]);
+
+    // Player 1 siempre pasa por el chequeo de permisos único del hook, sea vsIA o vsPlayer.
+    const handlePlayer1Click = useCallback((pokemon) => {
+        handlePokemonCircleClick(pokemon, true);
+    }, [handlePokemonCircleClick]);
+
+    const handlePlayer2Click = useCallback((pokemon) => {
+        if (gameMode === 'vsPlayer') handlePokemonCircleClick(pokemon, false);
+    }, [gameMode, handlePokemonCircleClick]);
+
+    const handleOpenBag = useCallback(() => setShowBag(true), []);
+    const handleCloseBag = useCallback(() => setShowBag(false), []);
 
     if (loading || !activePokemonP1 || !activePokemonP2) {
         return (
@@ -90,19 +106,15 @@ const PokemonBattleArena = () => {
         );
     }
 
-    const activePokemonForControls = isPlayer1Turn ? activePokemonP1 : activePokemonP2;
+    // En vsIA, los controles del jugador siempre muestran los movimientos de P1
+    // (nunca los de la IA, para no filtrar su moveset/PP mientras "piensa").
+    const activePokemonForControls = gameMode === 'vsIA'
+        ? activePokemonP1
+        : (isPlayer1Turn ? activePokemonP1 : activePokemonP2);
     const canPlayer1Switch = (isPlayer1Turn || awaitingSwitch === 'player1') && !animationBlocking && !winner;
     const canPlayer2Switch = (!isPlayer1Turn || awaitingSwitch === 'player2') && !animationBlocking && !winner;
     const defenderTypes = isPlayer1Turn ? activePokemonP2?.types : activePokemonP1?.types;
     const floatClass = floatingMsg ? (FLOATING_MSG_CLASSES[floatingMsg.type] || 'float-neutral') : '';
-
-    const handlePlayer1Click = (pokemon) => {
-        if (gameMode === 'vsIA') handleSwitchPokemon(pokemon, true);
-        else handlePokemonCircleClick(pokemon, true);
-    };
-    const handlePlayer2Click = (pokemon) => {
-        if (gameMode === 'vsPlayer') handlePokemonCircleClick(pokemon, false);
-    };
 
     const arenaType = (activePokemonP2?.types?.[0]?.type?.name ?? activePokemonP2?.types?.[0]) || 'normal';
 
@@ -163,7 +175,7 @@ const PokemonBattleArena = () => {
                     awaitingPlayerSwitch={awaitingSwitch === 'player1' || awaitingSwitch === 'player2'}
                     animationBlocking={animationBlocking}
                     onAttack={handleAttack}
-                    onOpenBag={() => setShowBag(true)}
+                    onOpenBag={handleOpenBag}
                     bag={bag}
                     battleEnded={!!winner}
                     gameMode={gameMode}
@@ -173,7 +185,7 @@ const PokemonBattleArena = () => {
             {showBag && (
                 <BagModal
                     bag={bag} activePokemon={activePokemonP1}
-                    onUseItem={handleUseItem} onClose={() => setShowBag(false)}
+                    onUseItem={handleUseItem} onClose={handleCloseBag}
                 />
             )}
 

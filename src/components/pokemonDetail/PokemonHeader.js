@@ -1,21 +1,7 @@
 // src/components/pokemonDetail/PokemonHeader.js
 import React from 'react';
+import { POKEMON_TYPES } from '../../utils/pokemonTypes';
 import './PokemonHeader.css';
-
-const TYPE_NAMES = {
-    normal:'Normal', fire:'Fuego', water:'Agua', grass:'Planta', electric:'Eléctrico',
-    ice:'Hielo', fighting:'Lucha', poison:'Veneno', ground:'Tierra', flying:'Volador',
-    psychic:'Psíquico', bug:'Bicho', rock:'Roca', ghost:'Fantasma', dragon:'Dragón',
-    steel:'Acero', dark:'Siniestro', fairy:'Hada',
-};
-
-const TYPE_COLORS = {
-    normal:'#A8A77A', fire:'#EE8130', water:'#6390F0', grass:'#7AC74C',
-    electric:'#F7D02C', ice:'#96D9D6', fighting:'#C22E28', poison:'#A33EA1',
-    ground:'#E2BF65', flying:'#A98FF3', psychic:'#F95587', bug:'#A6B91A',
-    rock:'#B6A136', ghost:'#735797', dragon:'#6F35FC', dark:'#705746',
-    steel:'#B7B7CE', fairy:'#D685AD',
-};
 
 const getSpanishDescription = (entries) => {
     if (!entries?.length) return 'Descripción no disponible.';
@@ -30,8 +16,8 @@ const PokemonHeader = ({ pokemon, species }) => {
 
     const primaryType = pokemon.types?.[0]?.type?.name ?? 'normal';
     const secondaryType = pokemon.types?.[1]?.type?.name;
-    const color1 = TYPE_COLORS[primaryType] ?? '#888';
-    const color2 = TYPE_COLORS[secondaryType] ?? color1;
+    const color1 = POKEMON_TYPES[primaryType]?.color ?? '#888';
+    const color2 = POKEMON_TYPES[secondaryType]?.color ?? color1;
 
     const imageUrl =
         pokemon.sprites?.other?.['official-artwork']?.front_default ||
@@ -61,9 +47,9 @@ const PokemonHeader = ({ pokemon, species }) => {
                             <span
                                 key={t.type.name}
                                 className={`type-badge-hero type-${t.type.name}`}
-                                style={{ background: TYPE_COLORS[t.type.name] }}
+                                style={{ background: POKEMON_TYPES[t.type.name]?.color }}
                             >
-                                {TYPE_NAMES[t.type.name] ?? t.type.name}
+                                {POKEMON_TYPES[t.type.name]?.name ?? t.type.name}
                             </span>
                         ))}
                     </div>

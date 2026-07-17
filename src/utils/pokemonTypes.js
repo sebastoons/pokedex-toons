@@ -23,5 +23,8 @@ export const POKEMON_TYPES = {
 
 // Función para obtener la información del tipo
 export const getTypeInfo = (type) => {
-    return POKEMON_TYPES[type.toLowerCase()] || { name: type, color: '#68A090' }; // Default color si no se encuentra
+    const known = POKEMON_TYPES[type.toLowerCase()];
+    if (known) return known;
+    // Tipo no reconocido (p. ej. un tipo Tera): capitaliza el nombre crudo como fallback
+    return { name: type.charAt(0).toUpperCase() + type.slice(1), color: '#68A090' };
 };

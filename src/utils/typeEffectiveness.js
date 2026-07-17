@@ -103,10 +103,9 @@ const typeRelations = {
  */
 export const calculateTypeEffectiveness = (moveType, defenderTypes) => {
     let multiplier = 1;
-    let message = '';
 
     if (!moveType || !typeRelations[moveType]) {
-        return { multiplier: 1, message: 'El tipo del movimiento no es reconocido.' };
+        return { multiplier: 1, message: 'El tipo del movimiento no es reconocido.', tier: 'normal' };
     }
 
     defenderTypes.forEach(dType => {
@@ -122,65 +121,22 @@ export const calculateTypeEffectiveness = (moveType, defenderTypes) => {
         }
     });
 
+    let tier, message;
     if (multiplier === 0) {
-        message = '¡No tiene efecto!';
+        tier = 'immune'; message = '¡No tiene efecto!';
+    } else if (multiplier >= 4) {
+        tier = 'quad'; message = '¡Es cuádruple efectivo!';
     } else if (multiplier >= 2) {
-        message = '¡Es súper efectivo!';
-    } else if (multiplier > 1 && multiplier < 2) { // Por ejemplo, 1.5x por un tipo y 1x por otro
-        message = 'Es efectivo.';
-    } else if (multiplier < 1 && multiplier > 0) {
-        message = 'No es muy efectivo...';
+        tier = 'super'; message = '¡Es súper efectivo!';
+    } else if (multiplier > 1) {
+        tier = 'super'; message = 'Es efectivo.';
+    } else if (multiplier <= 0.25) {
+        tier = 'barely'; message = 'Apenas hace efecto...';
+    } else if (multiplier < 1) {
+        tier = 'resist'; message = 'No es muy efectivo...';
+    } else {
+        tier = 'normal'; message = '';
     }
 
-    // Ajuste para mensajes de "cuádruple efectivo"
-    if (multiplier >= 4) {
-        message = '¡Es cuádruple efectivo!';
-    } else if (multiplier <= 0.25 && multiplier > 0) {
-        message = 'Apenas hace efecto...';
-    }
-
-
-    return { multiplier, message };
-};
-
-// Puedes mantener o añadir tus otras funciones aquí si las necesitas
-export const getTypeInfo = (type) => {
-    return typeRelations[type];
-};
-
-export const getWeaknessesAndResistances = (types) => {
-    let allWeaknesses = new Set();
-    let allResistances = new Set();
-    let allImmunities = new Set();
-
-    types.forEach(type => {
-        const relations = typeRelations[type];
-        if (relations) {
-            relations.weaknesses.forEach(w => allWeaknesses.add(w));
-            relations.resistances.forEach(r => allResistances.add(r));
-            relations.immune.forEach(i => allImmunities.add(i));
-        }
-    });
-
-    // Remover duplicados y conflictos (ej. si un tipo es débil a algo y el otro lo resiste)
-    allWeaknesses.forEach(t => {
-        if (allResistances.has(t)) {
-            allWeaknesses.delete(t);
-            allResistances.delete(t); // Se cancelan
-        }
-        if (allImmunities.has(t)) {
-            allWeaknesses.delete(t); // La inmunidad siempre prevalece
-        }
-    });
-    allResistances.forEach(t => {
-        if (allImmunities.has(t)) {
-            allResistances.delete(t); // La inmunidad siempre prevalece
-        }
-    });
-
-    return {
-        weaknesses: Array.from(allWeaknesses),
-        resistances: Array.from(allResistances),
-        immunities: Array.from(allImmunities)
-    };
+    return { multiplier, message, tier };
 };
