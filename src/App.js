@@ -23,7 +23,6 @@ const PokemonBattleSelector = lazy(() => import('./components/PokemonBattleSelec
 const PokemonBattleArena    = lazy(() => import('./components/battle/PokemonBattleArena'));
 const BattleModeSelector    = lazy(() => import('./components/BattleModeSelector'));
 const AnalyticsDashboard    = lazy(() => import('./components/AnalyticsDashboard'));
-const GameAdventure         = lazy(() => import('./components/game/GameAdventure'));
 
 // Constantes
 const ALL_POKEMON_GENERATIONS = [
@@ -252,7 +251,6 @@ function App() {
                               {isGenMenuOpen && (<ul className="generation-dropdown-menu">{ALL_POKEMON_GENERATIONS.map(gen => (<li key={gen.id} onClick={() => handleGenerationSelect(gen.id)} className={selectedGeneration === gen.id.toString() ? 'active' : ''}>{gen.name}</li>))}</ul>)}
                           </div>
                           <Link to="/battle" className="battle-button">Ir a Batalla</Link>
-                          <Link to="/game" className="battle-button" style={{ background: 'linear-gradient(160deg, #3a5dc8, #2a3a8a)' }}>🎮 Aventura Satélite</Link>
                       </div>
                       <div className="pokemon-list">{filteredPokemon.length > 0 ? (filteredPokemon.map(pokemon => <PokemonCard key={pokemon.id} pokemon={pokemon} />)) : (<div className="no-results">No se encontraron Pokémon.</div>)}</div>
                   </>
@@ -262,7 +260,6 @@ function App() {
               <Route path="/battle" element={<motion.div variants={pageVariants} initial="initial" animate="animate" exit="exit"><BattleModeSelector /></motion.div>} />
               <Route path="/battle-selector" element={<motion.div variants={pageVariants} initial="initial" animate="animate" exit="exit"><PokemonBattleSelector pokemonList={pokemonList} /></motion.div>} />
               <Route path="/battle/arena" element={<PokemonBattleArena pokemonList={pokemonList} />} />
-              <Route path="/game" element={<GameAdventure />} />
               <Route path="/analytics" element={<motion.div variants={pageVariants} initial="initial" animate="animate" exit="exit"><AnalyticsDashboard /></motion.div>} />
               <Route path="*" element={<div className="error">Página no encontrada</div>} />
           </Routes>
