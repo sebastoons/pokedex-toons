@@ -88,7 +88,7 @@ function PokemonDetail() {
         setEvolutionLine(specialPokemon.evolutionLine || []);
         setClassicSprites([]);
 
-        setLoading(false);
+        if (!ignore) setLoading(false);
 
       } else {
         // --- LÓGICA ORIGINAL PARA POKÉMON DE LA API (sin cambios) ---

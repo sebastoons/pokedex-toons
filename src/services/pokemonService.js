@@ -149,6 +149,7 @@ export const fetchPokemonDetailsByIds = async (ids) => {
             const specialPokemon = generacionEspecial.find(p => p.id === id);
             if (!specialPokemon) {
                 console.error(`Pokémon especial con ID ${id} no encontrado en generacionEspecial.`);
+                const placeholderImg = `https://placehold.co/200x200/e0e0e0/333?text=%3F`;
                 return Promise.resolve({
                     id,
                     name: `Pokémon ${id}`,
@@ -156,7 +157,8 @@ export const fetchPokemonDetailsByIds = async (ids) => {
                     stats: { hp: 40, attack: 50, defense: 30, 'special-attack': 40, 'special-defense': 30, speed: 40 },
                     types: [{ type: { name: 'normal' } }],
                     moves: [...fallbackMoves],
-                    sprites: { front_default: null, back_default: null },
+                    imageUrl: placeholderImg,
+                    sprites: { front_default: placeholderImg, back_default: placeholderImg },
                 });
             }
 

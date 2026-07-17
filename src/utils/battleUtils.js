@@ -13,17 +13,17 @@ export const stageMultiplier = (stage) => {
 };
 
 export const calculateDamage = (attackerPokemon, defenderPokemon, move, level = 50) => {
-    if (!move) return { damage: 0, effectivenessMessage: 'Movimiento inválido.', isCritical: false };
+    if (!move) return { damage: 0, effectivenessMessage: 'Movimiento inválido.', effectivenessTier: 'normal', isCritical: false };
     const moveType = move.type || 'normal';
 
     if (typeof move.power !== 'number' || move.power <= 0) {
-        return { damage: 0, effectivenessMessage: '', isCritical: false };
+        return { damage: 0, effectivenessMessage: '', effectivenessTier: 'normal', isCritical: false };
     }
 
     const rawAtk = attackerPokemon.attack;
     const rawDef = defenderPokemon.defense;
     if (typeof rawAtk !== 'number' || typeof rawDef !== 'number' || rawDef === 0) {
-        return { damage: 1, effectivenessMessage: '', isCritical: false };
+        return { damage: 1, effectivenessMessage: '', effectivenessTier: 'normal', isCritical: false };
     }
 
     const isCritical = Math.random() < 0.0625;

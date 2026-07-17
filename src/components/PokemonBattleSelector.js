@@ -308,6 +308,9 @@ const MovePicker = ({ move, slotIndex, pool, onSelect }) => {
 // Tarjeta de configuración de técnicas de un Pokémon; memoiza su pool de
 // movimientos por poke.id/apiPool para no recalcularlo en cada render del padre.
 const PokeConfigCard = React.memo(function PokeConfigCard({ poke, moves, apiPool, onSelectMove }) {
+    // onSelectMove es la referencia estable handleMoveSelect(pokemonId, slotIndex, move);
+    // aquí solo se le antepone el pokemonId con una currificación memoizada.
+    const handleSelect = useCallback((idx, m) => onSelectMove(poke.id, idx, m), [onSelectMove, poke.id]);
     const types = useMemo(() => getPokemonTypes(poke), [poke]);
     const pool = useMemo(() => {
         const staticPool = buildMovePool(types);
@@ -336,7 +339,7 @@ const PokeConfigCard = React.memo(function PokeConfigCard({ poke, moves, apiPool
                         move={moves[idx] || null}
                         slotIndex={idx}
                         pool={pool}
-                        onSelect={(m) => onSelectMove(idx, m)}
+                        onSelect={(m) => handleSelect(idx, m)}
                     />
                 ))}
             </div>
@@ -476,13 +479,13 @@ function PokemonBattleSelector({ pokemonList }) {
         return () => ctrl.abort();
     }, [isConfiguringMoves, currentPlayer]); // eslint-disable-line react-hooks/exhaustive-deps
 
-    const handleMoveSelect = (pokemonId, slotIndex, move) => {
+    const handleMoveSelect = useCallback((pokemonId, slotIndex, move) => {
         (currentPlayer === 1 ? setSelectedMovesP1 : setSelectedMovesP2)(prev => {
             const curr = [...(prev[pokemonId] || [])];
             curr[slotIndex] = move;
             return { ...prev, [pokemonId]: curr };
         });
-    };
+    }, [currentPlayer]);
 
     const handleStartBattle = () => {
         let finalP2Team = player2Team;
@@ -561,7 +564,7 @@ function PokemonBattleSelector({ pokemonList }) {
                             poke={poke}
                             moves={selectedMoves[poke.id] || []}
                             apiPool={apiMovePool[poke.id]}
-                            onSelectMove={(idx, m) => handleMoveSelect(poke.id, idx, m)}
+                            onSelectMove={handleMoveSelect}
                         />
                     ))}
                 </div>

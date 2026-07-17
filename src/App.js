@@ -255,7 +255,7 @@ function App() {
               <Route path="/pokemon/:pokemonId" element={<motion.div variants={pageVariants} initial="initial" animate="animate" exit="exit"><PokemonDetail /></motion.div>} />
               <Route path="/battle" element={<motion.div variants={pageVariants} initial="initial" animate="animate" exit="exit"><BattleModeSelector /></motion.div>} />
               <Route path="/battle-selector" element={<motion.div variants={pageVariants} initial="initial" animate="animate" exit="exit"><PokemonBattleSelector pokemonList={pokemonList} /></motion.div>} />
-              <Route path="/battle/arena" element={<motion.div variants={pageVariants} initial="initial" animate="animate" exit="exit"><PokemonBattleArena pokemonList={pokemonList} /></motion.div>} />
+              <Route path="/battle/arena" element={<motion.div variants={pageVariants} initial="initial" animate="animate" exit="exit"><PokemonBattleArena /></motion.div>} />
               <Route path="/analytics" element={<motion.div variants={pageVariants} initial="initial" animate="animate" exit="exit"><AnalyticsDashboard /></motion.div>} />
               <Route path="*" element={<div className="error">Página no encontrada</div>} />
           </Routes>

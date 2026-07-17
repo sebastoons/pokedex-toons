@@ -1,31 +1,10 @@
 // src/components/pokemonDetail/PokemonTypeEffectiveness.js
 import React from 'react';
+import { getTypeInfo } from '../../utils/pokemonTypes';
 import './PokemonTypeEffectiveness.css';
 
-// Función para traducir nombres de tipos, ahora vive aquí
-const translateTypeName = (typeName) => {
-    switch (typeName.toLowerCase()) {
-      case 'normal': return 'Normal';
-      case 'fire': return 'Fuego';
-      case 'water': return 'Agua';
-      case 'grass': return 'Planta';
-      case 'electric': return 'Eléctrico';
-      case 'ice': return 'Hielo';
-      case 'fighting': return 'Lucha';
-      case 'poison': return 'Veneno';
-      case 'ground': return 'Tierra';
-      case 'flying': return 'Volador';
-      case 'psychic': return 'Psíquico';
-      case 'bug': return 'Bicho';
-      case 'rock': return 'Roca';
-      case 'ghost': return 'Fantasma';
-      case 'dragon': return 'Dragón';
-      case 'steel': return 'Acero';
-      case 'dark': return 'Siniestro';
-      case 'fairy': return 'Hada';
-      default: return typeName.charAt(0).toUpperCase() + typeName.slice(1);
-    }
-};
+const translateTypeName = (typeName) =>
+    getTypeInfo(typeName)?.name ?? (typeName.charAt(0).toUpperCase() + typeName.slice(1));
 
 // Componente interno para renderizar una sección de efectividad
 const renderEffectivenessTypes = (typesArray, typeLabel) => {
