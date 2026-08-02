@@ -1,0 +1,127 @@
+/* src/components/pokemonDetail/PokemonGen5Moveset.css */
+
+.gen5-move-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    justify-content: center;
+    margin-bottom: 14px;
+}
+
+.gen5-move-tab {
+    font-family: monospace;
+    font-size: 0.78em;
+    font-weight: bold;
+    color: #666;
+    background: #f0f2f5;
+    border: 1px solid #dde2e8;
+    border-radius: 8px;
+    padding: 6px 10px;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s, border-color 0.15s;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.gen5-move-tab:hover:not(:disabled) { background: #e4e8ee; }
+.gen5-move-tab:disabled { opacity: 0.5; cursor: default; }
+
+.gen5-move-tab.active {
+    background: #34495e;
+    color: #fff;
+    border-color: #34495e;
+}
+
+.gen5-move-tab-count {
+    font-size: 0.85em;
+    opacity: 0.75;
+}
+
+.gen5-move-list {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid #eceff2;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.gen5-move-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 10px;
+    font-family: monospace;
+    font-size: 0.85em;
+    border-bottom: 1px solid #f0f2f5;
+}
+
+.gen5-move-row:last-child { border-bottom: none; }
+.gen5-move-row:nth-child(even) { background: #fafbfc; }
+
+.gen5-move-row-header {
+    background: #34495e !important;
+    color: #fff;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 0.5em;
+    text-transform: uppercase;
+    padding: 9px 10px;
+}
+
+.gen5-move-level {
+    width: 56px;
+    flex-shrink: 0;
+    font-size: 0.9em;
+    color: #888;
+}
+
+.gen5-move-row-header .gen5-move-level { color: #fff; }
+
+.gen5-move-name {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: #34495e;
+    font-weight: bold;
+}
+
+.gen5-move-row-header .gen5-move-name { color: #fff; }
+
+.gen5-move-type {
+    width: 68px;
+    flex-shrink: 0;
+    text-align: center;
+    text-transform: uppercase;
+    font-size: 0.78em;
+    color: #fff;
+    border-radius: 10px;
+    padding: 2px 4px;
+    text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.3);
+}
+
+.gen5-move-row-header .gen5-move-type {
+    background: transparent !important;
+    color: #fff;
+    text-shadow: none;
+}
+
+.gen5-move-power, .gen5-move-pp {
+    width: 46px;
+    flex-shrink: 0;
+    text-align: center;
+    color: #666;
+}
+
+.gen5-move-pp { width: 54px; }
+.gen5-move-row-header .gen5-move-power,
+.gen5-move-row-header .gen5-move-pp { color: #fff; }
+
+@media (max-width: 480px) {
+    .gen5-move-row { font-size: 0.72em; padding: 6px 6px; gap: 4px; }
+    .gen5-move-level { width: 42px; }
+    .gen5-move-type { width: 54px; font-size: 0.7em; }
+    .gen5-move-power, .gen5-move-pp { width: 36px; }
+    .gen5-move-tab { font-size: 0.68em; padding: 5px 7px; }
+}

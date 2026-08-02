@@ -252,22 +252,3 @@ export const getAutomaticAbility = (types) => {
   return { name: "Habilidad Única", description: "Este Pokémon posee una habilidad nunca antes vista." };
 };
 
-// Función para obtener una lista de movimientos basada en los tipos del Pokémon
-export const getAutomaticMoves = (types) => {
-  let moves = [];
-  
-  types.forEach(type => {
-    if (typeData[type] && typeData[type].moves) {
-      moves.push(...typeData[type].moves);
-    }
-  });
-
-  // Si no se encontraron movimientos para los tipos, añadimos algunos de tipo normal
-  if (moves.length === 0 && typeData.normal.moves) {
-      moves.push(...typeData.normal.moves);
-  }
-
-  // Mezclamos y seleccionamos hasta 4 movimientos para que no sean siempre los mismos
-  const shuffled = moves.sort(() => 0.5 - Math.random());
-  return shuffled.slice(0, 4);
-};

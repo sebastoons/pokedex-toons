@@ -1,0 +1,85 @@
+/* src/components/pokemonDetail/PokemonBreeding.css */
+
+.breeding-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.breeding-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    text-align: center;
+}
+
+.breeding-item-label {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 0.5em;
+    color: #999;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.breeding-item-value {
+    font-family: monospace;
+    font-size: 0.95em;
+    color: #34495e;
+    font-weight: bold;
+}
+
+.breeding-egg-groups {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 6px;
+}
+
+.breeding-egg-group-badge {
+    font-family: monospace;
+    font-size: 0.85em;
+    font-weight: bold;
+    color: #fff;
+    background: linear-gradient(135deg, #705898, #604888);
+    padding: 4px 10px;
+    border-radius: 12px;
+    text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.3);
+}
+
+.breeding-gender-none {
+    font-family: monospace;
+    font-size: 0.9em;
+    color: #777;
+}
+
+.breeding-gender-bar-wrap {
+    width: 100%;
+    max-width: 260px;
+}
+
+.breeding-gender-bar {
+    display: flex;
+    height: 12px;
+    border-radius: 6px;
+    overflow: hidden;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.breeding-gender-male {
+    background: linear-gradient(90deg, #4a90d9, #3a7cc4);
+}
+
+.breeding-gender-female {
+    background: linear-gradient(90deg, #e85890, #d84880);
+}
+
+.breeding-gender-labels {
+    display: flex;
+    justify-content: space-between;
+    font-family: monospace;
+    font-size: 0.8em;
+    font-weight: bold;
+    color: #555;
+    margin-top: 4px;
+}

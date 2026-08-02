@@ -69,3 +69,30 @@
     z-index: 1;
     font-family: monospace;
 }
+
+.stat-ev-badge {
+    flex-shrink: 0;
+    font-family: monospace;
+    font-size: 0.72em;
+    font-weight: bold;
+    color: #2c3e50;
+    background: linear-gradient(135deg, #ffd76a, #f5c247);
+    border: 1px solid #d9a62c;
+    border-radius: 10px;
+    padding: 2px 7px;
+    white-space: nowrap;
+}
+
+.stats-ev-hint {
+    text-align: center;
+    font-family: monospace;
+    font-size: 0.72em;
+    font-style: italic;
+    color: #999;
+    margin: 8px 0 0;
+}
+
+@media (max-width: 480px) {
+    .stat-name { width: 66px; font-size: 0.9em; }
+    .stat-ev-badge { font-size: 0.62em; padding: 2px 5px; }
+}
