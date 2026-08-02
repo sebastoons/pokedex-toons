@@ -75,13 +75,21 @@
 }
 
 .evolution-requirement {
-    font-size: 0.9em;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.85em;
     color: #595959;
     background-color: rgb(255, 255, 255);
-    padding: 2px 6px;
+    padding: 3px 8px;
     border-radius: 5px;
     margin-bottom: 5px;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 40%);
     font-family: monospace;
     text-transform: uppercase;
+    white-space: nowrap;
+}
+
+.evolution-requirement-icon {
+    font-size: 1.1em;
 }

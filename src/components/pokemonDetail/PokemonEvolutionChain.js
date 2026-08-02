@@ -3,66 +3,81 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import './PokemonEvolutionChain.css';
 
-// La función para formatear los requisitos de evolución ahora vivirá aquí.
-// La tomamos de tu PokemonDetail.js original.
+const humanize = (slug) => slug.replace(/-/g, ' ').split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+
+const STONE_TRANSLATIONS = {
+    'thunder-stone': 'Piedra Trueno', 'leaf-stone': 'Piedra Hoja',
+    'moon-stone': 'Piedra Lunar', 'sun-stone': 'Piedra Solar',
+    'water-stone': 'Piedra Agua', 'fire-stone': 'Piedra Fuego',
+    'oval-stone': 'Piedra Oval', 'shiny-stone': 'Piedra Alba',
+    'dusk-stone': 'Piedra Noche', 'dawn-stone': 'Piedra Día',
+    'ice-stone': 'Piedra Hielo',
+};
+
+const translateItem = (itemName) => STONE_TRANSLATIONS[itemName] || humanize(itemName);
+
+// Idea 7: método de evolución explícito (piedra, intercambio, felicidad,
+// objeto sostenido...), con un ícono por tipo de disparador para que se
+// distinga de un vistazo, tal como en la Pokédex de los juegos.
 const formatEvolutionRequirement = (details) => {
-    if (!details) return '';
+    if (!details) return { icon: '❓', text: '' };
 
     const trigger = details.trigger?.name;
-    let requirement = '';
+    let text = '';
+    let icon = '⭐';
 
     switch (trigger) {
         case 'level-up':
+            icon = '📈';
             if (details.min_level) {
-                requirement = `Nv. ${details.min_level}`;
+                text = `Nv. ${details.min_level}`;
             } else if (details.min_happiness) {
-                requirement = `Felicidad`;
+                text = 'Felicidad';
+                icon = '💗';
             } else if (details.min_affection) {
-                requirement = `Afecto`;
+                text = 'Afecto';
+                icon = '💗';
             } else if (details.min_beauty) {
-                requirement = `Belleza`;
+                text = 'Belleza';
+                icon = '💗';
             } else {
-                requirement = 'Por nivel';
+                text = 'Por nivel';
             }
-            if (details.time_of_day && details.time_of_day !== '') {
-                requirement += ` (${details.time_of_day === 'day' ? 'Día' : 'Noche'})`;
+            if (details.held_item) {
+                text += ` (con ${translateItem(details.held_item.name)})`;
+                icon = '🎒';
+            }
+            if (details.time_of_day) {
+                text += ` (${details.time_of_day === 'day' ? 'Día' : 'Noche'})`;
             }
             if (details.known_move) {
-                const moveName = details.known_move.name.replace(/-/g, ' ').split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
-                requirement += ` (con ${moveName})`;
+                text += ` (con ${humanize(details.known_move.name)})`;
+            }
+            if (details.location) {
+                text += ` en ${humanize(details.location.name)}`;
+                icon = '📍';
             }
             break;
         case 'trade':
-            requirement = 'Intercambio';
+            icon = '🔄';
+            text = 'Intercambio';
             if (details.held_item) {
-                const itemName = details.held_item.name.replace(/-/g, ' ').split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
-                requirement += ` (equipando ${itemName})`;
+                text += ` (equipando ${translateItem(details.held_item.name)})`;
             }
             break;
         case 'use-item':
-            if (details.item) {
-                let itemName = details.item.name;
-                const stoneTranslations = {
-                    'thunder-stone': 'Piedra Trueno', 'leaf-stone': 'Piedra Hoja',
-                    'moon-stone': 'Piedra Lunar', 'sun-stone': 'Piedra Solar',
-                    'water-stone': 'Piedra Agua', 'fire-stone': 'Piedra Fuego',
-                    'oval-stone': 'Piedra Oval', 'shiny-stone': 'Piedra Alba',
-                    'dusk-stone': 'Piedra Noche', 'dawn-stone': 'Piedra Día',
-                    'ice-stone': 'Piedra Hielo'
-                };
-                itemName = stoneTranslations[itemName] || itemName.replace(/-/g, ' ').split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
-                requirement = `Usar ${itemName}`;
-            } else {
-                requirement = 'Usar objeto';
-            }
+            icon = '💎';
+            text = details.item ? `Usar ${translateItem(details.item.name)}` : 'Usar objeto';
             break;
         case 'shed':
-            requirement = 'Vacío en equipo';
+            icon = '🌀';
+            text = 'Vacío en equipo';
             break;
         default:
-            requirement = `Condición especial`;
+            icon = '❓';
+            text = 'Condición especial';
     }
-    return requirement.trim();
+    return { icon, text: text.trim() };
 };
 
 
@@ -82,12 +97,15 @@ const PokemonEvolutionChain = ({ evolutionLine }) => {
     <div className="evolution-section">
       <h3>Linea Evolutiva</h3>
       <div className="evolution-line-container">
-        {evolutionLine.map((evoPokemon, index) => (
+        {evolutionLine.map((evoPokemon, index) => {
+          const req = index > 0 && evoPokemon.details ? formatEvolutionRequirement(evoPokemon.details) : null;
+          return (
           <React.Fragment key={evoPokemon.id}>
             {index > 0 && (
               <div className="evolution-path-details">
                 <span className="evolution-requirement">
-                  {evoPokemon.details ? formatEvolutionRequirement(evoPokemon.details) : 'Evolución'}
+                  <span className="evolution-requirement-icon">{req?.icon ?? '⭐'}</span>
+                  {req?.text || 'Evolución'}
                 </span>
                 <span className="evolution-arrow">→</span>
               </div>
@@ -101,7 +119,8 @@ const PokemonEvolutionChain = ({ evolutionLine }) => {
               <span className="evolution-name">{evoPokemon.name}</span>
             </div>
           </React.Fragment>
-        ))}
+          );
+        })}
       </div>
     </div>
   );

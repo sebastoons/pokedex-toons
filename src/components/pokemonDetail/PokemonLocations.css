@@ -1,0 +1,64 @@
+/* src/components/pokemonDetail/PokemonLocations.css */
+
+.gen5-section-range {
+    font-size: 0.75em;
+    color: #aaa;
+    text-transform: none;
+    font-family: monospace;
+}
+
+.locations-gen-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.locations-gen-block {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.locations-gen-heading {
+    display: flex;
+    justify-content: center;
+}
+
+.locations-versions {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.locations-version-block {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 10px;
+    background: #f7f8fa;
+    border-radius: 8px;
+    border: 1px solid #eceff2;
+}
+
+.locations-areas {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    flex: 1;
+}
+
+.locations-area-tag {
+    font-family: monospace;
+    font-size: 0.78em;
+    color: #34495e;
+    background: #fff;
+    border: 1px solid #dde2e8;
+    border-radius: 10px;
+    padding: 3px 9px;
+}
+
+@media (max-width: 480px) {
+    .locations-version-block { padding: 6px 8px; }
+    .locations-area-tag { font-size: 0.68em; padding: 2px 7px; }
+}
