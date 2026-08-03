@@ -7,21 +7,33 @@
     font-family: monospace;
 }
 
-.locations-gen-list {
+.locations-region-tabs {
     display: flex;
-    flex-direction: column;
-    gap: 16px;
-}
-
-.locations-gen-block {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-}
-
-.locations-gen-heading {
-    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
     justify-content: center;
+    margin-bottom: 14px;
+}
+
+.locations-region-tab {
+    font-family: monospace;
+    font-size: 0.8em;
+    font-weight: bold;
+    color: #666;
+    background: #f0f2f5;
+    border: 1px solid #dde2e8;
+    border-radius: 8px;
+    padding: 6px 12px;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+
+.locations-region-tab:hover { background: #e4e8ee; }
+
+.locations-region-tab.active {
+    background: #34495e;
+    color: #fff;
+    border-color: #34495e;
 }
 
 .locations-versions {
@@ -51,14 +63,60 @@
 .locations-area-tag {
     font-family: monospace;
     font-size: 0.78em;
-    color: #34495e;
-    background: #fff;
-    border: 1px solid #dde2e8;
     border-radius: 10px;
     padding: 3px 9px;
+    border: 1px solid transparent;
+}
+
+.locations-area-tag b { font-weight: bold; margin-left: 3px; }
+
+/* Colores de probabilidad de encuentro, igual a como marcaba la Pokédex clásica */
+.locations-area-high {
+    color: #7a1a1a;
+    background: #ffd6d6;
+    border-color: #f0a8a8;
+}
+
+.locations-area-mid {
+    color: #7a4a10;
+    background: #ffe3bd;
+    border-color: #f0c48a;
+}
+
+.locations-area-low {
+    color: #6b6420;
+    background: #fbf3c8;
+    border-color: #e6da96;
+}
+
+.locations-legend {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 14px;
+    margin-top: 14px;
+    padding-top: 10px;
+    border-top: 1px dashed #e4e8ee;
+}
+
+.locations-legend-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-family: monospace;
+    font-size: 0.72em;
+    color: #888;
+}
+
+.locations-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    display: inline-block;
 }
 
 @media (max-width: 480px) {
     .locations-version-block { padding: 6px 8px; }
     .locations-area-tag { font-size: 0.68em; padding: 2px 7px; }
+    .locations-region-tab { font-size: 0.72em; padding: 5px 9px; }
 }
