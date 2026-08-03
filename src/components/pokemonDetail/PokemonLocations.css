@@ -115,6 +115,39 @@
     display: inline-block;
 }
 
+.locations-version-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 6px;
+    margin-bottom: 12px;
+}
+
+.locations-version-tab {
+    cursor: pointer;
+    background: none;
+}
+
+.locations-version-tab.active {
+    background: #34495e;
+    color: #fff;
+    border-color: #34495e;
+}
+
+.locations-areas-below-map {
+    justify-content: center;
+    margin-top: 4px;
+}
+
+.locations-map-pending {
+    text-align: center;
+    font-family: monospace;
+    font-size: 0.72em;
+    font-style: italic;
+    color: #aaa;
+    margin: 10px 0 0;
+}
+
 @media (max-width: 480px) {
     .locations-version-block { padding: 6px 8px; }
     .locations-area-tag { font-size: 0.68em; padding: 2px 7px; }

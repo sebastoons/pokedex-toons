@@ -52,8 +52,7 @@ export const ABILITY_NAMES_ES = {
     'magic-bounce': 'Espejo Mágico', 'sap-sipper': 'Herbívoro', 'prankster': 'Bromista',
     'sand-force': 'Poder Arena', 'iron-barbs': 'Punta Acero', 'zen-mode': 'Modo Zen',
     'victory-star': 'Estrella Victoria', 'turboblaze': 'Turbochispa', teravolt: 'Terravoltaje',
-    'sand-attack': 'Ataque Arena', 'gale-wings': 'Viento Afín',
-    'unique-ability': 'Habilidad Única',
+    'gale-wings': 'Viento Afín',
 };
 
 // Traduce un slug de habilidad al español; si no está en el diccionario,

@@ -3,8 +3,12 @@
 // (Generación VI en adelante queda fuera por ahora, a definir más adelante.)
 // Filtrado por región (para no saturar todo hacia abajo) y con el color de
 // cada zona según la probabilidad real de encuentro, tal como marcaba la
-// Pokédex clásica al buscar un Pokémon ya capturado.
+// Pokédex clásica al buscar un Pokémon ya capturado. Para Kanto y Teselia
+// además se muestra un mapa propio (ver src/data/regionMaps.js); el resto
+// de regiones por ahora solo tiene la vista de lista.
 import React, { useState, useEffect, useMemo } from 'react';
+import { hasRegionMap } from '../../data/regionMaps';
+import RegionMapView from './RegionMapView';
 import './Gen5Theme.css';
 import './PokemonLocations.css';
 
@@ -28,6 +32,7 @@ const AreaTag = ({ area, chance }) => {
 
 const PokemonLocations = ({ locations, loading }) => {
     const [activeRegion, setActiveRegion] = useState(null);
+    const [activeVersion, setActiveVersion] = useState(null);
 
     const regions = useMemo(() => locations?.byRegion || [], [locations]);
 
@@ -41,6 +46,20 @@ const PokemonLocations = ({ locations, loading }) => {
     const currentRegion = useMemo(
         () => regions.find(r => r.id === activeRegion) || regions[0] || null,
         [regions, activeRegion]
+    );
+
+    const regionHasMap = currentRegion ? hasRegionMap(currentRegion.id) : false;
+
+    // Al cambiar de región, vuelve a elegir la primera versión disponible.
+    useEffect(() => {
+        if (currentRegion && !currentRegion.versions.some(v => v.name === activeVersion)) {
+            setActiveVersion(currentRegion.versions[0]?.name || null);
+        }
+    }, [currentRegion, activeVersion]);
+
+    const currentVersion = useMemo(
+        () => currentRegion?.versions.find(v => v.name === activeVersion) || currentRegion?.versions[0] || null,
+        [currentRegion, activeVersion]
     );
 
     return (
@@ -69,7 +88,35 @@ const PokemonLocations = ({ locations, loading }) => {
                         ))}
                     </div>
 
-                    {currentRegion && (
+                    {regionHasMap && currentRegion && (
+                        <>
+                            {currentRegion.versions.length > 1 && (
+                                <div className="locations-version-tabs">
+                                    {currentRegion.versions.map(v => (
+                                        <button
+                                            key={v.name}
+                                            className={`gen5-version-pill locations-version-tab ${currentVersion?.name === v.name ? 'active' : ''}`}
+                                            onClick={() => setActiveVersion(v.name)}
+                                        >
+                                            {v.display}
+                                        </button>
+                                    ))}
+                                </div>
+                            )}
+                            {currentVersion && (
+                                <>
+                                    <RegionMapView regionId={currentRegion.id} areas={currentVersion.areas} />
+                                    <div className="locations-areas locations-areas-below-map">
+                                        {currentVersion.areas.map(({ area, chance }) => (
+                                            <AreaTag key={area} area={area} chance={chance} />
+                                        ))}
+                                    </div>
+                                </>
+                            )}
+                        </>
+                    )}
+
+                    {!regionHasMap && currentRegion && (
                         <div className="locations-versions">
                             {currentRegion.versions.map(v => (
                                 <div key={v.name} className="locations-version-block">
@@ -84,11 +131,18 @@ const PokemonLocations = ({ locations, loading }) => {
                         </div>
                     )}
 
-                    <div className="locations-legend">
-                        <span className="locations-legend-item"><i className="locations-dot locations-area-high" /> Alta (≥50%)</span>
-                        <span className="locations-legend-item"><i className="locations-dot locations-area-mid" /> Media (15-49%)</span>
-                        <span className="locations-legend-item"><i className="locations-dot locations-area-low" /> Baja (&lt;15%)</span>
-                    </div>
+                    {!regionHasMap && (
+                        <>
+                            <p className="locations-map-pending">
+                                El mapa ilustrado todavía no está disponible para {currentRegion?.label}; por ahora se muestra en lista.
+                            </p>
+                            <div className="locations-legend">
+                                <span className="locations-legend-item"><i className="locations-dot locations-area-high" /> Alta (≥50%)</span>
+                                <span className="locations-legend-item"><i className="locations-dot locations-area-mid" /> Media (15-49%)</span>
+                                <span className="locations-legend-item"><i className="locations-dot locations-area-low" /> Baja (&lt;15%)</span>
+                            </div>
+                        </>
+                    )}
                 </>
             )}
         </div>

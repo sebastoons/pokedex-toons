@@ -1,0 +1,94 @@
+/* src/components/pokemonDetail/RegionMapView.css */
+
+.region-map-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 14px;
+}
+
+.region-map-svg {
+    width: 100%;
+    max-width: 420px;
+    aspect-ratio: 1 / 1;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+}
+
+.region-map-bg {
+    fill: #eaf3e6;
+    stroke: #cfe0c8;
+    stroke-width: 0.4;
+}
+
+.region-map-path {
+    stroke: #b9cdb0;
+    stroke-width: 0.6;
+    stroke-linecap: round;
+}
+
+.region-map-node {
+    stroke: #fff;
+    stroke-width: 0.4;
+    cursor: pointer;
+    transition: r 0.12s ease;
+}
+
+.region-map-node-town { fill: #7a6a52; }
+.region-map-node-route { fill: #a8b89c; }
+.region-map-node-dungeon { fill: #5a6a78; }
+
+.region-map-node-high { fill: #e0504a; stroke: #7a1a1a; stroke-width: 0.6; }
+.region-map-node-mid  { fill: #f0a13f; stroke: #7a4a10; stroke-width: 0.6; }
+.region-map-node-low  { fill: #f0d060; stroke: #6b6420; stroke-width: 0.6; }
+
+.region-map-node-group:hover .region-map-node { filter: brightness(1.15); }
+
+.region-map-label {
+    font-family: monospace;
+    font-size: 2.6px;
+    font-weight: bold;
+    fill: #2c3e50;
+    paint-order: stroke;
+    stroke: #fff;
+    stroke-width: 0.6px;
+    stroke-linejoin: round;
+}
+
+.region-map-legend {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px;
+    font-family: monospace;
+    font-size: 0.7em;
+    color: #888;
+}
+
+.region-map-legend span {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.region-map-dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.region-map-dot.region-map-node-high { background: #e0504a; }
+.region-map-dot.region-map-node-mid  { background: #f0a13f; }
+.region-map-dot.region-map-node-low  { background: #f0d060; }
+.region-map-dot.region-map-node-none { background: #a8b89c; }
+
+.region-map-disclaimer {
+    font-family: monospace;
+    font-size: 0.65em;
+    font-style: italic;
+    color: #aaa;
+    text-align: center;
+    max-width: 320px;
+}
