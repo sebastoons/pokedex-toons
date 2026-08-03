@@ -71,5 +71,21 @@ export const VERSION_INFO = GENERATIONS_1_TO_5.reduce((acc, { gen, versions }) =
 
 export const isGen1To5Version = (versionName) => Boolean(VERSION_INFO[versionName]);
 
+// Regiones jugables (Kanto, Johto, Hoenn, Sinnoh, Teselia) — se usan para
+// filtrar las ubicaciones salvajes por región en vez de mostrar todo junto.
+export const REGIONS = [
+    { id: 'kanto',   label: 'Kanto',   versions: ['red', 'blue', 'yellow', 'firered', 'leafgreen'] },
+    { id: 'johto',   label: 'Johto',   versions: ['gold', 'silver', 'crystal', 'heartgold', 'soulsilver'] },
+    { id: 'hoenn',   label: 'Hoenn',   versions: ['ruby', 'sapphire', 'emerald'] },
+    { id: 'sinnoh',  label: 'Sinnoh',  versions: ['diamond', 'pearl', 'platinum'] },
+    { id: 'teselia', label: 'Teselia', versions: ['black', 'white', 'black-2', 'white-2'] },
+];
+
+// Mapa plano version.name -> región, para agrupar encuentros rápido.
+export const VERSION_TO_REGION = REGIONS.reduce((acc, region) => {
+    region.versions.forEach(v => { acc[v] = region.id; });
+    return acc;
+}, {});
+
 export const humanizeSlug = (slug = '') =>
     slug.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');

@@ -4,7 +4,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import '../App.css';
 
 import { fetchPokemon, getPokemonTypeEffectiveness, fetchPokemonBasicInfo } from '../services/pokeapi';
-import { filterMovesByGen5, fetchGen5MovesData, fetchGen1To5Encounters } from '../services/pokeGen5';
+import { filterMovesByGen5, fetchGen5MovesData, fetchGen1To5Encounters, fetchAbilitiesData } from '../services/pokeGen5';
 import { generacionEspecial } from '../data/generacionEspecial';
 import { getAutomaticAbility } from '../utils/specialGenerationUtils';
 
@@ -116,19 +116,7 @@ function PokemonDetail() {
               ? fetch(pokemonJson.species.url).then(r => r.json())
               : Promise.resolve(null),
 
-            Promise.all(abilityRefs.map(async (a) => {
-              try {
-                const res = await fetch(a.ability.url);
-                const data = await res.json();
-                const esName = data.names?.find(n => n.language.name === 'es')?.name || a.ability.name;
-                const esDesc = data.effect_entries?.find(e => e.language.name === 'es')?.effect
-                  || data.effect_entries?.find(e => e.language.name === 'en')?.effect
-                  || 'Descripción no disponible.';
-                return { name: esName, description: esDesc.replace(/[\n\r\f]/g, ' '), isHidden: a.is_hidden };
-              } catch {
-                return { name: a.ability.name, description: 'Descripción no disponible.', isHidden: a.is_hidden };
-              }
-            })),
+            fetchAbilitiesData(abilityRefs),
 
             fetchGen5MovesData(movesBuckets),
             fetchGen1To5Encounters(pokemonJson.id),
@@ -141,8 +129,7 @@ function PokemonDetail() {
           if (ignore) return;
 
           setSpeciesData(speciesJson);
-          // Normales primero, la Oculta al final para que resalte.
-          setAbilities([...resolvedAbilities].sort((a, b) => (a.isHidden ? 1 : 0) - (b.isHidden ? 1 : 0)));
+          setAbilities(resolvedAbilities); // fetchAbilitiesData ya deja la Oculta al final
           setGen5Moveset(resolvedMoveset);
           setGen5MovesLoading(false);
           setLocations(resolvedLocations);

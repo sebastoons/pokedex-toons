@@ -49,8 +49,8 @@
     line-height: 1.5;
 }
 
-/* Insignia coloreada por generación (I-V), para escanear rápido de dónde
-   viene cada dato. Colores inspirados en la portada de cada era de juegos. */
+/* Insignia fija "GEN V" junto al título del moveset, para dejar claro de
+   qué juego viene esa información. */
 .gen5-gen-badge {
     display: inline-block;
     font-family: 'Press Start 2P', monospace;
@@ -58,15 +58,10 @@
     padding: 4px 8px;
     border-radius: 6px;
     color: #fff;
+    background: #2c2c54;
     text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.4);
     white-space: nowrap;
 }
-
-.gen5-gen-badge[data-gen="1"] { background: #cc2020; }
-.gen5-gen-badge[data-gen="2"] { background: #c8960c; }
-.gen5-gen-badge[data-gen="3"] { background: #159652; }
-.gen5-gen-badge[data-gen="4"] { background: #4a5fc1; }
-.gen5-gen-badge[data-gen="5"] { background: #2c2c54; }
 
 /* Badge de versión específica (Esmeralda, Blanco 2, etc.), más suave que
    la insignia de generación, para no competir visualmente con ella. */
