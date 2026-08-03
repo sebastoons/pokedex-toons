@@ -1,5 +1,9 @@
 /* src/components/pokemonDetail/PokemonGen5Moveset.css */
 
+.gen5-section-relative {
+    position: relative;
+}
+
 .gen5-move-tabs {
     display: flex;
     flex-wrap: wrap;
@@ -57,19 +61,20 @@
 }
 
 .gen5-move-row {
-    position: relative;
     display: flex;
     align-items: center;
-    gap: 6px;
-    padding: 7px 8px;
+    gap: 8px;
+    padding: 8px 12px;
     font-family: monospace;
-    font-size: 0.85em;
+    font-size: 0.9em;
     border-bottom: 1px solid #f0f2f5;
     cursor: default;
+    transition: background 0.12s;
 }
 
 .gen5-move-row:last-child { border-bottom: none; }
 .gen5-move-row:nth-child(even) { background: #fafbfc; }
+.gen5-move-row-active { background: #eef2f8 !important; }
 
 .gen5-move-row-header {
     background: #34495e !important;
@@ -77,12 +82,12 @@
     font-family: 'Press Start 2P', monospace;
     font-size: 0.48em;
     text-transform: uppercase;
-    padding: 9px 8px;
+    padding: 9px 12px;
     cursor: default;
 }
 
 .gen5-move-level {
-    width: 50px;
+    width: 56px;
     flex-shrink: 0;
     font-size: 0.9em;
     color: #888;
@@ -108,14 +113,14 @@
 .gen5-move-row-header .gen5-move-name { color: #fff; }
 
 .gen5-move-type {
-    width: 62px;
+    width: 80px;
     flex-shrink: 0;
     text-align: center;
     text-transform: uppercase;
-    font-size: 0.76em;
+    font-size: 0.78em;
     color: #fff;
     border-radius: 10px;
-    padding: 2px 4px;
+    padding: 3px 6px;
     text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.3);
 }
 
@@ -125,67 +130,104 @@
     text-shadow: none;
 }
 
-.gen5-move-power, .gen5-move-acc, .gen5-move-pp {
-    width: 34px;
-    flex-shrink: 0;
-    text-align: center;
-    color: #666;
+/* ── Cartel flotante de descripción — cubre toda la sección de movimientos ── */
+.gen5-move-tooltip-overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(15, 20, 28, 0.55);
+    border-radius: 10px;
+    z-index: 40;
+    padding: 16px;
+    animation: gen5-tooltip-fade 0.12s ease-out;
 }
 
-.gen5-move-acc { width: 40px; }
+@keyframes gen5-tooltip-fade {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
 
-.gen5-move-row-header .gen5-move-power,
-.gen5-move-row-header .gen5-move-acc,
-.gen5-move-row-header .gen5-move-pp { color: #fff; }
-
-/* ── Tooltip de descripción (hover en PC, mantener presionado en móvil) ── */
 .gen5-move-tooltip {
-    position: absolute;
-    left: 8px;
-    right: 8px;
-    top: calc(100% + 4px);
-    z-index: 30;
+    width: 100%;
+    max-width: 320px;
     background: #1f2a38;
     color: #fff;
-    border-radius: 8px;
-    padding: 10px 12px;
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
+    border-radius: 10px;
+    padding: 14px 16px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
     text-align: left;
 }
 
+.gen5-move-tooltip-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
 .gen5-move-tooltip-name {
-    display: block;
     font-family: 'Press Start 2P', monospace;
-    font-size: 0.55em;
+    font-size: 0.58em;
     color: #ffcb05;
-    margin-bottom: 6px;
     text-transform: uppercase;
 }
 
+.gen5-move-tooltip-close {
+    flex-shrink: 0;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(255, 255, 255, 0.12);
+    color: #fff;
+    font-size: 1em;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.gen5-move-tooltip-close:hover { background: rgba(255, 255, 255, 0.22); }
+
 .gen5-move-tooltip-desc {
     font-family: monospace;
-    font-size: 0.82em;
-    line-height: 1.5;
+    font-size: 0.85em;
+    line-height: 1.55;
     color: #e6e9ee;
-    margin: 0 0 8px;
+    margin: 0 0 12px;
 }
 
 .gen5-move-tooltip-stats {
     display: flex;
-    gap: 12px;
-    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.gen5-move-tooltip-stats span {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    background: rgba(255, 255, 255, 0.06);
+    border-radius: 8px;
+    padding: 6px 4px;
     font-family: monospace;
-    font-size: 0.7em;
+    font-size: 0.6em;
     font-weight: bold;
     color: #9fb3c8;
+    text-align: center;
+}
+
+.gen5-move-tooltip-stats b {
+    font-size: 1.25em;
+    color: #fff;
 }
 
 @media (max-width: 480px) {
-    .gen5-move-row { font-size: 0.7em; padding: 6px 5px; gap: 3px; }
-    .gen5-move-level { width: 38px; }
-    .gen5-move-type { width: 50px; font-size: 0.68em; }
-    .gen5-move-power, .gen5-move-pp { width: 28px; }
-    .gen5-move-acc { width: 34px; }
+    .gen5-move-row { font-size: 0.78em; padding: 7px 8px; gap: 6px; }
+    .gen5-move-level { width: 44px; }
+    .gen5-move-type { width: 62px; font-size: 0.7em; }
     .gen5-move-tab { font-size: 0.66em; padding: 5px 7px; }
     .gen5-move-tooltip-desc { font-size: 0.78em; }
 }

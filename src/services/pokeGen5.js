@@ -3,17 +3,24 @@
 // referencia principal, con fallback a versiones anteriores por movimiento).
 import { GEN5_VERSION_GROUPS, REGIONS, VERSION_INFO, humanizeSlug } from '../data/gen5Versions';
 import { translateAbilityName } from '../data/abilityNames';
+import { getAbilityDescription } from '../data/abilityDescriptions';
 
 const BASE_URL = 'https://pokeapi.co/api/v2/';
 
 // ── Habilidades (idea 5) ─────────────────────────────────────────────────
-// La cobertura en español del endpoint /ability/ de PokeAPI es irregular, así
-// que se usa el diccionario propio como fuente principal del NOMBRE; solo la
-// descripción (más difícil de mantener a mano) se pide a la API.
+// La cobertura en español del endpoint /ability/ de PokeAPI es irregular
+// tanto para el NOMBRE como para la DESCRIPCIÓN, así que ambos usan como
+// fuente principal los diccionarios propios (abilityNames/abilityDescriptions).
+// Solo si una habilidad no está en el diccionario (ej. de Gen VI en adelante)
+// se recurre a la API como respaldo.
 export const fetchAbilitiesData = async (abilityRefs = []) => {
     const resolved = await Promise.all(abilityRefs.map(async (a) => {
         const slug = a.ability.name;
         const translatedName = translateAbilityName(slug);
+        const knownDescription = getAbilityDescription(slug);
+        if (knownDescription) {
+            return { name: translatedName, description: knownDescription, isHidden: a.is_hidden };
+        }
         try {
             const res = await fetch(a.ability.url);
             if (!res.ok) throw new Error(`HTTP ${res.status}`);

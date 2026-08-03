@@ -1,9 +1,9 @@
 // src/components/pokemonDetail/PokemonGen5Moveset.js
 // Idea 3 + parte de la idea 4: moveset real de Generación 5 (Blanco/Negro,
 // con fallback a Blanco 2/Negro 2), separado por cómo se aprende — igual a
-// como lo muestra la Pokédex dentro del propio juego. Cada movimiento tiene
-// una descripción disponible al pasar el mouse (PC) o mantener presionado
-// (móvil/tablet).
+// como lo muestra la Pokédex dentro del propio juego. Poder, precisión y PP
+// solo se muestran en el cartel flotante (mantener presionado en móvil,
+// pasar el mouse en PC) para no saturar la tabla.
 import React, { useState, useMemo, useRef, useEffect, useCallback } from 'react';
 import { getMoveTypeColor } from '../../utils/moveTypeColors';
 import './Gen5Theme.css';
@@ -18,7 +18,11 @@ const TABS = [
 
 const LONG_PRESS_MS = 380;
 
-const MoveRow = ({ move, firstCol, isOpen, onOpen, onClose }) => {
+// Nota: cerrar al soltar el mouse se maneja en el CONTENEDOR (gen5-move-list),
+// no en cada fila — el cartel flotante cubre la fila que lo abrió, así que un
+// onMouseLeave por fila dispararía un parpadeo (se tapa a sí misma → cierra →
+// vuelve a quedar "hovered" → abre →...).
+const MoveRow = ({ move, firstCol, isOpen, onOpen }) => {
     const pressTimer = useRef(null);
 
     const handleTouchStart = useCallback(() => {
@@ -31,13 +35,11 @@ const MoveRow = ({ move, firstCol, isOpen, onOpen, onClose }) => {
     useEffect(() => () => clearTimeout(pressTimer.current), []);
 
     const color = getMoveTypeColor(move.type);
-    const isStatus = move.damageClass === 'status';
 
     return (
         <div
-            className="gen5-move-row"
+            className={`gen5-move-row ${isOpen ? 'gen5-move-row-active' : ''}`}
             onMouseEnter={onOpen}
-            onMouseLeave={onClose}
             onTouchStart={handleTouchStart}
             onTouchEnd={handleTouchEnd}
             onTouchCancel={handleTouchEnd}
@@ -50,21 +52,27 @@ const MoveRow = ({ move, firstCol, isOpen, onOpen, onClose }) => {
             )}
             <span className="gen5-move-name">{move.name}</span>
             <span className="gen5-move-type" style={{ background: color }}>{move.type}</span>
-            <span className="gen5-move-power">{isStatus ? '—' : (move.power ?? '—')}</span>
-            <span className="gen5-move-acc">{move.accuracy != null ? `${move.accuracy}%` : '—'}</span>
-            <span className="gen5-move-pp">{move.pp ?? '—'}</span>
+        </div>
+    );
+};
 
-            {isOpen && (
-                <div className="gen5-move-tooltip" onClick={(e) => e.stopPropagation()}>
+const MoveTooltip = ({ move, onClose }) => {
+    if (!move) return null;
+    const isStatus = move.damageClass === 'status';
+    return (
+        <div className="gen5-move-tooltip-overlay" onClick={onClose}>
+            <div className="gen5-move-tooltip" onClick={(e) => e.stopPropagation()}>
+                <div className="gen5-move-tooltip-head">
                     <strong className="gen5-move-tooltip-name">{move.name}</strong>
-                    <p className="gen5-move-tooltip-desc">{move.description || 'Sin descripción disponible.'}</p>
-                    <div className="gen5-move-tooltip-stats">
-                        <span>PODER {isStatus ? '—' : (move.power ?? '—')}</span>
-                        <span>PRECISIÓN {move.accuracy != null ? `${move.accuracy}%` : '—'}</span>
-                        <span>PP {move.pp ?? '—'}</span>
-                    </div>
+                    <button className="gen5-move-tooltip-close" onClick={onClose} aria-label="Cerrar">×</button>
                 </div>
-            )}
+                <p className="gen5-move-tooltip-desc">{move.description || 'Sin descripción disponible.'}</p>
+                <div className="gen5-move-tooltip-stats">
+                    <span>PODER<b>{isStatus ? '—' : (move.power ?? '—')}</b></span>
+                    <span>PRECISIÓN<b>{move.accuracy != null ? `${move.accuracy}%` : '—'}</b></span>
+                    <span>PP<b>{move.pp ?? '—'}</b></span>
+                </div>
+            </div>
         </div>
     );
 };
@@ -72,18 +80,6 @@ const MoveRow = ({ move, firstCol, isOpen, onOpen, onClose }) => {
 const PokemonGen5Moveset = ({ moveset, loading }) => {
     const [activeTab, setActiveTab] = useState('levelUp');
     const [openMoveUrl, setOpenMoveUrl] = useState(null);
-    const listRef = useRef(null);
-
-    // Cierra el tooltip si se toca/hace clic fuera de la lista (necesario
-    // para el modo "mantener presionado" en móvil, que si no se queda abierto).
-    useEffect(() => {
-        if (!openMoveUrl) return;
-        const handleOutside = (e) => {
-            if (listRef.current && !listRef.current.contains(e.target)) setOpenMoveUrl(null);
-        };
-        document.addEventListener('pointerdown', handleOutside);
-        return () => document.removeEventListener('pointerdown', handleOutside);
-    }, [openMoveUrl]);
 
     useEffect(() => { setOpenMoveUrl(null); }, [activeTab]);
 
@@ -97,9 +93,10 @@ const PokemonGen5Moveset = ({ moveset, loading }) => {
     const totalMoves = counts.levelUp + counts.machine + counts.tutor + counts.egg;
     const firstCol = activeTab === 'levelUp' ? 'level' : activeTab === 'machine' ? 'machine' : null;
     const firstColHeader = activeTab === 'levelUp' ? 'Nivel' : activeTab === 'machine' ? 'MT/MO' : null;
+    const openMove = openMoveUrl ? moveset[activeTab]?.find(m => m.url === openMoveUrl) : null;
 
     return (
-        <div className="gen5-section">
+        <div className="gen5-section gen5-section-relative">
             <h3 className="gen5-section-title">Movimientos <span className="gen5-gen-badge">GEN V</span></h3>
             <span className="gen5-section-subtitle">Según Pokémon Blanco / Negro (y Blanco 2 / Negro 2 si aplica)</span>
 
@@ -127,15 +124,12 @@ const PokemonGen5Moveset = ({ moveset, loading }) => {
                 <div className="gen5-empty-state">Sin movimientos en esta categoría para Generación V.</div>
             ) : (
                 <>
-                    <span className="gen5-move-hint">Mantén presionado (o pasa el mouse) sobre un movimiento para ver su descripción.</span>
-                    <div className="gen5-move-list" ref={listRef}>
+                    <span className="gen5-move-hint">Mantén presionado (o pasa el mouse) sobre un movimiento para ver poder, precisión, PP y su descripción.</span>
+                    <div className="gen5-move-list" onMouseLeave={() => setOpenMoveUrl(null)}>
                         <div className="gen5-move-row gen5-move-row-header">
                             {firstColHeader && <span className="gen5-move-level">{firstColHeader}</span>}
                             <span className="gen5-move-name">Movimiento</span>
                             <span className="gen5-move-type">Tipo</span>
-                            <span className="gen5-move-power">Pod.</span>
-                            <span className="gen5-move-acc">Prec.</span>
-                            <span className="gen5-move-pp">PP</span>
                         </div>
                         {moveset[activeTab].map(move => (
                             <MoveRow
@@ -144,9 +138,13 @@ const PokemonGen5Moveset = ({ moveset, loading }) => {
                                 firstCol={firstCol}
                                 isOpen={openMoveUrl === move.url}
                                 onOpen={() => setOpenMoveUrl(move.url)}
-                                onClose={() => setOpenMoveUrl(null)}
                             />
                         ))}
+                        {/* Se anida aquí (no como hermano de gen5-move-list) para que
+                            cubrirse a sí misma no cuente como "salir" de la lista y
+                            dispare el onMouseLeave que la cerraría; gracias a
+                            position:absolute igual cubre toda la sección (gen5-section). */}
+                        <MoveTooltip move={openMove} onClose={() => setOpenMoveUrl(null)} />
                     </div>
                 </>
             )}
