@@ -223,12 +223,19 @@ class AnalyticsTracker {
         existing.count++;
       } else {
         data.searchTerms.push({ term: searchTerm, count: 1 });
+        // Evita que términos únicos crezcan sin límite; se descartan los
+        // menos buscados primero (el dashboard solo muestra el top 8 igual).
+        if (data.searchTerms.length > 300) {
+          data.searchTerms.sort((a, b) => b.count - a.count);
+          data.searchTerms = data.searchTerms.slice(0, 300);
+        }
       }
       
       // *** NUEVO: Track búsquedas sin resultados ***
       if (!hasResults) {
         data.failedSearches = data.failedSearches || [];
         data.failedSearches.push({ term: searchTerm, timestamp: Date.now() });
+        if (data.failedSearches.length > 200) data.failedSearches = data.failedSearches.slice(-200);
       }
       
       this.trackEvent('Búsqueda', `Término: ${searchTerm}`);
@@ -265,24 +272,26 @@ class AnalyticsTracker {
   }
 
   // *** NUEVO: Track victoria de Pokémon ***
-  trackPokemonVictory(winnerName, loserId) {
+  trackPokemonVictory(winnerName, loserName) {
     try {
       const data = this.getAnalyticsData();
       data.pokemonWinRate = data.pokemonWinRate || [];
-      
+
       const winner = data.pokemonWinRate.find(p => p.name === winnerName);
       if (winner) {
         winner.wins++;
       } else {
         data.pokemonWinRate.push({ name: winnerName, wins: 1, losses: 0 });
       }
-      
-      // Track derrota
-      const loser = data.pokemonWinRate.find(p => p.id === loserId);
+
+      // Track derrota (mismo criterio de búsqueda por nombre que el ganador)
+      const loser = data.pokemonWinRate.find(p => p.name === loserName);
       if (loser) {
         loser.losses++;
+      } else if (loserName) {
+        data.pokemonWinRate.push({ name: loserName, wins: 0, losses: 1 });
       }
-      
+
       this.saveAnalyticsData(data);
     } catch (error) {
       console.error('Error tracking pokemon victory:', error);

@@ -31,6 +31,7 @@ const PokemonBattleArena = () => {
     const [showBag, setShowBag] = useState(false);
     const [particles, setParticles] = useState([]);
     const particleIdRef = useRef(0);
+    const particleTimersRef = useRef(new Set());
     const battleStartTrackedRef = useRef(false);
 
     const {
@@ -63,14 +64,23 @@ const PokemonBattleArena = () => {
             };
         });
         setParticles(prev => [...prev, ...newParticles]);
-        setTimeout(() => {
+        const timerId = setTimeout(() => {
+            particleTimersRef.current.delete(timerId);
             setParticles(prev => prev.filter(p => !newParticles.some(np => np.id === p.id)));
         }, 700);
+        particleTimersRef.current.add(timerId);
     }, []);
 
     useEffect(() => {
         if (lastAttack) spawnParticles(lastAttack.side, lastAttack.moveType);
     }, [lastAttack, spawnParticles]);
+
+    // Evita setState en un componente ya desmontado si el usuario sale de la
+    // batalla justo después de un ataque (antes de que expiren las partículas).
+    useEffect(() => () => {
+        particleTimersRef.current.forEach(id => clearTimeout(id));
+        particleTimersRef.current.clear();
+    }, []);
 
     useEffect(() => {
         if (loading) { battleStartTrackedRef.current = false; return; }
