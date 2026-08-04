@@ -154,11 +154,20 @@ function PokemonDetail() {
           setClassicSprites(sprites);
 
           if (speciesJson?.evolution_chain?.url) {
-            const evoChainRes = await fetch(speciesJson.evolution_chain.url);
-            const evoChainJson = await evoChainRes.json();
-            const processedEvoLine = await processEvolutionChain(evoChainJson.chain);
-            if (ignore) return;
-            setEvolutionLine(processedEvoLine);
+            // Aislado en su propio try/catch: si esto falla, solo se pierde
+            // la línea evolutiva, no toda la ficha ya cargada (stats,
+            // habilidades, moveset, ubicaciones, etc.).
+            try {
+              const evoChainRes = await fetch(speciesJson.evolution_chain.url);
+              if (!evoChainRes.ok) throw new Error(`HTTP ${evoChainRes.status}`);
+              const evoChainJson = await evoChainRes.json();
+              const processedEvoLine = await processEvolutionChain(evoChainJson.chain);
+              if (ignore) return;
+              setEvolutionLine(processedEvoLine);
+            } catch (evoErr) {
+              console.error('Error cargando la línea evolutiva:', evoErr);
+              if (!ignore) setEvolutionLine([]);
+            }
           }
         } catch (err) {
           if (!ignore) setError(err);

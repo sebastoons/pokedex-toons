@@ -7,6 +7,10 @@ import { buildMovePool, getPokemonTypes } from '../data/moveDatabase';
 import { pickRandomTeam, buildRandomMovesMap } from '../utils/randomBattleUtils';
 import './PokemonBattleSelector.css';
 
+// Referencia estable para el caso "sin técnicas aún": evita crear un array
+// nuevo en cada render, lo que rompería React.memo en PokeConfigCard.
+const EMPTY_MOVES = [];
+
 const ALL_POKEMON_GENERATIONS = [
     { id: 'all', name: 'Todas' },
     { id: 1, limit: 151, offset: 0,   name: 'Generación 1' },
@@ -408,7 +412,7 @@ function PokemonBattleSelector({ pokemonList }) {
                         <PokeConfigCard
                             key={poke.id}
                             poke={poke}
-                            moves={selectedMoves[poke.id] || []}
+                            moves={selectedMoves[poke.id] || EMPTY_MOVES}
                             apiPool={apiMovePool[poke.id]}
                             onSelectMove={handleMoveSelect}
                         />

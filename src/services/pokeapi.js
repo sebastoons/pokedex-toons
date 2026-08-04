@@ -103,8 +103,14 @@ export async function fetchEvolutionChain(url) {
     }
 }
 
+// Cachea el resultado por id/nombre — esta función se llama una vez por
+// integrante de cada cadena evolutiva mostrada, y las mismas especies se
+// repiten constantemente al navegar entre Pokémon emparentados.
+const basicInfoCache = new Map();
+
 // NUEVA FUNCIÓN: Para obtener detalles básicos de un Pokémon (nombre y sprite)
 export async function fetchPokemonBasicInfo(idOrName) {
+    if (basicInfoCache.has(idOrName)) return basicInfoCache.get(idOrName);
     try {
         const url = `${BASE_URL}pokemon/${idOrName}/`;
         const response = await fetch(url);
@@ -112,19 +118,22 @@ export async function fetchPokemonBasicInfo(idOrName) {
             throw new Error(`HTTP error! status: ${response.status} fetching basic info for ${idOrName}`);
         }
         const data = await response.json();
-        // Intentar obtener el nombre en español si está disponible (desde la especie)
+        // La URL de especie solo se conoce tras resolver esta respuesta,
+        // así que este segundo fetch no puede lanzarse en paralelo con el primero.
         const speciesResponse = await fetch(data.species.url);
         const speciesData = await speciesResponse.json();
         const spanishNameEntry = speciesData.names.find(nameEntry => nameEntry.language.name === 'es');
         // Usa el nombre traducido, o el nombre original capitalizado si no hay traducción
         const translatedName = spanishNameEntry ? spanishNameEntry.name : data.name.charAt(0).toUpperCase() + data.name.slice(1);
 
-        return {
+        const result = {
             id: data.id,
             name: translatedName,
             // Prioriza official-artwork, si no está usa front_default, si no, un placeholder
             sprite: data.sprites.other?.['official-artwork']?.front_default || data.sprites.front_default || `https://placehold.co/96x96/e0e0e0/333?text=No+Img`,
         };
+        basicInfoCache.set(idOrName, result);
+        return result;
     } catch (error) {
         console.error(`Error fetching basic info for ${idOrName}:`, error);
         // Retornar un objeto con información parcial o un placeholder si falla

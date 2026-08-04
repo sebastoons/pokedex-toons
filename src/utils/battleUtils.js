@@ -1,6 +1,11 @@
 // src/utils/battleUtils.js
 import { calculateTypeEffectiveness } from './typeEffectiveness';
 
+// Movimiento de respaldo cuando un Pokémon se queda sin PP en todos sus
+// movimientos. Única fuente — antes existían dos copias (BattleControls.js
+// y useBattleLogic.js) que podían desincronizarse.
+export const STRUGGLE = { name: 'Forcejeo', power: 50, accuracy: 100, type: 'normal', damage_class: 'physical', priority: 0, currentPP: Infinity, maxPP: Infinity };
+
 export const checkAccuracy = (move) => {
     const acc = move.accuracy;
     if (acc === null || acc === undefined) return true;
