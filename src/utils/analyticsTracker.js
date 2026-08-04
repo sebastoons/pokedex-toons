@@ -139,6 +139,9 @@ class AnalyticsTracker {
         todayEntry.visits++;
       } else {
         data.dailyVisits.push({ date: today, visits: 1 });
+        // Limita el historial a los últimos 90 días para que el blob en
+        // localStorage no crezca sin límite con el uso continuado.
+        if (data.dailyVisits.length > 90) data.dailyVisits = data.dailyVisits.slice(-90);
       }
       
       // *** NUEVO: Track dispositivo ***

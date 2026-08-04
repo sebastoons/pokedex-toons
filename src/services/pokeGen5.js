@@ -25,12 +25,13 @@ export const fetchAbilitiesData = async (abilityRefs = []) => {
             const res = await fetch(a.ability.url);
             if (!res.ok) throw new Error(`HTTP ${res.status}`);
             const data = await res.json();
+            const apiName = data.names?.find(n => n.language.name === 'es')?.name || translatedName;
             const esDesc = data.effect_entries?.find(e => e.language.name === 'es')?.short_effect
                 || data.effect_entries?.find(e => e.language.name === 'es')?.effect
                 || data.effect_entries?.find(e => e.language.name === 'en')?.short_effect
                 || data.effect_entries?.find(e => e.language.name === 'en')?.effect
                 || 'Descripción no disponible.';
-            return { name: translatedName, description: esDesc.replace(/[\n\r]+/g, ' ').split('\f').join(' '), isHidden: a.is_hidden };
+            return { name: apiName, description: esDesc.replace(/[\n\r]+/g, ' ').split('\f').join(' '), isHidden: a.is_hidden };
         } catch {
             return { name: translatedName, description: 'Descripción no disponible.', isHidden: a.is_hidden };
         }
@@ -83,8 +84,9 @@ const resolveMachineLabel = async (moveData, versionGroups) => {
             const data = await res.json();
             const itemName = data.item?.name || '';
             const isHM = itemName.startsWith('hm');
-            const num = itemName.replace(/^[a-z]+/, '').padStart(2, '0');
-            if (!num) continue;
+            const digits = itemName.replace(/^[a-z]+/, '');
+            if (!digits) continue;
+            const num = digits.padStart(2, '0');
             return { kind: isHM ? 'MO' : 'MT', number: num, label: `${isHM ? 'MO' : 'MT'} ${num}` };
         } catch {
             // sigue intentando con el siguiente version_group

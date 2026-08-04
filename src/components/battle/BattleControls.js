@@ -3,9 +3,8 @@ import React from 'react';
 import BattleLogDisplay from '../BattleLogDisplay';
 import { getMoveTypeGradient } from '../../utils/moveTypeColors';
 import { calculateTypeEffectiveness } from '../../utils/typeEffectiveness';
+import { STRUGGLE } from '../../utils/battleUtils';
 import './BattleControls.css';
-
-const STRUGGLE = { name: 'Forcejeo', power: 50, accuracy: 100, type: 'normal', damage_class: 'physical' };
 
 const getEffectivenessIcon = (moveType, defenderTypes) => {
     if (!defenderTypes || defenderTypes.length === 0) return null;

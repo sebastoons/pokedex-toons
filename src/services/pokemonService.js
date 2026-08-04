@@ -25,13 +25,23 @@ const getLocalizedMoveName = (moveDetail) => {
     return nameEntry ? nameEntry.name : moveDetail.name.replace(/-/g, ' ').split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
 };
 
+// Cachea solo el payload BASE del Pokémon (stats/tipos/sprites/lista de
+// movimientos disponibles) — nunca el resultado final de fetchPokemonDetails,
+// porque ese incluye una selección ALEATORIA de 4 movimientos entre los 20
+// muestreados; cachearlo completo eliminaría esa variedad entre batallas.
+const pokemonJsonCache = new Map();
+const fetchPokemonJsonCached = async (pokemonId) => {
+    if (pokemonJsonCache.has(pokemonId)) return pokemonJsonCache.get(pokemonId);
+    const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${pokemonId}/`);
+    if (!res.ok) throw new Error(`Failed to fetch Pokemon ID ${pokemonId}`);
+    const data = await res.json();
+    pokemonJsonCache.set(pokemonId, data);
+    return data;
+};
+
 export const fetchPokemonDetails = async (pokemonId) => {
     try {
-        const pokemonRes = await fetch(`https://pokeapi.co/api/v2/pokemon/${pokemonId}/`);
-        if (!pokemonRes.ok) {
-            throw new Error(`Failed to fetch Pokemon ID ${pokemonId}`);
-        }
-        const pokemonData = await pokemonRes.json();
+        const pokemonData = await fetchPokemonJsonCached(pokemonId);
 
         const stats = {};
         pokemonData.stats.forEach(s => {

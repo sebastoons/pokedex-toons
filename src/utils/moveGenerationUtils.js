@@ -246,11 +246,15 @@ export const improvePokemonMoves = (pokemon) => {
     const generatedMoves = generateMovesByTypes(types, pokemon.stats);
     
     // Si el Pokémon ya tiene movimientos, mezclarlos con los generados
+    // (sin duplicar por nombre, ej. "Placaje" podía venir en ambos grupos)
     if (pokemon.moves && pokemon.moves.length > 0) {
         const existingMoves = pokemon.moves.slice(0, 2); // Mantener algunos existentes
-        const newMoves = generatedMoves.slice(0, 4 - existingMoves.length);
-        
-        return [...existingMoves, ...newMoves].slice(0, 4);
+        const combined = [...existingMoves];
+        for (const move of generatedMoves) {
+            if (combined.length >= 4) break;
+            if (!combined.some(m => m.name === move.name)) combined.push(move);
+        }
+        return combined.slice(0, 4);
     }
 
     return generatedMoves;

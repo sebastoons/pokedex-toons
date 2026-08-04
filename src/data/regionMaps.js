@@ -125,7 +125,7 @@ export const hasRegionMap = (regionId) => Boolean(REGION_MAPS[regionId]);
 const normalize = (str) => str
     .toLowerCase()
     .normalize('NFD').replace(/[\u0300-\u036f]/g, '') // quita tildes
-    .replace(/\b(b?\d+f|floor \d+|\d+)\b/g, '') // pisos/números sueltos (b1f, 1f, 2...)
+    .replace(/\b(b?\d+f|floor \d+)\b/g, '') // solo sufijos de piso (b1f, floor 2...); conserva numeros de ruta
     .replace(/\s+/g, ' ')
     .trim();
 
@@ -134,9 +134,6 @@ export const matchAreaToNode = (regionId, areaName) => {
     if (!map) return null;
     const target = normalize(areaName);
     return map.nodes.find(node =>
-        node.aliases.some(alias => {
-            const na = normalize(alias);
-            return target === na || target.startsWith(na) || na.startsWith(target);
-        })
+        node.aliases.some(alias => normalize(alias) === target)
     ) || null;
 };

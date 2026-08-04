@@ -2,11 +2,9 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { fetchPokemonDetailsByIds } from '../services/pokemonService';
-import { calculateDamage, checkAccuracy, stageMultiplier } from '../utils/battleUtils';
+import { calculateDamage, checkAccuracy, stageMultiplier, STRUGGLE } from '../utils/battleUtils';
 import { calculateTypeEffectiveness } from '../utils/typeEffectiveness';
 import analyticsTracker from '../utils/analyticsTracker';
-
-const STRUGGLE = { name: 'Forcejeo', power: 50, accuracy: 100, type: 'normal', damage_class: 'physical', priority: 0, currentPP: Infinity, maxPP: Infinity };
 
 const TYPE_TO_STATUS = {
     poison: 'poisoned', bug: 'poisoned',

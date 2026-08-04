@@ -8,9 +8,10 @@
 // uno, se prefiere el primero de la lista (más reciente / más relevante).
 export const GEN5_VERSION_GROUPS = ['black-2-white-2', 'black-white'];
 
-// Todas las "version" (juegos individuales) de Gen 1-5, agrupadas por generación,
-// en el orden en que se muestran. Cada versión trae su nombre en español.
-export const GENERATIONS_1_TO_5 = [
+// Todas las "version" (juegos individuales) de Gen 1-5, agrupadas por generación.
+// Solo se usa internamente para construir VERSION_INFO (no se exporta: nada
+// más en la app necesita el agrupado por generación, solo por versión/región).
+const GENERATIONS_1_TO_5 = [
     {
         gen: 1,
         label: 'Generación I',
@@ -69,8 +70,6 @@ export const VERSION_INFO = GENERATIONS_1_TO_5.reduce((acc, { gen, versions }) =
     return acc;
 }, {});
 
-export const isGen1To5Version = (versionName) => Boolean(VERSION_INFO[versionName]);
-
 // Regiones jugables (Kanto, Johto, Hoenn, Sinnoh, Teselia) — se usan para
 // filtrar las ubicaciones salvajes por región en vez de mostrar todo junto.
 export const REGIONS = [
@@ -80,12 +79,6 @@ export const REGIONS = [
     { id: 'sinnoh',  label: 'Sinnoh',  versions: ['diamond', 'pearl', 'platinum'] },
     { id: 'teselia', label: 'Teselia', versions: ['black', 'white', 'black-2', 'white-2'] },
 ];
-
-// Mapa plano version.name -> región, para agrupar encuentros rápido.
-export const VERSION_TO_REGION = REGIONS.reduce((acc, region) => {
-    region.versions.forEach(v => { acc[v] = region.id; });
-    return acc;
-}, {});
 
 export const humanizeSlug = (slug = '') =>
     slug.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
