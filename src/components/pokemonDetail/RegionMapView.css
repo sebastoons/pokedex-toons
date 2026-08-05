@@ -13,47 +13,85 @@
     max-width: 420px;
     aspect-ratio: 1 / 1;
     border-radius: 10px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.16);
+    overflow: visible;
 }
 
 .region-map-bg {
-    fill: #eaf3e6;
     stroke: #cfe0c8;
     stroke-width: 0.4;
 }
 
+/* Camino base (se dibuja progresivamente vía Framer Motion) */
 .region-map-path {
+    fill: none;
     stroke: #b9cdb0;
-    stroke-width: 0.6;
+    stroke-width: 0.7;
     stroke-linecap: round;
+}
+
+/* Capa de guiones en bucle, encima del camino base, para un efecto de
+   "sendero vivo" — como si algo recorriera el mapa constantemente. */
+.region-map-path-flow {
+    fill: none;
+    stroke: #ffffff;
+    opacity: 0.55;
+    stroke-width: 0.55;
+    stroke-linecap: round;
+    stroke-dasharray: 1.4 3.2;
+    animation: region-map-flow 3.2s linear infinite;
+}
+
+@keyframes region-map-flow {
+    to { stroke-dashoffset: -23; }
 }
 
 .region-map-node {
     stroke: #fff;
-    stroke-width: 0.4;
-    cursor: pointer;
-    transition: r 0.12s ease;
+    stroke-width: 0.45;
 }
 
 .region-map-node-town { fill: #7a6a52; }
-.region-map-node-route { fill: #a8b89c; }
-.region-map-node-dungeon { fill: #5a6a78; }
+.region-map-node-route { fill: #9db08f; }
+.region-map-node-dungeon { fill: #4d5c68; }
 
-.region-map-node-high { fill: #e0504a; stroke: #7a1a1a; stroke-width: 0.6; }
-.region-map-node-mid  { fill: #f0a13f; stroke: #7a4a10; stroke-width: 0.6; }
-.region-map-node-low  { fill: #f0d060; stroke: #6b6420; stroke-width: 0.6; }
+.region-map-node-high { fill: #e0504a; stroke: #7a1a1a; stroke-width: 0.7; }
+.region-map-node-mid  { fill: #f0a13f; stroke: #7a4a10; stroke-width: 0.7; }
+.region-map-node-low  { fill: #f0d060; stroke: #6b6420; stroke-width: 0.7; }
 
-.region-map-node-group:hover .region-map-node { filter: brightness(1.15); }
+.region-map-ping {
+    fill: none;
+    stroke-width: 0.8;
+    pointer-events: none;
+}
+.region-map-ping.region-map-node-high { stroke: #e0504a; }
+.region-map-ping.region-map-node-mid  { stroke: #f0a13f; }
+.region-map-ping.region-map-node-low  { stroke: #d8c020; }
+
+.region-map-node-group { cursor: pointer; }
+
+.region-map-icon-fill {
+    fill: #fff;
+    opacity: 0.92;
+    pointer-events: none;
+}
+
+.region-map-icon-cut {
+    fill: #7a6a52;
+    opacity: 0.85;
+    pointer-events: none;
+}
 
 .region-map-label {
     font-family: monospace;
-    font-size: 2.6px;
+    font-size: 2.7px;
     font-weight: bold;
     fill: #2c3e50;
     paint-order: stroke;
     stroke: #fff;
-    stroke-width: 0.6px;
+    stroke-width: 0.7px;
     stroke-linejoin: round;
+    pointer-events: none;
 }
 
 .region-map-legend {
@@ -82,7 +120,7 @@
 .region-map-dot.region-map-node-high { background: #e0504a; }
 .region-map-dot.region-map-node-mid  { background: #f0a13f; }
 .region-map-dot.region-map-node-low  { background: #f0d060; }
-.region-map-dot.region-map-node-none { background: #a8b89c; }
+.region-map-dot.region-map-node-none { background: #9db08f; }
 
 .region-map-disclaimer {
     font-family: monospace;
@@ -90,5 +128,9 @@
     font-style: italic;
     color: #aaa;
     text-align: center;
-    max-width: 320px;
+    max-width: 340px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .region-map-path-flow { animation: none; opacity: 0.3; }
 }
