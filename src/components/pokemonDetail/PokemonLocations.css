@@ -36,23 +36,6 @@
     border-color: #34495e;
 }
 
-.locations-versions {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-}
-
-.locations-version-block {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 8px;
-    padding: 8px 10px;
-    background: #f7f8fa;
-    border-radius: 8px;
-    border: 1px solid #eceff2;
-}
-
 .locations-areas {
     display: flex;
     flex-wrap: wrap;
@@ -83,38 +66,6 @@
     border-color: #f0c48a;
 }
 
-.locations-area-low {
-    color: #6b6420;
-    background: #fbf3c8;
-    border-color: #e6da96;
-}
-
-.locations-legend {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 14px;
-    margin-top: 14px;
-    padding-top: 10px;
-    border-top: 1px dashed #e4e8ee;
-}
-
-.locations-legend-item {
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    font-family: monospace;
-    font-size: 0.72em;
-    color: #888;
-}
-
-.locations-dot {
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-    display: inline-block;
-}
-
 .locations-version-tabs {
     display: flex;
     flex-wrap: wrap;
@@ -139,17 +90,7 @@
     margin-top: 4px;
 }
 
-.locations-map-pending {
-    text-align: center;
-    font-family: monospace;
-    font-size: 0.72em;
-    font-style: italic;
-    color: #aaa;
-    margin: 10px 0 0;
-}
-
 @media (max-width: 480px) {
-    .locations-version-block { padding: 6px 8px; }
     .locations-area-tag { font-size: 0.68em; padding: 2px 7px; }
     .locations-region-tab { font-size: 0.72em; padding: 5px 9px; }
 }

@@ -244,7 +244,7 @@ function PokemonDetail() {
       />
       <PokemonGen5Moveset moveset={gen5Moveset} loading={gen5MovesLoading} />
       <PokemonEvolutionChain evolutionLine={evolutionLine} />
-      <PokemonLocations locations={locations} loading={locationsLoading} />
+      <PokemonLocations locations={locations} loading={locationsLoading} pokemonId={pokemonId} evolutionLine={evolutionLine} />
       <PokemonMedia
         soundUrl={pokemonData.cries?.latest || pokemonData.cries?.legacy}
         classicSprites={classicSprites}

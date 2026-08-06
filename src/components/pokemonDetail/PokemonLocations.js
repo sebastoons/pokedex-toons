@@ -1,25 +1,19 @@
 // src/components/pokemonDetail/PokemonLocations.js
 // Idea 9: dónde encontrar a este Pokémon en estado salvaje, Generación I-V.
 // (Generación VI en adelante queda fuera por ahora, a definir más adelante.)
-// Filtrado por región (para no saturar todo hacia abajo) y con el color de
-// cada zona según la probabilidad real de encuentro, tal como marcaba la
-// Pokédex clásica al buscar un Pokémon ya capturado. Para Kanto y Teselia
-// además se muestra un mapa propio (ver src/data/regionMaps.js); el resto
-// de regiones por ahora solo tiene la vista de lista.
+// Las 5 regiones jugables (Kanto, Johto, Hoenn, Sinnoh, Teselia) tienen mapa
+// propio ilustrado (ver src/data/regionMaps.js) con el color de cada zona
+// según la probabilidad real de encuentro — ya no hay vista de lista.
+// Si el Pokémon no aparece salvaje en ninguna versión, se explica en español
+// cómo se consigue realmente (evolución, inicial, regalo/intercambio/evento).
 import React, { useState, useEffect, useMemo } from 'react';
-import { hasRegionMap } from '../../data/regionMaps';
 import RegionMapView from './RegionMapView';
 import './Gen5Theme.css';
 import './PokemonLocations.css';
 
-// Umbrales de probabilidad de encuentro (según el % que reporta el propio juego).
-const chanceLevel = (chance) => {
-    if (chance >= 50) return 'high';
-    if (chance >= 15) return 'mid';
-    return 'low';
-};
-
-const CHANCE_LABEL = { high: 'Alta probabilidad', mid: 'Probabilidad media', low: 'Baja probabilidad' };
+// Solo dos niveles de aviso (rojo/naranjo), igual que en el mapa.
+const chanceLevel = (chance) => (chance >= 50 ? 'high' : 'mid');
+const CHANCE_LABEL = { high: 'Alta probabilidad', mid: 'Aparece con menor frecuencia' };
 
 const AreaTag = ({ area, chance }) => {
     const level = chanceLevel(chance);
@@ -30,7 +24,42 @@ const AreaTag = ({ area, chance }) => {
     );
 };
 
-const PokemonLocations = ({ locations, loading }) => {
+// IDs de los Pokémon iniciales de Gen I-V (Kanto a Teselia): no se encuentran
+// salvajes, se entregan de regalo al comenzar la aventura.
+const STARTER_IDS = new Set([
+    1, 4, 7, 152, 155, 158, 252, 255, 258, 387, 390, 393, 495, 498, 501,
+]);
+
+const EVO_TRIGGER_TEXT = {
+    'level-up': 'evolucionando por nivel',
+    'trade': 'evolucionando por intercambio',
+    'use-item': 'evolucionando con un objeto especial',
+    'shed': 'evolucionando con un espacio libre en el equipo',
+};
+
+// Cuando no hay datos de aparición salvaje, se explica cómo se consigue en
+// realidad usando lo que ya sabemos de su propia línea evolutiva (idea 9,
+// pedido explícito del usuario de no dejar el espacio vacío ni en inglés).
+const describeHowToObtain = (pokemonId, evolutionLine) => {
+    const id = parseInt(pokemonId, 10);
+    const self = (evolutionLine || []).find(p => parseInt(p.id, 10) === id);
+
+    if (self && self.depth > 0) {
+        const pre = evolutionLine.find(p => p.depth === self.depth - 1);
+        const method = EVO_TRIGGER_TEXT[self.details?.trigger?.name] || 'evolucionando';
+        return pre
+            ? `No aparece salvaje: se obtiene ${method} desde ${pre.name}.`
+            : `No aparece salvaje: se obtiene ${method} desde su preevolución.`;
+    }
+
+    if (STARTER_IDS.has(id)) {
+        return 'Es uno de los Pokémon iniciales: se obtiene de regalo al comenzar la aventura, no en estado salvaje.';
+    }
+
+    return 'No se encuentra en estado salvaje en las Generaciones I-V: probablemente se obtiene por regalo, intercambio o evento especial dentro del juego.';
+};
+
+const PokemonLocations = ({ locations, loading, pokemonId, evolutionLine }) => {
     const [activeRegion, setActiveRegion] = useState(null);
     const [activeVersion, setActiveVersion] = useState(null);
 
@@ -47,8 +76,6 @@ const PokemonLocations = ({ locations, loading }) => {
         () => regions.find(r => r.id === activeRegion) || regions[0] || null,
         [regions, activeRegion]
     );
-
-    const regionHasMap = currentRegion ? hasRegionMap(currentRegion.id) : false;
 
     // Al cambiar de región, vuelve a elegir la primera versión disponible.
     useEffect(() => {
@@ -72,7 +99,7 @@ const PokemonLocations = ({ locations, loading }) => {
                 <div className="gen5-empty-state">
                     {locations?.error
                         ? 'No se pudo consultar la información de ubicaciones en este momento.'
-                        : 'Este Pokémon no aparece en estado salvaje en las Generaciones I-V (es un inicial, evoluciona por otro medio, o solo se obtiene por intercambio/regalo/evento).'}
+                        : describeHowToObtain(pokemonId, evolutionLine)}
                 </div>
             ) : (
                 <>
@@ -88,7 +115,7 @@ const PokemonLocations = ({ locations, loading }) => {
                         ))}
                     </div>
 
-                    {regionHasMap && currentRegion && (
+                    {currentRegion && (
                         <>
                             {currentRegion.versions.length > 1 && (
                                 <div className="locations-version-tabs">
@@ -113,34 +140,6 @@ const PokemonLocations = ({ locations, loading }) => {
                                     </div>
                                 </>
                             )}
-                        </>
-                    )}
-
-                    {!regionHasMap && currentRegion && (
-                        <div className="locations-versions">
-                            {currentRegion.versions.map(v => (
-                                <div key={v.name} className="locations-version-block">
-                                    <span className="gen5-version-pill">{v.display}</span>
-                                    <div className="locations-areas">
-                                        {v.areas.map(({ area, chance }) => (
-                                            <AreaTag key={area} area={area} chance={chance} />
-                                        ))}
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    )}
-
-                    {!regionHasMap && (
-                        <>
-                            <p className="locations-map-pending">
-                                El mapa ilustrado todavía no está disponible para {currentRegion?.label}; por ahora se muestra en lista.
-                            </p>
-                            <div className="locations-legend">
-                                <span className="locations-legend-item"><i className="locations-dot locations-area-high" /> Alta (≥50%)</span>
-                                <span className="locations-legend-item"><i className="locations-dot locations-area-mid" /> Media (15-49%)</span>
-                                <span className="locations-legend-item"><i className="locations-dot locations-area-low" /> Baja (&lt;15%)</span>
-                            </div>
                         </>
                     )}
                 </>
