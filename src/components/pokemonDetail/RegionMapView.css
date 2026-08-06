@@ -13,32 +13,46 @@
     max-width: 420px;
     aspect-ratio: 1 / 1;
     border-radius: 10px;
-    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.16);
+    box-shadow: 0 3px 14px rgba(0, 0, 0, 0.22);
     overflow: visible;
 }
 
 .region-map-bg {
-    stroke: #cfe0c8;
-    stroke-width: 0.4;
+    stroke: #4f8a3a;
+    stroke-width: 0.6;
 }
 
-/* Camino base (se dibuja progresivamente vía Framer Motion) */
+/* Decoración ambiental (árboles/montañas) — sin datos reales detrás */
+.region-map-decor-tree { fill: #4f8a3a; }
+.region-map-decor-trunk { fill: #6b4a2a; }
+.region-map-decor-mountain { fill: #8a9099; opacity: 0.8; }
+
+/* Camino tipo "sendero de tablero": borde oscuro grueso + relleno claro
+   encima, como una pista de juego de mesa en vez de una línea fina. */
+.region-map-path-outline {
+    fill: none;
+    stroke: #5a3a1c;
+    stroke-width: 2.6;
+    stroke-linecap: round;
+    opacity: 0.85;
+}
+
 .region-map-path {
     fill: none;
-    stroke: #b9cdb0;
-    stroke-width: 0.7;
+    stroke: #e8d5a0;
+    stroke-width: 1.7;
     stroke-linecap: round;
 }
 
-/* Capa de guiones en bucle, encima del camino base, para un efecto de
+/* Capa de guiones en bucle, encima del camino, para un efecto de
    "sendero vivo" — como si algo recorriera el mapa constantemente. */
 .region-map-path-flow {
     fill: none;
     stroke: #ffffff;
-    opacity: 0.55;
-    stroke-width: 0.55;
+    opacity: 0.7;
+    stroke-width: 0.6;
     stroke-linecap: round;
-    stroke-dasharray: 1.4 3.2;
+    stroke-dasharray: 1.2 3.4;
     animation: region-map-flow 3.2s linear infinite;
 }
 
@@ -48,48 +62,48 @@
 
 .region-map-node {
     stroke: #fff;
-    stroke-width: 0.45;
+    stroke-width: 0.5;
 }
 
-.region-map-node-town { fill: #7a6a52; }
-.region-map-node-route { fill: #9db08f; }
-.region-map-node-dungeon { fill: #4d5c68; }
+.region-map-node-town { fill: #d0433a; }
+.region-map-node-route { fill: #f2ebd8; stroke: #b9a878; }
+.region-map-node-dungeon { fill: #3c4a56; }
 
-.region-map-node-high { fill: #e0504a; stroke: #7a1a1a; stroke-width: 0.7; }
-.region-map-node-mid  { fill: #f0a13f; stroke: #7a4a10; stroke-width: 0.7; }
-.region-map-node-low  { fill: #f0d060; stroke: #6b6420; stroke-width: 0.7; }
+/* Solo dos avisos: rojo (alta probabilidad) y naranjo (aparece, con menor
+   frecuencia) — sin un tercer tono para no saturar de colores el mapa. */
+.region-map-node-high { fill: #e0342a; stroke: #6b0f0a; stroke-width: 0.8; }
+.region-map-node-mid  { fill: #f2861f; stroke: #7a3d08; stroke-width: 0.8; }
 
 .region-map-ping {
     fill: none;
-    stroke-width: 0.8;
+    stroke-width: 0.9;
     pointer-events: none;
 }
-.region-map-ping.region-map-node-high { stroke: #e0504a; }
-.region-map-ping.region-map-node-mid  { stroke: #f0a13f; }
-.region-map-ping.region-map-node-low  { stroke: #d8c020; }
+.region-map-ping.region-map-node-high { stroke: #e0342a; }
+.region-map-ping.region-map-node-mid  { stroke: #f2861f; }
 
 .region-map-node-group { cursor: pointer; }
 
 .region-map-icon-fill {
     fill: #fff;
-    opacity: 0.92;
+    opacity: 0.95;
     pointer-events: none;
 }
 
 .region-map-icon-cut {
-    fill: #7a6a52;
-    opacity: 0.85;
+    fill: #6b0f0a;
+    opacity: 0.7;
     pointer-events: none;
 }
 
 .region-map-label {
     font-family: monospace;
-    font-size: 2.7px;
+    font-size: 2.8px;
     font-weight: bold;
     fill: #2c3e50;
     paint-order: stroke;
     stroke: #fff;
-    stroke-width: 0.7px;
+    stroke-width: 0.8px;
     stroke-linejoin: round;
     pointer-events: none;
 }
@@ -98,7 +112,7 @@
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    gap: 12px;
+    gap: 14px;
     font-family: monospace;
     font-size: 0.7em;
     color: #888;
@@ -117,10 +131,8 @@
     display: inline-block;
 }
 
-.region-map-dot.region-map-node-high { background: #e0504a; }
-.region-map-dot.region-map-node-mid  { background: #f0a13f; }
-.region-map-dot.region-map-node-low  { background: #f0d060; }
-.region-map-dot.region-map-node-none { background: #9db08f; }
+.region-map-dot.region-map-node-high { background: #e0342a; }
+.region-map-dot.region-map-node-mid  { background: #f2861f; }
 
 .region-map-disclaimer {
     font-family: monospace;
@@ -132,5 +144,5 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-    .region-map-path-flow { animation: none; opacity: 0.3; }
+    .region-map-path-flow { animation: none; opacity: 0.35; }
 }

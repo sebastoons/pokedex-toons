@@ -1,19 +1,17 @@
 // src/components/pokemonDetail/RegionMapView.js
 // Mapa propio y estilizado de una región (ver src/data/regionMaps.js sobre
 // por qué no es el mapa real del juego). Dibuja ciudades/rutas/mazmorras
-// como nodos conectados por caminos curvos y animados (Framer Motion), y
-// resalta con un pulso tipo radar los que coinciden con una ubicación real
-// donde aparece el Pokémon en la versión elegida.
+// como nodos conectados por caminos curvos tipo "sendero de tablero"
+// (Framer Motion para el trazado y las transiciones), y resalta con un
+// pulso tipo radar los que coinciden con una ubicación real donde aparece
+// el Pokémon en la versión elegida. Solo dos colores de aviso: rojo (alta
+// probabilidad) y naranjo (el Pokémon aparece, pero con menor frecuencia).
 import React, { useMemo, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { REGION_MAPS, matchAreaToNode } from '../../data/regionMaps';
 import './RegionMapView.css';
 
-const chanceLevel = (chance) => {
-    if (chance >= 50) return 'high';
-    if (chance >= 15) return 'mid';
-    return 'low';
-};
+const chanceLevel = (chance) => (chance >= 50 ? 'high' : 'mid');
 
 const NODE_RADIUS = { town: 2.8, route: 1.1, dungeon: 2.4 };
 
@@ -38,6 +36,24 @@ const curvePath = (na, nb) => {
     return `M ${na.x} ${na.y} Q ${cx} ${cy} ${nb.x} ${nb.y}`;
 };
 
+// Decoración de fondo (árboles/montañas) puramente ambiental, no ligada a
+// datos reales — genera posiciones deterministas separadas de los nodos
+// para dar textura de "terreno" en vez de una tarjeta verde lisa.
+const decorFor = (regionId, count) => {
+    const items = [];
+    for (let i = 0; i < count; i++) {
+        const h1 = edgeHash(regionId, `dx${i}`);
+        const h2 = edgeHash(regionId, `dy${i}`);
+        const h3 = edgeHash(regionId, `dt${i}`);
+        items.push({
+            x: 5 + ((h1 + 1) / 2) * 90,
+            y: 5 + ((h2 + 1) / 2) * 90,
+            tree: h3 > 0,
+        });
+    }
+    return items;
+};
+
 // Iconos propios, dibujados a mano en un espacio local ~±2 unidades
 // (se posicionan con un <g transform="translate(x,y)">).
 const TownIcon = () => (
@@ -55,6 +71,17 @@ const DungeonIcon = () => (
     />
 );
 
+const TreeDecor = () => (
+    <>
+        <circle cx="0" cy="-0.4" r="1.1" className="region-map-decor-tree" />
+        <rect x="-0.25" y="0.5" width="0.5" height="0.9" className="region-map-decor-trunk" />
+    </>
+);
+
+const MountainDecor = () => (
+    <path d="M -1.4 0.9 L -0.3 -1 L 0.3 -0.2 L 0.9 -1.1 L 1.6 0.9 Z" className="region-map-decor-mountain" />
+);
+
 const RegionMapView = ({ regionId, areas }) => {
     const [hovered, setHovered] = useState(null);
     const map = REGION_MAPS[regionId];
@@ -67,6 +94,8 @@ const RegionMapView = ({ regionId, areas }) => {
         });
         return result;
     }, [regionId, areas]);
+
+    const decor = useMemo(() => (map ? decorFor(regionId, 16) : []), [regionId, map]);
 
     if (!map) return null;
     const nodeById = Object.fromEntries(map.nodes.map(n => [n.id, n]));
@@ -86,22 +115,37 @@ const RegionMapView = ({ regionId, areas }) => {
                     transition={{ duration: 0.25 }}
                 >
                     <defs>
-                        <radialGradient id={`region-map-glow-${regionId}`} cx="50%" cy="50%" r="60%">
-                            <stop offset="0%" stopColor="#f3f9ef" />
-                            <stop offset="100%" stopColor="#e2efdb" />
+                        <radialGradient id={`region-map-glow-${regionId}`} cx="42%" cy="38%" r="75%">
+                            <stop offset="0%" stopColor="#a9d98a" />
+                            <stop offset="55%" stopColor="#8ec66c" />
+                            <stop offset="100%" stopColor="#6fae53" />
                         </radialGradient>
                     </defs>
 
                     <rect x="0" y="0" width="100" height="100" rx="4" fill={`url(#region-map-glow-${regionId})`} className="region-map-bg" />
 
-                    {/* Caminos: se dibujan progresivamente al entrar y llevan un flujo de
-                        guiones en bucle para sensación de "sendero vivo". */}
+                    {/* Textura ambiental (árboles/montañas), decorativa, sin datos reales detrás */}
+                    {decor.map((d, i) => (
+                        <g key={i} transform={`translate(${d.x} ${d.y})`} className="region-map-decor" opacity={0.55}>
+                            {d.tree ? <TreeDecor /> : <MountainDecor />}
+                        </g>
+                    ))}
+
+                    {/* Caminos tipo "sendero de tablero": borde + relleno, se dibujan
+                        progresivamente al entrar y llevan un flujo de guiones en bucle. */}
                     {map.paths.map(([a, b], i) => {
                         const na = nodeById[a], nb = nodeById[b];
                         if (!na || !nb) return null;
                         const d = curvePath(na, nb);
                         return (
                             <g key={`${a}-${b}`}>
+                                <motion.path
+                                    d={d}
+                                    className="region-map-path-outline"
+                                    initial={{ pathLength: 0, opacity: 0 }}
+                                    animate={{ pathLength: 1, opacity: 1 }}
+                                    transition={{ duration: 0.45, delay: i * 0.006, ease: 'easeInOut' }}
+                                />
                                 <motion.path
                                     d={d}
                                     className="region-map-path"
@@ -180,10 +224,8 @@ const RegionMapView = ({ regionId, areas }) => {
             </AnimatePresence>
 
             <div className="region-map-legend">
-                <span><i className="region-map-dot region-map-node-high" /> Alta (≥50%)</span>
-                <span><i className="region-map-dot region-map-node-mid" /> Media (15-49%)</span>
-                <span><i className="region-map-dot region-map-node-low" /> Baja (&lt;15%)</span>
-                <span><i className="region-map-dot region-map-node-none" /> Sin datos aquí</span>
+                <span><i className="region-map-dot region-map-node-high" /> Alta probabilidad (≥50%)</span>
+                <span><i className="region-map-dot region-map-node-mid" /> Aparece (&lt;50%)</span>
             </div>
             <span className="region-map-disclaimer">
                 {highlightedCount > 0

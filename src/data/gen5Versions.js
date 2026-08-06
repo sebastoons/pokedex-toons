@@ -72,12 +72,14 @@ export const VERSION_INFO = GENERATIONS_1_TO_5.reduce((acc, { gen, versions }) =
 
 // Regiones jugables (Kanto, Johto, Hoenn, Sinnoh, Teselia) — se usan para
 // filtrar las ubicaciones salvajes por región en vez de mostrar todo junto.
+// Kanto: solo Rojo Fuego/Verde Hoja (remakes de Gen III, estilo PokeMMo);
+// Teselia: solo Negro/Blanco (PokeMMo no contempla Negro 2/Blanco 2).
 export const REGIONS = [
-    { id: 'kanto',   label: 'Kanto',   versions: ['red', 'blue', 'yellow', 'firered', 'leafgreen'] },
+    { id: 'kanto',   label: 'Kanto',   versions: ['firered', 'leafgreen'] },
     { id: 'johto',   label: 'Johto',   versions: ['gold', 'silver', 'crystal', 'heartgold', 'soulsilver'] },
     { id: 'hoenn',   label: 'Hoenn',   versions: ['ruby', 'sapphire', 'emerald'] },
     { id: 'sinnoh',  label: 'Sinnoh',  versions: ['diamond', 'pearl', 'platinum'] },
-    { id: 'teselia', label: 'Teselia', versions: ['black', 'white', 'black-2', 'white-2'] },
+    { id: 'teselia', label: 'Teselia', versions: ['black', 'white'] },
 ];
 
 export const humanizeSlug = (slug = '') =>
