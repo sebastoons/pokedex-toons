@@ -22,26 +22,46 @@
     stroke-width: 0.6;
 }
 
-/* Decoración ambiental (árboles/montañas) — sin datos reales detrás */
-.region-map-decor-tree { fill: #4f8a3a; }
-.region-map-decor-trunk { fill: #6b4a2a; }
-.region-map-decor-mountain { fill: #8a9099; opacity: 0.8; }
+/* Manchas de relieve/vegetación — puramente decorativas, sin datos reales detrás */
+.region-map-terrain-blob {
+    opacity: 0.45;
+}
 
-/* Camino tipo "sendero de tablero": borde oscuro grueso + relleno claro
-   encima, como una pista de juego de mesa en vez de una línea fina. */
+.region-map-river {
+    fill: none;
+    stroke: #6fa8d0;
+    stroke-width: 0.9;
+    stroke-linecap: round;
+    opacity: 0.85;
+}
+
+.region-map-water-deep {
+    fill: #3f7fae;
+    opacity: 0.92;
+}
+
+.region-map-water-shallow {
+    fill: #6fa8d0;
+    opacity: 0.75;
+}
+
+/* Camino tipo "carretera de mapa de ruta": borde oscuro grueso + relleno
+   dorado encima, con codos en ángulo recto en vez de una línea fina. */
 .region-map-path-outline {
     fill: none;
-    stroke: #5a3a1c;
-    stroke-width: 2.6;
+    stroke: #6b4a1c;
+    stroke-width: 2.8;
     stroke-linecap: round;
+    stroke-linejoin: round;
     opacity: 0.85;
 }
 
 .region-map-path {
     fill: none;
-    stroke: #e8d5a0;
-    stroke-width: 1.7;
+    stroke: #eab93c;
+    stroke-width: 1.8;
     stroke-linecap: round;
+    stroke-linejoin: round;
 }
 
 /* Capa de guiones en bucle, encima del camino, para un efecto de
@@ -52,6 +72,7 @@
     opacity: 0.7;
     stroke-width: 0.6;
     stroke-linecap: round;
+    stroke-linejoin: round;
     stroke-dasharray: 1.2 3.4;
     animation: region-map-flow 3.2s linear infinite;
 }
@@ -65,9 +86,11 @@
     stroke-width: 0.5;
 }
 
-.region-map-node-town { fill: #d0433a; }
-.region-map-node-route { fill: #f2ebd8; stroke: #b9a878; }
-.region-map-node-dungeon { fill: #3c4a56; }
+/* Casillas sin datos aquí: azul oscuro neutro para ciudades/mazmorras (no se
+   confunde con el rojo/naranjo de aviso), arena discreto para rutas. */
+.region-map-node-town { fill: #1c3a52; stroke: #0d1f2e; }
+.region-map-node-dungeon { fill: #1c3a52; stroke: #0d1f2e; }
+.region-map-node-route { fill: #d8c48f; stroke: #a68c55; }
 
 /* Solo dos avisos: rojo (alta probabilidad) y naranjo (aparece, con menor
    frecuencia) — sin un tercer tono para no saturar de colores el mapa. */
@@ -91,8 +114,8 @@
 }
 
 .region-map-icon-cut {
-    fill: #6b0f0a;
-    opacity: 0.7;
+    fill: #000;
+    opacity: 0.32;
     pointer-events: none;
 }
 
@@ -127,7 +150,7 @@
 .region-map-dot {
     width: 9px;
     height: 9px;
-    border-radius: 50%;
+    border-radius: 3px;
     display: inline-block;
 }
 
